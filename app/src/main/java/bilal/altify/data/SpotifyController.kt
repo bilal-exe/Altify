@@ -20,6 +20,8 @@ class SpotifyController private constructor(
 
     val volume = Volume(spotifyAppRemote.connectApi)
 
+    val content = Content(spotifyAppRemote.contentApi)
+
     suspend fun getLargeImage(imageUri: ImageUri): Bitmap =
             spotifyAppRemote.imagesApi.getImage(imageUri).await().data
 
