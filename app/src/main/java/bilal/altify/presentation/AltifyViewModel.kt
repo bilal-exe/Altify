@@ -1,8 +1,10 @@
 package bilal.altify.presentation
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.data.SpotifyController
+import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -101,9 +103,19 @@ class AltifyViewModel @Inject constructor(
         viewModelScope.launch { controller!!.content.getChildrenOfItem(listItem) }
     }
 
-    fun play(listItem: ListItem) {
+    fun playListItem(listItem: ListItem) {
         if (controller == null) return
         viewModelScope.launch { controller!!.content.play(listItem) }
+    }
+
+    suspend fun getLargeImage(imageUri: ImageUri): Bitmap {
+        if (controller == null) throw Exception()
+        return controller!!.getLargeImage(imageUri)
+    }
+
+    suspend fun getSmallImage(imageUri: ImageUri): Bitmap {
+        if (controller == null) throw Exception()
+        return controller!!.geSmallImage(imageUri)
     }
 
     private val collectionBlocks = arrayOf<suspend CoroutineScope.() -> Unit>(

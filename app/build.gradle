@@ -68,6 +68,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-runtime-ktx:2.6.0'
     kapt "com.google.dagger:hilt-compiler:2.44"
 
+    implementation "androidx.palette:palette-ktx:1.0.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

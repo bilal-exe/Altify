@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import bilal.altify.data.SpotifyController
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.theme.AltifyTheme
@@ -48,7 +49,10 @@ class MainActivity : ComponentActivity() {
                         )
 
                     is AltifyUIState.Connected ->
-                        AltifyApp(viewModel = viewModel, uiState = uiState)
+                        AltifyApp(
+                            viewModel = viewModel,
+                            uiState = uiState as AltifyUIState.Connected
+                        )
 
                 }
 

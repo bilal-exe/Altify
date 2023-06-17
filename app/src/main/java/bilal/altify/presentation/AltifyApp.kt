@@ -1,9 +1,13 @@
 package bilal.altify.presentation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -13,7 +17,7 @@ import bilal.altify.presentation.navigation.*
 @Composable
 fun AltifyApp(
     viewModel: AltifyViewModel,
-    uiState: AltifyUIState
+    uiState: AltifyUIState.Connected
 ) {
 
     val navController = rememberNavController()
@@ -21,6 +25,7 @@ fun AltifyApp(
     val currentDestination: NavDestination? = currentBackStack?.destination
     val currentScreen = destinations.find { it.route == currentDestination?.route }
         ?: AltifyDestination.NOW_PLAYING
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         bottomBar = {
@@ -29,12 +34,15 @@ fun AltifyApp(
                 onNavigateToDestination = { navController.navigateSingleTopTo(it.route) },
                 currentDestination = currentScreen
             )
-        }
+        },
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
         AltifyNavHost(
             modifier = Modifier.padding(padding),
             navController = navController,
-            viewModel = viewModel
+            viewModel = viewModel,
+            uiState = uiState
         )
     }
 

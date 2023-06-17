@@ -6,24 +6,26 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.screens.BrowseScreen
-import bilal.altify.presentation.screens.NowPlayingScreen
+import bilal.altify.presentation.screens.nowplaying.NowPlayingScreen
 
 @Composable
 fun AltifyNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = AltifyDestination.NOW_PLAYING.route,
-    viewModel: AltifyViewModel
+    viewModel: AltifyViewModel,
+    uiState: AltifyUIState.Connected
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(AltifyDestination.NOW_PLAYING.route) { NowPlayingScreen(viewModel) }
-        composable(AltifyDestination.BROWSE.route) { BrowseScreen(viewModel) }
+        composable(AltifyDestination.NOW_PLAYING.route) { NowPlayingScreen(viewModel, uiState) }
+        composable(AltifyDestination.BROWSE.route) { BrowseScreen(viewModel, uiState) }
     }
 }
 
