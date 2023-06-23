@@ -32,9 +32,11 @@ class SpotifyController private constructor(
     val content = Content(spotifyAppRemote.contentApi)
 
     fun getLargeImage(uri: String) {
+        Log.d("Spotify", "image requested")
         CoroutineScope(IO).launch {
             spotifyAppRemote.imagesApi.getImage(ImageUri(uri)).setResultCallback {
                 _largeImage.value = it
+                Log.d("Spotify", "image received")
             }.setErrorCallback {
                 throw Exception()
             }

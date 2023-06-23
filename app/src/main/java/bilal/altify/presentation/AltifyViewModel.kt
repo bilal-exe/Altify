@@ -129,7 +129,11 @@ class AltifyViewModel @Inject constructor(
     private val collectionBlocks = arrayOf<suspend CoroutineScope.() -> Unit>(
         {
             controller!!.player.currentTrack.collect { track ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(track = track?.toAlt()) }
+                val alt = track?.toAlt()
+                if (alt != null && alt != (uiState.value as AltifyUIState.Connected).track) {
+                    alt.imageUri?.let { getLargeImage(it) }
+                }
+                _uiState.update { (it as AltifyUIState.Connected).copy(track = alt) }
             }
         },
         {
@@ -165,7 +169,7 @@ class AltifyViewModel @Inject constructor(
         },
         {
             controller!!.largeImage.collect {
-                largeImage.value
+                largeImage.value = it
             }
         }
     )

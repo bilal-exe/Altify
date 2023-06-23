@@ -79,7 +79,7 @@ fun NowPlayingRotatingArtwork(bitmap: Bitmap?) {
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 5000, easing = LinearEasing)
+            animation = tween(durationMillis = 10000, easing = LinearEasing)
         )
     )
     Box(
