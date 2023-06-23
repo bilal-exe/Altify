@@ -1,18 +1,12 @@
 package bilal.altify.presentation
 
-import android.graphics.Bitmap
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.data.spotify.SpotifyController
-import bilal.altify.data.spotify.toAlt
 import com.spotify.protocol.types.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,9 +19,7 @@ class AltifyViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var controller: SpotifyController? = null
-    private val collectionJobs = mutableListOf<Job?>()
-
-    val largeImage = mutableStateOf<Bitmap?>(null)
+    val stateUpdater = StateUpdater(_uiState, viewModelScope)
 
     init {
         connect()
@@ -38,7 +30,7 @@ class AltifyViewModel @Inject constructor(
         viewModelScope.launch {
             spotifyControllerFactory.connect().fold(
                 onSuccess = { onConnected(it) },
-                onFailure = { onConnectionFailed(it) }
+                onFailure = { onDisconnected(it) }
             )
         }
     }
@@ -46,14 +38,13 @@ class AltifyViewModel @Inject constructor(
     private fun onConnected(spotifyController: SpotifyController) {
         controller = spotifyController
         _uiState.value = AltifyUIState.Connected()
-        collectionBlocks.forEach { collectionJobs += viewModelScope.launch { it() } }
+        stateUpdater.onConnected(spotifyController)
     }
 
-    private fun onConnectionFailed(throwable: Throwable) {
+    private fun onDisconnected(throwable: Throwable) {
         controller = null
         _uiState.value = AltifyUIState.Disconnected(throwable.message)
-        collectionJobs.forEach { it?.cancel() }
-        collectionJobs.clear()
+        stateUpdater.onDisconnected()
     }
 
     fun pauseResume() {
@@ -115,62 +106,4 @@ class AltifyViewModel @Inject constructor(
         if (controller == null) return
         viewModelScope.launch { controller!!.content.play(listItem) }
     }
-
-    fun getLargeImage(imageUri: String) {
-        if (controller == null) throw Exception()
-        controller!!.getLargeImage(imageUri)
-    }
-
-//    suspend fun getSmallImage(imageUri: String): Bitmap {
-//        if (controller == null) throw Exception()
-//        return controller!!.geSmallImage(imageUri)
-//    }
-
-    private val collectionBlocks = arrayOf<suspend CoroutineScope.() -> Unit>(
-        {
-            controller!!.player.currentTrack.collect { track ->
-                val alt = track?.toAlt()
-                if (alt != null && alt != (uiState.value as AltifyUIState.Connected).track) {
-                    alt.imageUri?.let { getLargeImage(it) }
-                }
-                _uiState.update { (it as AltifyUIState.Connected).copy(track = alt) }
-            }
-        },
-        {
-            controller!!.player.isPaused.collect { isPaused ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(isPaused = isPaused) }
-            }
-        },
-        {
-            controller!!.player.playbackPosition.collect { pos ->
-                _uiState.update { (it as AltifyUIState.Connected).playbackPosition = pos; it }
-            }
-        },
-        {
-            controller!!.player.playerContext.collect { playerContext ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(playerContext = playerContext?.toAlt()) }
-            }
-        },
-        {
-            controller!!.content.listItemsFlow.collect { listItems ->
-                _uiState.update { oldState ->
-                    (oldState as AltifyUIState.Connected).copy(
-                        listItems = listItems.items.map { it.toAlt() }.toTypedArray()
-                    )
-                }
-            }
-        },
-        {
-            controller!!.volume.volume.collect { vol ->
-                if (vol != null) {
-                    _uiState.update { (it as AltifyUIState.Connected).copy(volume = vol.mVolume) }
-                }
-            }
-        },
-        {
-            controller!!.largeImage.collect {
-                largeImage.value = it
-            }
-        }
-    )
 }

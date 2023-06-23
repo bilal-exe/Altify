@@ -1,7 +1,6 @@
 package bilal.altify.presentation.screens.nowplaying
 
-import android.graphics.Bitmap
-import androidx.compose.runtime.*
+    import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.data.dataclasses.AltPlayerContext
 import bilal.altify.data.dataclasses.AltTrack
@@ -16,11 +15,9 @@ fun NowPlayingScreen(viewModel: AltifyViewModel, uiState: AltifyUIState.Connecte
     val play = viewModel::play
     val queue = viewModel::addToQueue
     val seek = viewModel::seek
-    val getArtwork = viewModel::getLargeImage
     val increaseVolume = viewModel::increaseVolume
     val decreaseVolume = viewModel::decreaseVolume
     val setVolume = viewModel::setVolume
-    val coverArt by remember { viewModel.largeImage }
 
     NowPlayingScreen(
         uiState,
@@ -30,7 +27,6 @@ fun NowPlayingScreen(viewModel: AltifyViewModel, uiState: AltifyUIState.Connecte
         play,
         queue,
         seek,
-        coverArt,
         increaseVolume,
         decreaseVolume,
         setVolume
@@ -46,7 +42,6 @@ fun NowPlayingScreen(
     play: (String) -> Unit,
     queue: (String) -> Unit,
     seek: (Long) -> Unit,
-    coverArt: Bitmap?,
     increaseVolume: () -> Unit,
     decreaseVolume: () -> Unit,
     setVolume: (Float) -> Unit,
@@ -55,9 +50,9 @@ fun NowPlayingScreen(
     var showControls by remember { mutableStateOf(true) }
     val toggleControls = { showControls = !showControls }
 
-    NowPlayingBackground(coverArt) {
+    NowPlayingBackground(uiState.artwork) {
         if (uiState.playerContext != null) NowPlayingTopBar(player = uiState.playerContext)
-        NowPlayingArtwork(coverArt, toggleControls)
+        NowPlayingArtwork(uiState.artwork, toggleControls)
         NowPlayingMusicInfo(uiState.track)
         NowPlayingProgressBar(
             progress = uiState.playbackPosition,
@@ -83,7 +78,6 @@ private fun NowPlayingPreview() {
         play = { },
         queue = { },
         seek = { },
-        coverArt = null,
         increaseVolume = {},
         decreaseVolume = {},
         setVolume = {}
