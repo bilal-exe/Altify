@@ -6,6 +6,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.screens.BrowseScreen
@@ -24,7 +25,12 @@ fun AltifyNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(AltifyDestination.NOW_PLAYING.route) { NowPlayingScreen(viewModel, uiState) }
+        composable(
+            route = AltifyDestination.NOW_PLAYING.route,
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "altify://now_playing" }
+            )
+        ) { NowPlayingScreen(viewModel, uiState) }
         composable(AltifyDestination.BROWSE.route) { BrowseScreen(viewModel, uiState) }
     }
 }

@@ -1,10 +1,11 @@
 package bilal.altify.presentation
 
 import android.graphics.Bitmap
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bilal.altify.data.SpotifyController
-import com.spotify.protocol.types.ImageUri
+import bilal.altify.data.spotify.SpotifyController
+import bilal.altify.data.spotify.toAlt
 import com.spotify.protocol.types.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,8 @@ class AltifyViewModel @Inject constructor(
 
     private var controller: SpotifyController? = null
     private val collectionJobs = mutableListOf<Job?>()
+
+    val largeImage = mutableStateOf<Bitmap?>(null)
 
     init {
         connect()
@@ -93,6 +96,11 @@ class AltifyViewModel @Inject constructor(
         viewModelScope.launch { controller!!.volume.decreaseVolume() }
     }
 
+    fun setVolume(volume: Float) {
+        if (controller == null) return
+        viewModelScope.launch { controller!!.volume.setVolume(volume) }
+    }
+
     fun getRecommendedListItems() {
         if (controller == null) return
         viewModelScope.launch { controller!!.content.getRecommended() }
@@ -108,20 +116,20 @@ class AltifyViewModel @Inject constructor(
         viewModelScope.launch { controller!!.content.play(listItem) }
     }
 
-    suspend fun getLargeImage(imageUri: ImageUri): Bitmap {
+    fun getLargeImage(imageUri: String) {
         if (controller == null) throw Exception()
-        return controller!!.getLargeImage(imageUri)
+        controller!!.getLargeImage(imageUri)
     }
 
-    suspend fun getSmallImage(imageUri: ImageUri): Bitmap {
-        if (controller == null) throw Exception()
-        return controller!!.geSmallImage(imageUri)
-    }
+//    suspend fun getSmallImage(imageUri: String): Bitmap {
+//        if (controller == null) throw Exception()
+//        return controller!!.geSmallImage(imageUri)
+//    }
 
     private val collectionBlocks = arrayOf<suspend CoroutineScope.() -> Unit>(
         {
             controller!!.player.currentTrack.collect { track ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(track = track) }
+                _uiState.update { (it as AltifyUIState.Connected).copy(track = track?.toAlt()) }
             }
         },
         {
@@ -136,17 +144,28 @@ class AltifyViewModel @Inject constructor(
         },
         {
             controller!!.player.playerContext.collect { playerContext ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(playerContext = playerContext) }
+                _uiState.update { (it as AltifyUIState.Connected).copy(playerContext = playerContext?.toAlt()) }
             }
         },
         {
             controller!!.content.listItemsFlow.collect { listItems ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(listItems = listItems.items) }
+                _uiState.update { oldState ->
+                    (oldState as AltifyUIState.Connected).copy(
+                        listItems = listItems.items.map { it.toAlt() }.toTypedArray()
+                    )
+                }
             }
         },
         {
             controller!!.volume.volume.collect { vol ->
-                _uiState.update { (it as AltifyUIState.Connected).copy(volume = vol!!.mVolume) }
+                if (vol != null) {
+                    _uiState.update { (it as AltifyUIState.Connected).copy(volume = vol.mVolume) }
+                }
+            }
+        },
+        {
+            controller!!.largeImage.collect {
+                largeImage.value
             }
         }
     )

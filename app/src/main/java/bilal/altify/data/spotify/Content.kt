@@ -1,5 +1,6 @@
-package bilal.altify.data
+package bilal.altify.data.spotify
 
+import android.util.Log
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.protocol.client.CallResult
 import com.spotify.protocol.types.ListItem
@@ -17,6 +18,7 @@ class Content(
     private lateinit var listItemsCallback: CallResult.ResultCallback<ListItems>
 
     val listItemsFlow = callbackFlow {
+        Log.d("Spotify", "player state received")
         listItemsCallback = CallResult.ResultCallback<ListItems> { trySend(it) }
         awaitClose { this.cancel() }
     }
@@ -26,10 +28,18 @@ class Content(
         contentApi
             .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
             .setResultCallback(listItemsCallback)
+            .setErrorCallback {
+                throw Exception("Error callback")
+            }
     }
 
     suspend fun getChildrenOfItem(listItem: ListItem) {
-        contentApi.getChildrenOfItem(listItem, 25, 0)
+        contentApi
+            .getChildrenOfItem(listItem, 25, 0)
+            .setResultCallback(listItemsCallback)
+            .setErrorCallback {
+                throw Exception("Error callback")
+            }
     }
 
     suspend fun play(listItem: ListItem) {

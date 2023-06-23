@@ -1,7 +1,7 @@
 package bilal.altify.di
 
 import android.content.Context
-import bilal.altify.data.SpotifyController
+import bilal.altify.data.spotify.SpotifyController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

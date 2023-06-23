@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -18,7 +19,7 @@ fun AltifyBottomNav(
 
     NavigationBar(
         modifier = modifier,
-        contentColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = Color.Transparent,
         tonalElevation = 0.dp,
     ) {
         destinations.forEach { destination ->
@@ -62,5 +63,15 @@ fun NavigationBarItemIcon(destination: AltifyDestination, isSelected: Boolean) {
         painter = painterResource(id = destination.icon),
         contentDescription = destination.route,
         tint = if (isSelected) Color.White else Color.Black
+    )
+}
+
+@Preview
+@Composable
+private fun AltifyBottomNavPreview() {
+    AltifyBottomNav(
+        destinations = destinations,
+        onNavigateToDestination = {},
+        currentDestination = AltifyDestination.NOW_PLAYING
     )
 }

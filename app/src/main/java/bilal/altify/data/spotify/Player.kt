@@ -1,5 +1,6 @@
-package bilal.altify.data
+package bilal.altify.data.spotify
 
+import android.util.Log
 import com.spotify.android.appremote.api.PlayerApi
 import com.spotify.protocol.types.PlayerContext
 import com.spotify.protocol.types.Track
@@ -24,18 +25,27 @@ class Player(
     private val _playbackPosition = MutableStateFlow<Long>(0)
     val playbackPosition = _playbackPosition.asStateFlow()
 
-    val playerContext: Flow<PlayerContext?> = callbackFlow {
-        val subscription = playerApi.subscribeToPlayerContext().setEventCallback { trySend(it) }
+    val playerContext: Flow<PlayerContext?> = callbackFlow<PlayerContext?> {
+        val subscription = playerApi.subscribeToPlayerContext().setEventCallback {
+            trySend(it)
+            Log.d("Spotify", "player context")
+        }.setErrorCallback {
+            throw Exception("Error callback")
+        }
         awaitClose { subscription.cancel() }
     }
+        .flowOn(IO)
         .stateIn(CoroutineScope(IO), SharingStarted.WhileSubscribed(5000), null)
 
     init {
         CoroutineScope(IO).launch {
             playerApi.subscribeToPlayerState().setEventCallback {
+                Log.d("Spotify", "player state received")
                 _currentTrack.value = it.track
                 _isPaused.value = it.isPaused
                 _playbackPosition.value = it.playbackPosition
+            }.setErrorCallback {
+                throw Exception("Error callback")
             }
         }
     }

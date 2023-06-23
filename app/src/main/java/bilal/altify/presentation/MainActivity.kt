@@ -6,18 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import bilal.altify.data.SpotifyController
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.theme.AltifyTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -26,26 +21,23 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AltifyTheme {
 
-                var uiState: AltifyUIState by mutableStateOf(AltifyUIState.Connecting)
-
-                lifecycleScope.launch {
-                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.uiState.onEach { uiState = it }.collect()
-                    }
-                }
+                val uiState by viewModel.uiState.collectAsState()
 
                 when (uiState) {
 
                     AltifyUIState.Connecting ->
-                        LoadingScreen("Connecting to Spotify")
+                        LoadingScreen("Connecting to Spotify...")
 
                     is AltifyUIState.Disconnected ->
                         ErrorScreen(
                             message = (uiState as AltifyUIState.Disconnected).message
-                                ?: "Couldn't connect to Spotify"
+                                ?: "Couldn't connect to Spotify",
+                            buttonText = "Tap to retry",
+                            buttonFunc = viewModel::connect
                         )
 
                     is AltifyUIState.Connected ->
@@ -68,11 +60,13 @@ class MainActivity : ComponentActivity() {
         }
         return true
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     AltifyTheme {
+
     }
 }
