@@ -22,17 +22,19 @@ class AltifyViewModel @Inject constructor(
     val stateUpdater = StateUpdater(_uiState, viewModelScope)
 
     init {
-        connect()
+        viewModelScope.launch {
+            spotifyControllerFactory.connectionsFlow.collect {
+                it.fold(
+                    onSuccess = { onConnected(it) },
+                    onFailure = { onDisconnected(it) }
+                )
+            }
+        }
     }
 
     fun connect() {
         _uiState.value = AltifyUIState.Connecting
-        viewModelScope.launch {
-            spotifyControllerFactory.connect().fold(
-                onSuccess = { onConnected(it) },
-                onFailure = { onDisconnected(it) }
-            )
-        }
+        spotifyControllerFactory.connect()
     }
 
     private fun onConnected(spotifyController: SpotifyController) {

@@ -1,29 +1,18 @@
 package bilal.altify.data.spotify
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.Log
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.error.SpotifyAppRemoteException
-import com.spotify.protocol.types.Image
-import com.spotify.protocol.types.ImageUri
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class SpotifyController private constructor(
     private val spotifyAppRemote: SpotifyAppRemote
 ) {
-
-    private val _largeImage = MutableStateFlow<Bitmap?>(null)
-    val largeImage = _largeImage.asStateFlow()
 
     val player = Player(spotifyAppRemote.playerApi)
 
@@ -31,17 +20,7 @@ class SpotifyController private constructor(
 
     val content = Content(spotifyAppRemote.contentApi)
 
-    fun getLargeImage(uri: String) {
-        Log.d("Spotify", "image requested")
-        CoroutineScope(IO).launch {
-            spotifyAppRemote.imagesApi.getImage(ImageUri(uri)).setResultCallback {
-                _largeImage.value = it
-                Log.d("Spotify", "image received")
-            }.setErrorCallback {
-                throw Exception()
-            }
-        }
-    }
+    val image = Images(spotifyAppRemote.imagesApi)
 
 //    suspend fun geSmallImage(uri: String): Bitmap =
 //        spotifyAppRemote.imagesApi.getImage(ImageUri(uri), Image.Dimension.THUMBNAIL).await().data
@@ -58,20 +37,29 @@ class SpotifyController private constructor(
             .showAuthView(true)
             .build()
 
-        suspend fun connect(): Result<SpotifyController> = suspendCoroutine { continuation ->
+        lateinit var listener: Connector.ConnectionListener
 
-            val listener = object : Connector.ConnectionListener {
+        val connectionsFlow = callbackFlow {
 
-                override fun onConnected(appRemote: SpotifyAppRemote) =
-                    continuation.resume(Result.success(SpotifyController(appRemote)))
+            listener = object : Connector.ConnectionListener {
+
+                override fun onConnected(appRemote: SpotifyAppRemote) {
+                    trySend(Result.success(SpotifyController(appRemote)))
+                }
 
                 override fun onFailure(throwable: Throwable) {
                     Log.d("SpotifyAppRemote", throwable.toString())
-                    continuation.resume(Result.failure(throwable as SpotifyAppRemoteException))
+                    trySend(Result.failure(throwable as SpotifyAppRemoteException))
                 }
 
             }
 
+            connect()
+
+            awaitClose {}
+        }
+
+        fun connect() {
             SpotifyAppRemote.connect(context, connectionParams, listener)
         }
     }

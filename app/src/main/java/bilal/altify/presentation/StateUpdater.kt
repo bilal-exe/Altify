@@ -31,7 +31,7 @@ class StateUpdater(
         controller.player.currentTrack.collect { track ->
             val alt = track?.toAlt()
             if (alt != null && alt != (uiState.value as AltifyUIState.Connected).track) {
-                alt.imageUri?.let { controller.getLargeImage(it) }
+                alt.imageUri?.let { controller.image.getLargeImage(it) }
             }
             uiState.update { (it as AltifyUIState.Connected).copy(track = alt) }
         }
@@ -83,11 +83,10 @@ class StateUpdater(
     }
 
     private val artworkCollector = Collector(scope) { controller ->
-        controller.largeImage.collect { artwork ->
+        controller.image.artwork.collect { artwork ->
             uiState.update { (it as AltifyUIState.Connected).copy(artwork = artwork) }
         }
     }
-
 
 
     private val collectors = listOf(
