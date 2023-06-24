@@ -1,15 +1,26 @@
 package bilal.altify.presentation.screens.nowplaying
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import bilal.altify.data.dataclasses.AltPlayerContext
-import bilal.altify.presentation.util.WhiteText
+import bilal.altify.data.util.clipLen
 
 @Composable
 fun NowPlayingTopBar(
@@ -18,42 +29,65 @@ fun NowPlayingTopBar(
     val title = player.title
     val subtitle = player.subtitle
     val type = player.type
-    NowPlayingTopBar(title, subtitle, type, modifier)
+    NowPlayingTopBar(title = title, subtitle = subtitle, type = type, modifier = modifier)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NowPlayingTopBar(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
     type: String,
-    modifier: Modifier = Modifier
+    actionIcon: ImageVector? = null,
+    actionIconContentDescription: String = "",
+    onActionClick: (() -> Unit)? = null,
 ) {
-    Column(
+    CenterAlignedTopAppBar(
+        title = { TopAppBarText(title, subtitle, type) },
+        actions = {
+            if (actionIcon != null && onActionClick != null)
+                IconButton(onClick = onActionClick) {
+                    Icon(
+                        imageVector = actionIcon,
+                        contentDescription = actionIconContentDescription,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Color.Transparent
+        ),
         modifier = modifier
-            .height(75.dp)
-            .fillMaxWidth()
-            .padding(6.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        WhiteText(
-            text = type,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Medium
-        )
-        WhiteText(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold
-        )
-        WhiteText(text = subtitle, style = MaterialTheme.typography.bodyMedium)
-    }
+    )
+}
+
+@Composable
+private fun TopAppBarText(
+    title: String,
+    subtitle: String,
+    type: String,
+) {
+    Text(
+        buildAnnotatedString {
+            withStyle(SpanStyle()) { append("$subtitle: ") }
+            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                append(title.clipLen(20))
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0L)
 @Composable
 private fun NowPlayingTopBarPreview() {
     NowPlayingBackground {
-        NowPlayingTopBar("Title", "Subtitle", "Type")
+        NowPlayingTopBar(
+            title = "Title",
+            subtitle = "Subtitle",
+            type = "Type",
+            actionIcon = Icons.Default.Settings,
+            onActionClick = {}
+        )
     }
 }

@@ -9,8 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import bilal.altify.presentation.util.WhiteText
-import bilal.altify.presentation.util.toMinsSecs
+import bilal.altify.data.util.toMinsSecs
 
 @Composable
 fun NowPlayingProgressBar(
@@ -38,9 +37,9 @@ fun NowPlayingProgressBar(
             colors = sliderColors
         )
         Row {
-            WhiteText(text = progress.toMinsSecs())
+            AltText(text = progress.toMinsSecs())
             Spacer(modifier = Modifier.weight(1f))
-            WhiteText(text = duration.toMinsSecs())
+            AltText(text = duration.toMinsSecs())
         }
     }
 }

@@ -23,6 +23,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
+import bilal.altify.presentation.prefrences.AltPreference
+
+enum class ArtworkDisplayConfig(override val code: Int): AltPreference {
+    NORMAL(0), SPINNING_DISC(1)
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

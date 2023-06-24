@@ -5,9 +5,11 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
+import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.theme.AltifyTheme
@@ -62,6 +64,11 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+
+enum class DarkThemeConfig(override val code: Int) : AltPreference {
+    FOLLOW_SYSTEM(0), LIGHT(1), DARK(2)
+}
+
 
 @Preview(showBackground = true)
 @Composable
