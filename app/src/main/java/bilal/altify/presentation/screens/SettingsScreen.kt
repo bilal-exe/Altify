@@ -5,6 +5,10 @@ import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 
 @Composable
-fun BrowseScreen(viewModel: AltifyViewModel, uiState: AltifyUIState) {
+fun SettingsScreen(
+    viewModel: AltifyViewModel,
+    uiState: AltifyUIState,
+    navToNowPlaying: () -> Unit
+) {
 
 }

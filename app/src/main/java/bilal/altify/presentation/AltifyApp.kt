@@ -24,17 +24,10 @@ fun AltifyApp(
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination: NavDestination? = currentBackStack?.destination
     val currentScreen = destinations.find { it.route == currentDestination?.route }
-        ?: AltifyDestination.NOW_PLAYING
+        ?: AltifyDestination.NowPlaying
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        bottomBar = {
-            AltifyBottomNav(
-                destinations = destinations,
-                onNavigateToDestination = { navController.navigateSingleTopTo(it.route) },
-                currentDestination = currentScreen
-            )
-        },
         contentColor = MaterialTheme.colorScheme.onBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->

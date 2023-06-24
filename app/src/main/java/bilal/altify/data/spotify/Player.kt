@@ -28,7 +28,6 @@ class Player(
     val playerContext: Flow<PlayerContext?> = callbackFlow<PlayerContext?> {
         val subscription = playerApi.subscribeToPlayerContext().setEventCallback {
             trySend(it)
-            Log.d("Spotify", "player context")
         }.setErrorCallback {
             throw Exception("Error callback")
         }
@@ -40,10 +39,10 @@ class Player(
     init {
         CoroutineScope(IO).launch {
             playerApi.subscribeToPlayerState().setEventCallback {
-                Log.d("Spotify", "player state received")
-                _currentTrack.value = it.track
+                Log.d("Spotify", "player state received + ${it.playbackPosition}")
+                if (it.track != null) _currentTrack.value = it.track
                 _isPaused.value = it.isPaused
-                _playbackPosition.value = it.playbackPosition
+                if (it.playbackPosition != 0L) _playbackPosition.value = it.playbackPosition
             }.setErrorCallback {
                 throw Exception("Error callback")
             }

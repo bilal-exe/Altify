@@ -18,7 +18,6 @@ class Content(
     private lateinit var listItemsCallback: CallResult.ResultCallback<ListItems>
 
     val listItemsFlow = callbackFlow {
-        Log.d("Spotify", "player state received")
         listItemsCallback = CallResult.ResultCallback<ListItems> { trySend(it) }
         awaitClose { this.cancel() }
     }

@@ -3,7 +3,7 @@ package bilal.altify.presentation.screens.nowplaying
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +32,8 @@ import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.AltPreference
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-private val bodyColor = mutableStateOf(Color.Black)
-private val titleColor = mutableStateOf(Color.Black)
+val bodyColor = mutableStateOf(Color.Black)
+val titleColor = mutableStateOf(Color.Black)
 
 enum class BackgroundStyleConfig(override val code: Int) : AltPreference {
     SOLID(0), GRADIENT(1), PLAIN(2)
@@ -105,7 +105,7 @@ private fun NowPlayingSolidBackground(
     backgroundColor: Color,
     content: @Composable () -> Unit,
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .background(color = backgroundColor)
             .fillMaxSize(),
@@ -163,7 +163,7 @@ private fun NowPlayingGradientBackground(
         )
     )
 
-    Box(
+    Column(
         modifier = Modifier
             .background(brush)
             .fillMaxSize(),
@@ -214,7 +214,6 @@ fun AltText(
         onTextLayout = onTextLayout,
         style = style,
     )
-    Log.d("COLOR", color.toArgb().toString())
 }
 
 @Composable
@@ -259,7 +258,6 @@ fun AltText(
         onTextLayout = onTextLayout,
         style = style,
     )
-    Log.d("COLOR", color.toArgb().toString())
 }
 
 @Preview(showBackground = true)
