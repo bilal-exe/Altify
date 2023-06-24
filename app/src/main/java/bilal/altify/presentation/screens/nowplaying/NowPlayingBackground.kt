@@ -3,8 +3,7 @@ package bilal.altify.presentation.screens.nowplaying
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -29,52 +28,127 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.palette.graphics.Palette
+import bilal.altify.presentation.prefrences.AltPreference
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-val bodyColor = mutableStateOf(Color.Black)
-val titleColor = mutableStateOf(Color.Black)
+private val bodyColor = mutableStateOf(Color.Black)
+private val titleColor = mutableStateOf(Color.Black)
+
+enum class BackgroundStyleConfig(override val code: Int) : AltPreference {
+    SOLID(0), GRADIENT(1), PLAIN(2)
+}
 
 @Composable
 fun NowPlayingBackground(
     bitmap: Bitmap? = null,
     darkTheme: Boolean = false,
+    style: BackgroundStyleConfig = BackgroundStyleConfig.SOLID,
     content: @Composable () -> Unit,
 ) {
-    if (bitmap == null) NowPlayingGradientBackground(darkTheme, content)
-    else NowPlayingGradientBackground(bitmap, darkTheme, content)
+
+    val themeColor = if (darkTheme) Color.White else Color.Black
+
+    if (style == BackgroundStyleConfig.PLAIN) {
+        NowPlayingSolidBackground(backgroundColor = themeColor, content = content)
+        return
+    }
+
+    val palette = bitmap?.let { Palette.from(it).generate() }
+    val systemUiController = rememberSystemUiController()
+    val surfaceColor = MaterialTheme.colorScheme.surface
+
+    if (palette == null) {
+        bodyColor.value = themeColor
+        titleColor.value = themeColor
+    } else {
+        titleColor.value = Color(palette.dominantSwatch!!.titleTextColor)
+        bodyColor.value = Color(palette.dominantSwatch!!.bodyTextColor)
+    }
+
+    LaunchedEffect(key1 = palette) {
+        val statusBarColor = if (palette == null) surfaceColor else {
+            when (darkTheme) {
+                true -> palette.darkVibrantSwatch?.getColor()
+                false -> palette.lightVibrantSwatch?.getColor()
+            } ?: surfaceColor
+        }
+        systemUiController.setStatusBarColor(statusBarColor)
+    }
+
+    when (style) {
+
+        BackgroundStyleConfig.SOLID -> {
+            val backgroundColor = if (palette?.dominantSwatch == null) {
+                if (darkTheme) Color.Black else Color.White
+            } else palette.dominantSwatch!!.getColor()
+            NowPlayingSolidBackground(backgroundColor = backgroundColor, content = content)
+        }
+
+        BackgroundStyleConfig.GRADIENT -> {
+            if (palette == null) NowPlayingGradientBackground(
+                darkTheme = darkTheme,
+                content = content
+            ) else NowPlayingGradientBackground(
+                palette = palette,
+                darkTheme = darkTheme,
+                content = content
+            )
+        }
+
+        else -> throw Exception()
+    }
+}
+
+@Composable
+private fun NowPlayingSolidBackground(
+    backgroundColor: Color,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .background(color = backgroundColor)
+            .fillMaxSize(),
+    ) { content() }
 }
 
 @Composable
 private fun NowPlayingGradientBackground(
-    bitmap: Bitmap,
+    palette: Palette?,
     darkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
-    val palette = Palette.from(bitmap).generate()
-    val systemUiController = rememberSystemUiController()
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    val surfaceVariantColor = MaterialTheme.colorScheme.surfaceVariant
 
-    val mainColor = palette.dominantSwatch?.getColor() ?: surfaceColor
-    val endColor = (if (darkTheme) palette.darkMutedSwatch?.getColor()
-    else palette.lightMutedSwatch?.getColor()) ?: surfaceVariantColor
-
-    titleColor.value = Color(palette.dominantSwatch!!.titleTextColor)
-    bodyColor.value = Color(palette.dominantSwatch!!.bodyTextColor)
-
-    LaunchedEffect(key1 = palette) {
-        val statusBarColor = palette.darkVibrantSwatch?.getColor() ?: surfaceColor
-        systemUiController.setStatusBarColor(statusBarColor)
-    }
-
-    NowPlayingGradientBackground(
-        mainColor = mainColor,
-        endColor = endColor,
+    if (palette == null) NowPlayingGradientBackground(
+        darkTheme = darkTheme,
         content = content
-    )
+    ) else {
+        val mainColor = palette.dominantSwatch?.getColor() ?: MaterialTheme.colorScheme.surface
+        val endColor = (if (darkTheme) palette.darkVibrantSwatch?.getColor()
+        else palette.lightMutedSwatch?.getColor()) ?: MaterialTheme.colorScheme.surfaceVariant
+
+        NowPlayingGradientBackground(
+            mainColor = mainColor,
+            endColor = endColor,
+            content = content
+        )
+    }
 }
 
-// all the functions end here
+@Composable
+private fun NowPlayingGradientBackground(
+    darkTheme: Boolean,
+    content: @Composable () -> Unit
+) =
+    if (darkTheme) NowPlayingGradientBackground(
+        mainColor = Color.Black,
+        endColor = Color.LightGray,
+        content = content
+    ) else NowPlayingGradientBackground(
+        mainColor = Color.White,
+        endColor = Color.DarkGray,
+        content = content
+    )
+
 @Composable
 private fun NowPlayingGradientBackground(
     mainColor: Color,
@@ -88,57 +162,14 @@ private fun NowPlayingGradientBackground(
         )
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .background(brush)
             .fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceEvenly
     ) { content() }
 }
 
-@Composable
-private fun NowPlayingGradientBackground(
-    darkTheme: Boolean,
-    content: @Composable () -> Unit
-) =
-    if (darkTheme) {
-        bodyColor.value = Color.White
-        titleColor.value = Color.White
-        NowPlayingGradientBackground(
-            mainColor = Color.Black,
-            endColor = Color.LightGray,
-            content = content
-        )
-    } else {
-        bodyColor.value = Color.Black
-        titleColor.value = Color.Black
-        NowPlayingGradientBackground(
-            mainColor = Color.White,
-            endColor = Color.DarkGray,
-            content = content
-        )
-    }
-
 private fun Palette.Swatch.getColor() = Color(rgb)
-
-@Preview(showBackground = true)
-@Composable
-private fun NowPlayingBackgroundPreview() {
-    NowPlayingGradientBackground(
-        mainColor = Color.White,
-        endColor = Color.Black
-    ) {
-        Text(text = "Hello")
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun NowPlayingDefualtBackgroundPreview() {
-    NowPlayingGradientBackground(true) {
-        AltText(text = "Title")
-    }
-}
 
 @Composable
 fun AltText(
@@ -183,4 +214,31 @@ fun AltText(
         style = style,
     )
     Log.d("COLOR", color.toArgb().toString())
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NowPlayingDefaultPlainBackgroundPreview() {
+    NowPlayingSolidBackground(Color.White) {
+        AltText(text = "Title")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NowPlayingDefaultSolidBackgroundPreview() {
+    NowPlayingSolidBackground(Color.Red) {
+        AltText(text = "Title")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NowPlayingGradientBackgroundPreview() {
+    NowPlayingBackground(
+        bitmap = null,
+        darkTheme = false,
+        style = BackgroundStyleConfig.GRADIENT,
+        content = { AltText(text = "Hello", isTitle = true) }
+    )
 }
