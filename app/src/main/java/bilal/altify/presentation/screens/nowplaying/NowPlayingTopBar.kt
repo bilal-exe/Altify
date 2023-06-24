@@ -1,5 +1,6 @@
 package bilal.altify.presentation.screens.nowplaying
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -58,7 +59,6 @@ private fun NowPlayingTopBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent
         ),
-        modifier = modifier
     )
 }
 
@@ -68,17 +68,18 @@ private fun TopAppBarText(
     subtitle: String,
     type: String,
 ) {
-    Text(
+    AltText(
         buildAnnotatedString {
             withStyle(SpanStyle()) { append("$subtitle: ") }
             withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
                 append(title.clipLen(20))
             }
-        }
+        },
+        isTitle = true
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0L)
+@Preview(showBackground = true)
 @Composable
 private fun NowPlayingTopBarPreview() {
     NowPlayingBackground {

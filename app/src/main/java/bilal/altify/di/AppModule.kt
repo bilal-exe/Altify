@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.preferencesDataStoreFile
 import bilal.altify.data.spotify.SpotifyController
+import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,9 +27,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create(
-            produceFile = { context.preferencesDataStoreFile("Settings") }
+    fun providesAltifyPreferencesDataSource(@ApplicationContext context: Context): AltifyPreferencesDataSource =
+        AltifyPreferencesDataSource(
+            PreferenceDataStoreFactory.create(
+                produceFile = { context.preferencesDataStoreFile("Settings") }
+            )
         )
 
 }

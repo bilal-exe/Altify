@@ -2,8 +2,10 @@ package bilal.altify.presentation
 
 import bilal.altify.data.spotify.SpotifyController
 import bilal.altify.data.spotify.toAlt
+import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 
 private class Collector(
@@ -24,8 +26,18 @@ private class Collector(
 }
 
 class StateUpdater(
-    private val uiState: MutableStateFlow<AltifyUIState>, scope: CoroutineScope
+    private val uiState: MutableStateFlow<AltifyUIState>,
+    private val preferences: AltifyPreferencesDataSource,
+    private val scope: CoroutineScope
 ) {
+
+    private val preferencesCollector = Collector(scope) {
+        preferences.state.collect { preferences ->
+            uiState.update {
+                (it as AltifyUIState.Connected).copy(preferences = preferences)
+            }
+        }
+    }
 
     private val trackCollector = Collector(scope) { controller ->
         controller.player.currentTrack.collect { track ->

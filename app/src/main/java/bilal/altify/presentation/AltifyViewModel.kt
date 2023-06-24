@@ -3,23 +3,26 @@ package bilal.altify.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.data.spotify.SpotifyController
+import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import com.spotify.protocol.types.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AltifyViewModel @Inject constructor(
-    private val spotifyControllerFactory: SpotifyController.SpotifyControllerFactory
+    private val spotifyControllerFactory: SpotifyController.SpotifyControllerFactory,
+    private val preferences: AltifyPreferencesDataSource
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AltifyUIState>(AltifyUIState.Connecting)
     val uiState = _uiState.asStateFlow()
 
     private var controller: SpotifyController? = null
-    val stateUpdater = StateUpdater(_uiState, viewModelScope)
+    val stateUpdater = StateUpdater(_uiState, preferences, viewModelScope)
 
     init {
         viewModelScope.launch {
