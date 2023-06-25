@@ -19,7 +19,7 @@ sealed interface AltifyUIState {
         val playbackPosition: Long = 0L,
         val playerContext: AltPlayerContext? = null,
         val volume: Float = 0f,
-        val listItems: Array<AltListItem>? = null,
+        val listItems: List<AltListItem>? = null,
         val artwork: Bitmap? = null
     ): AltifyUIState
 

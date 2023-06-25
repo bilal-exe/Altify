@@ -7,8 +7,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
 import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import kotlinx.coroutines.flow.stateIn
 
 
 class AltifyPreferencesDataSource(
@@ -22,13 +25,16 @@ class AltifyPreferencesDataSource(
     val state = altPreferences.data.map { preferences ->
         AltPreferencesState(
             darkTheme = DarkThemeConfig.values()
-                .find { it.code == preferences[darkThemeConfigKey] }!!,
+                .find { it.code == preferences[darkThemeConfigKey] }
+                ?: DarkThemeConfig.FOLLOW_SYSTEM,
             backgroundStyle = BackgroundStyleConfig.values()
-                .find { it.code == preferences[backgroundStyleConfigKey] }!!,
+                .find { it.code == preferences[backgroundStyleConfigKey] }
+                ?: BackgroundStyleConfig.SOLID,
             artworkDisplayConfig = ArtworkDisplayConfig.values()
-                .find { it.code == preferences[artworkDisplayConfigKey] }!!
+                .find { it.code == preferences[artworkDisplayConfigKey] }
+                ?: ArtworkDisplayConfig.NORMAL
         )
-    }
+    }.stateIn(CoroutineScope(IO), SharingStarted.WhileSubscribed(), AltPreferencesState())
 
     suspend fun setDarkThemeConfig(config: DarkThemeConfig) {
         altPreferences.edit { it[darkThemeConfigKey] = config.code }

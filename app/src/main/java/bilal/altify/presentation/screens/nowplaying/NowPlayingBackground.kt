@@ -1,7 +1,6 @@
 package bilal.altify.presentation.screens.nowplaying
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -67,12 +65,13 @@ fun NowPlayingBackground(
     }
 
     LaunchedEffect(key1 = palette) {
-        val statusBarColor = if (palette == null) surfaceColor else {
-            when (darkTheme) {
-                true -> palette.darkVibrantSwatch?.getColor()
-                false -> palette.lightVibrantSwatch?.getColor()
-            } ?: surfaceColor
-        }
+//        val statusBarColor = if (palette == null) surfaceColor else {
+//            when (darkTheme) {
+//                true -> palette.darkMutedSwatch?.getColor()
+//                false -> palette.lightMutedSwatch?.getColor()
+//            } ?: surfaceColor
+//        }
+        val statusBarColor = palette?.dominantSwatch?.getColor() ?: surfaceColor
         systemUiController.setStatusBarColor(statusBarColor)
     }
 

@@ -1,6 +1,5 @@
 package bilal.altify.data.spotify
 
-import android.util.Log
 import com.spotify.android.appremote.api.ConnectApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -16,25 +15,24 @@ class Volume(
 
     val volume = callbackFlow {
         val subscription = connectApi.subscribeToVolumeState()
-            .setEventCallback { trySend(it) }
+            .setEventCallback { trySend(it.mVolume) }
             .setErrorCallback {
                 throw Exception("Error callback")
             }
-        Log.d("Spotify", "volume received")
         awaitClose { subscription.cancel() }
     }
         .flowOn(IO)
-        .stateIn(CoroutineScope(IO), SharingStarted.WhileSubscribed(5000), null)
+        .stateIn(CoroutineScope(IO), SharingStarted.WhileSubscribed(), 0f)
 
-    suspend fun increaseVolume() {
+    fun increaseVolume() {
         connectApi.connectIncreaseVolume()
     }
 
-    suspend fun decreaseVolume() {
+    fun decreaseVolume() {
         connectApi.connectDecreaseVolume()
     }
 
-    suspend fun setVolume(volume: Float) {
+    fun setVolume(volume: Float) {
         connectApi.connectSetVolume(volume)
     }
 

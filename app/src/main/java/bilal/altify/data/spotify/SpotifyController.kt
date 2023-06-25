@@ -22,8 +22,8 @@ class SpotifyController private constructor(
 
     val image = Images(spotifyAppRemote.imagesApi)
 
-//    suspend fun geSmallImage(uri: String): Bitmap =
-//        spotifyAppRemote.imagesApi.getImage(ImageUri(uri), Image.Dimension.THUMBNAIL).await().data
+    fun isConnected() =
+        spotifyAppRemote.isConnected
 
     class SpotifyControllerFactory @Inject constructor(
         private val context: Context
@@ -44,6 +44,7 @@ class SpotifyController private constructor(
             listener = object : Connector.ConnectionListener {
 
                 override fun onConnected(appRemote: SpotifyAppRemote) {
+                    Log.d("SpotifyAppRemote", "Connected")
                     trySend(Result.success(SpotifyController(appRemote)))
                 }
 
@@ -57,9 +58,12 @@ class SpotifyController private constructor(
             connect()
 
             awaitClose {}
+
         }
 
+
         fun connect() {
+            Log.d("SpotifyAppRemote", "Connect called")
             SpotifyAppRemote.connect(context, connectionParams, listener)
         }
     }

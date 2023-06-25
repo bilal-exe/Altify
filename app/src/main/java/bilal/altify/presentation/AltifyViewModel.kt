@@ -6,9 +6,13 @@ import bilal.altify.data.spotify.SpotifyController
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import com.spotify.protocol.types.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,43 +22,74 @@ class AltifyViewModel @Inject constructor(
     private val preferences: AltifyPreferencesDataSource
 ) : ViewModel() {
 
+    private var controller: SpotifyController? = null
+//    val stateUpdater = StateUpdater(_uiState, preferences, viewModelScope)
+
     private val _uiState = MutableStateFlow<AltifyUIState>(AltifyUIState.Connecting)
     val uiState = _uiState.asStateFlow()
 
-    private var controller: SpotifyController? = null
-    val stateUpdater = StateUpdater(_uiState, preferences, viewModelScope)
-
     init {
         viewModelScope.launch {
-            spotifyControllerFactory.connectionsFlow.collect {
-                it.fold(
-                    onSuccess = { onConnected(it) },
-                    onFailure = { onDisconnected(it) }
+            spotifyControllerFactory.connectionsFlow.collect { result ->
+
+                val onSuccessBlocks = arrayOf<suspend (SpotifyController) -> Unit>(
+                    { sc ->
+                        while (true) {
+                            delay(2500)
+                            if (!sc.isConnected()) connect()
+                        }
+                    },
+                    { sc -> collectSpotifyInfo(sc).collect { new -> _uiState.update { new } } }
                 )
+                var onSuccessJobs = emptyList<Job>()
+
+                result.fold(
+                    onSuccess = { sc ->
+                        controller = sc
+                        onSuccessJobs = onSuccessBlocks.map { viewModelScope.launch { it(sc) } }
+                    },
+                    onFailure = { exception ->
+                        onSuccessJobs.forEach { it.cancel() }
+                        onSuccessJobs = emptyList()
+                        controller = null
+                        _uiState.value = AltifyUIState.Disconnected(exception.message)
+                    }
+                )
+
             }
         }
     }
+
+    private fun collectSpotifyInfo(controller: SpotifyController): Flow<AltifyUIState.Connected> =
+        combine(
+            preferences.state,
+            controller.player.altPlayerState,
+            controller.volume.volume,
+            controller.content.listItemsFlow,
+            controller.image.artwork
+        ) { pref, ps, vol, li, art ->
+            ps.track?.imageUri?.let { controller.image.getLargeImage(it) }
+            AltifyUIState.Connected(
+                preferences = pref,
+                track = ps.track,
+                isPaused = ps.isPaused,
+                playbackPosition = ps.position,
+                playerContext = ps.context,
+                volume = vol,
+                listItems = li,
+                artwork = art
+            )
+        }
+
 
     fun connect() {
         _uiState.value = AltifyUIState.Connecting
         spotifyControllerFactory.connect()
     }
 
-    private fun onConnected(spotifyController: SpotifyController) {
-        controller = spotifyController
-        _uiState.value = AltifyUIState.Connected()
-        stateUpdater.onConnected(spotifyController)
-    }
-
-    private fun onDisconnected(throwable: Throwable) {
-        controller = null
-        _uiState.value = AltifyUIState.Disconnected(throwable.message)
-        stateUpdater.onDisconnected()
-    }
-
     fun pauseResume() {
         if (controller == null) return
-        viewModelScope.launch { controller!!.player.pauseResume() }
+        viewModelScope.launch { controller!!.player.pauseResume((uiState.value as AltifyUIState.Connected).isPaused) }
     }
 
     fun skipNext() {

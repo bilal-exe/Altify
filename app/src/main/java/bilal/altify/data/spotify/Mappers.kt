@@ -4,19 +4,18 @@ import bilal.altify.data.dataclasses.AltListItem
 import bilal.altify.data.dataclasses.AltPlayerContext
 import bilal.altify.data.dataclasses.AltTrack
 import com.spotify.protocol.types.ListItem
-import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerContext
 import com.spotify.protocol.types.Track
 
-fun Track.toAlt() =
-    AltTrack(
+fun Track?.toAlt() =
+    if (this != null) AltTrack(
         artist = this.artist.name,
         album = this.album.name,
         duration = this.duration,
         name = this.name,
         uri = this.uri,
         imageUri = this.imageUri.raw,
-    )
+    ) else null
 
 fun PlayerContext.toAlt() =
     AltPlayerContext(
