@@ -23,9 +23,8 @@ class AltifyViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var controller: SpotifyController? = null
-//    val stateUpdater = StateUpdater(_uiState, preferences, viewModelScope)
 
-    private val _uiState = MutableStateFlow<AltifyUIState>(AltifyUIState.Connecting)
+    private val _uiState = MutableStateFlow(AltifyUIState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -33,117 +32,121 @@ class AltifyViewModel @Inject constructor(
             spotifyControllerFactory.connectionsFlow.collect { result ->
 
                 val onSuccessBlocks = arrayOf<suspend (SpotifyController) -> Unit>(
+                    { sc -> collectSpotifyInfo(sc).collect { new -> _uiState.update { new } } },
                     { sc ->
                         while (true) {
                             delay(2500)
                             if (!sc.isConnected()) connect()
                         }
                     },
-                    { sc -> collectSpotifyInfo(sc).collect { new -> _uiState.update { new } } }
                 )
+
                 var onSuccessJobs = emptyList<Job>()
 
                 result.fold(
                     onSuccess = { sc ->
                         controller = sc
+                        _uiState.update { it.copy(connectionState = AltifyConnectionState.Success) }
                         onSuccessJobs = onSuccessBlocks.map { viewModelScope.launch { it(sc) } }
-                    },
-                    onFailure = { exception ->
+                    }, onFailure = { exception ->
                         onSuccessJobs.forEach { it.cancel() }
                         onSuccessJobs = emptyList()
                         controller = null
-                        _uiState.value = AltifyUIState.Disconnected(exception.message)
-                    }
-                )
+                        _uiState.update {
+                            it.copy(
+                                connectionState = AltifyConnectionState.Disconnected(exception.message)
+                            )
+                        }
+                    })
 
             }
         }
     }
 
-    private fun collectSpotifyInfo(controller: SpotifyController): Flow<AltifyUIState.Connected> =
-        combine(
-            preferences.state,
-            controller.player.altPlayerState,
-            controller.volume.volume,
-            controller.content.listItemsFlow,
-            controller.image.artwork
-        ) { pref, ps, vol, li, art ->
-            ps.track?.imageUri?.let { controller.image.getLargeImage(it) }
-            AltifyUIState.Connected(
-                preferences = pref,
-                track = ps.track,
-                isPaused = ps.isPaused,
-                playbackPosition = ps.position,
-                playerContext = ps.context,
-                volume = vol,
-                listItems = li,
-                artwork = art
-            )
-        }
+    private fun collectSpotifyInfo(controller: SpotifyController): Flow<AltifyUIState> = combine(
+        preferences.state,
+        controller.player.altPlayerState,
+        controller.volume.volume,
+        controller.content.listItemsFlow,
+        controller.image.artwork
+    ) { pref, ps, vol, li, art ->
+        ps.track?.imageUri?.let { controller.image.getLargeImage(it) }
+        AltifyUIState(
+            preferences = pref,
+            track = ps.track,
+            isPaused = ps.isPaused,
+            playbackPosition = ps.position,
+            playerContext = ps.context,
+            volume = vol,
+            listItems = li,
+            artwork = art
+        )
+    }
 
 
     fun connect() {
-        _uiState.value = AltifyUIState.Connecting
+        _uiState.update { it.copy(connectionState = AltifyConnectionState.Connecting) }
         spotifyControllerFactory.connect()
     }
 
     fun pauseResume() {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.player.pauseResume((uiState.value as AltifyUIState.Connected).isPaused) }
+        if (controller == null) connect()
+        controller!!.player.pauseResume(uiState.value.isPaused)
     }
 
+
     fun skipNext() {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.player.skipNext() }
+        if (controller == null) connect()
+        controller!!.player.skipNext()
     }
 
     fun skipPrevious() {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.player.skipPrevious() }
+        if (controller == null) connect()
+        controller!!.player.skipPrevious()
     }
 
     fun play(uri: String) {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.player.play(uri) }
+        if (controller == null) connect()
+        controller!!.player.play(uri)
     }
 
     fun seek(to: Long) {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.player.seek(to) }
+        if (controller == null) connect()
+        controller!!.player.seek(to)
     }
 
     fun addToQueue(uri: String) {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.player.addToQueue(uri) }
+        if (controller == null) connect()
+        controller!!.player.addToQueue(uri)
     }
 
     fun increaseVolume() {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.volume.increaseVolume() }
+        if (controller == null) connect()
+        controller!!.volume.increaseVolume()
     }
 
     fun decreaseVolume() {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.volume.decreaseVolume() }
+        if (controller == null) connect()
+        controller!!.volume.decreaseVolume()
     }
 
     fun setVolume(volume: Float) {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.volume.setVolume(volume) }
+        if (controller == null) connect()
+        controller!!.volume.setVolume(volume)
     }
 
     fun getRecommendedListItems() {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.content.getRecommended() }
+        if (controller == null) connect()
+        controller!!.content.getRecommended()
     }
 
     fun getChildItems(listItem: ListItem) {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.content.getChildrenOfItem(listItem) }
+        if (controller == null) connect()
+        controller!!.content.getChildrenOfItem(listItem)
     }
 
     fun playListItem(listItem: ListItem) {
-        if (controller == null) return
-        viewModelScope.launch { controller!!.content.play(listItem) }
+        if (controller == null) connect()
+        controller!!.content.play(listItem)
     }
 }

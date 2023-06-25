@@ -3,6 +3,7 @@ package bilal.altify.data.spotify
 import bilal.altify.data.dataclasses.AltPlayerContext
 import bilal.altify.data.dataclasses.AltTrack
 import com.spotify.android.appremote.api.PlayerApi
+import com.spotify.protocol.types.PlayerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class Player(
     private val playerApi: PlayerApi,
@@ -23,7 +25,7 @@ class Player(
         val context: AltPlayerContext? = null
     )
 
-    private val playerState = callbackFlow {
+    private val playerState = callbackFlow<PlayerState> {
 
         val subscription = playerApi.subscribeToPlayerState()
             .setEventCallback { trySend(it) }

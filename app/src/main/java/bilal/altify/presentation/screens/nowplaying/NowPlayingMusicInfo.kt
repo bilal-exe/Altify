@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import bilal.altify.data.dataclasses.AltTrack
+import bilal.altify.presentation.util.AltText
 
 @Composable
 fun NowPlayingMusicInfo(track: AltTrack?) {

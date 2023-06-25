@@ -22,6 +22,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.data.dataclasses.AltPlayerContext
 import bilal.altify.data.util.clipLen
+import bilal.altify.presentation.util.AltText
 
 @Composable
 fun NowPlayingTopBar(
@@ -61,11 +62,10 @@ private fun NowPlayingTopBar(
         actions = {
             if (actionIcon != null && onActionClick != null)
                 IconButton(onClick = onActionClick) {
-                    val color by remember { titleColor }
                     Icon(
                         imageVector = actionIcon,
                         contentDescription = actionIconContentDescription,
-                        tint = color,
+                        tint = titleColor,
                     )
                 }
         },

@@ -1,9 +1,17 @@
 package bilal.altify.presentation.screens.nowplaying
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import bilal.altify.data.dataclasses.AltPlayerContext
 import bilal.altify.data.dataclasses.AltTrack
 import bilal.altify.presentation.AltifyUIState
@@ -12,7 +20,7 @@ import bilal.altify.presentation.AltifyViewModel
 @Composable
 fun NowPlayingScreen(
     viewModel: AltifyViewModel,
-    uiState: AltifyUIState.Connected,
+    uiState: AltifyUIState,
     navToSettings: () -> Unit
 ) {
     val pauseResume = viewModel::pauseResume
@@ -42,7 +50,7 @@ fun NowPlayingScreen(
 
 @Composable
 fun NowPlayingScreen(
-    uiState: AltifyUIState.Connected,
+    uiState: AltifyUIState,
     navToSettings: () -> Unit,
     pauseResume: () -> Unit,
     skipPrevious: () -> Unit,
@@ -59,20 +67,27 @@ fun NowPlayingScreen(
     val toggleControls = { showControls = !showControls }
 
     NowPlayingBackground(uiState.artwork) {
-        if (uiState.playerContext != null) NowPlayingTopBar(
-            player = uiState.playerContext,
-            rightButtonIcon = Icons.Default.Settings,
-            onRightButtonClick = navToSettings
-        )
-        NowPlayingArtwork(uiState.artwork, toggleControls)
-        NowPlayingMusicInfo(uiState.track)
-        NowPlayingProgressBar(
-            progress = uiState.playbackPosition,
-            duration = uiState.track?.duration ?: 0,
-            onSliderMoved = { seek(it) }
-        )
-        NowPlayingMusicControls(pauseResume, skipPrevious, skipNext)
-        NowPlayingVolumeSlider(uiState.volume, increaseVolume, decreaseVolume, setVolume)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(LocalConfiguration.current.screenHeightDp.dp),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            if (uiState.playerContext != null) NowPlayingTopBar(
+                player = uiState.playerContext,
+                rightButtonIcon = Icons.Default.Settings,
+                onRightButtonClick = navToSettings
+            )
+            NowPlayingArtwork(uiState.artwork, toggleControls)
+            NowPlayingMusicInfo(uiState.track)
+            NowPlayingProgressBar(
+                progress = uiState.playbackPosition,
+                duration = uiState.track?.duration ?: 0,
+                onSliderMoved = { seek(it) }
+            )
+            NowPlayingMusicControls(pauseResume, skipPrevious, skipNext)
+            NowPlayingVolumeSlider(uiState.volume, increaseVolume, decreaseVolume, setVolume)
+        }
     }
 }
 
@@ -80,7 +95,7 @@ fun NowPlayingScreen(
 @Composable
 private fun NowPlayingPreview() {
     NowPlayingScreen(
-        uiState = AltifyUIState.Connected(
+        uiState = AltifyUIState(
             playerContext = AltPlayerContext.example,
             track = AltTrack.example,
         ),

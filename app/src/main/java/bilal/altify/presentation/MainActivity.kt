@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.LoadingScreen
+import bilal.altify.presentation.screens.settings.SettingsViewModel
 import bilal.altify.presentation.theme.AltifyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<AltifyViewModel>()
+    private val settingsViewModel by viewModels<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,23 +31,24 @@ class MainActivity : ComponentActivity() {
 
                 val uiState by viewModel.uiState.collectAsState()
 
-                when (uiState) {
+                when (uiState.connectionState) {
 
-                    AltifyUIState.Connecting ->
+                    AltifyConnectionState.Connecting ->
                         LoadingScreen("Connecting to Spotify...")
 
-                    is AltifyUIState.Disconnected ->
+                    is AltifyConnectionState.Disconnected ->
                         ErrorScreen(
-                            message = (uiState as AltifyUIState.Disconnected).message
+                            message = (uiState.connectionState as AltifyConnectionState.Disconnected).message
                                 ?: "Couldn't connect to Spotify",
                             buttonText = "Tap to retry",
                             buttonFunc = viewModel::connect
                         )
 
-                    is AltifyUIState.Connected ->
+                    AltifyConnectionState.Success ->
                         AltifyApp(
                             viewModel = viewModel,
-                            uiState = uiState as AltifyUIState.Connected
+                            settingsViewModel = settingsViewModel,
+                            uiState = uiState
                         )
 
                 }
