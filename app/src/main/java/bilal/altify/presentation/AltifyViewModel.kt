@@ -72,6 +72,7 @@ class AltifyViewModel @Inject constructor(
     ) { pref, ps, vol, li, art ->
         ps.track?.imageUri?.let { controller.image.getLargeImage(it) }
         AltifyUIState(
+            connectionState = _uiState.value.connectionState,
             preferences = pref,
             track = ps.track,
             isPaused = ps.isPaused,

@@ -1,16 +1,17 @@
-package bilal.altify.presentation.screens.settings
+package bilal.altify.presentation.screens.preferences
 
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
 import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SettingsViewModel @Inject constructor(
+@HiltViewModel
+class PreferencesViewModel @Inject constructor(
     private val preferences: AltifyPreferencesDataSource
 ): ViewModel() {
 

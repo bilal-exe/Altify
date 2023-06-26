@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import bilal.altify.R
 import bilal.altify.presentation.prefrences.AltPreference
 
-enum class ArtworkDisplayConfig(override val code: Int): AltPreference {
-    NORMAL(0), SPINNING_DISC(1)
+enum class ArtworkDisplayConfig(override val code: Int, override val title: String): AltPreference {
+    NORMAL(0, "Normal"), SPINNING_DISC(1, "Spinning Record")
 }
 
 @OptIn(ExperimentalFoundationApi::class)

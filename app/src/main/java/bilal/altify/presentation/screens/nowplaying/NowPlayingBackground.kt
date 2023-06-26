@@ -24,8 +24,8 @@ var bodyColor by mutableStateOf(Color.Black)
 var titleColor by mutableStateOf(Color.Black)
     private set
 
-enum class BackgroundStyleConfig(override val code: Int) : AltPreference {
-    SOLID(0), GRADIENT(1), PLAIN(2)
+enum class BackgroundStyleConfig(override val code: Int, override val title: String) : AltPreference {
+    SOLID(0, "Solid Colour"), GRADIENT(1, "Gradient"), PLAIN(2, "Plain")
 }
 
 @Composable

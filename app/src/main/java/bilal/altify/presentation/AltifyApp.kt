@@ -13,12 +13,12 @@ import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import bilal.altify.presentation.navigation.*
-import bilal.altify.presentation.screens.settings.SettingsViewModel
+import bilal.altify.presentation.screens.preferences.PreferencesViewModel
 
 @Composable
 fun AltifyApp(
     viewModel: AltifyViewModel,
-    settingsViewModel: SettingsViewModel,
+    preferencesViewModel: PreferencesViewModel,
     uiState: AltifyUIState
 ) {
 
@@ -37,7 +37,7 @@ fun AltifyApp(
             modifier = Modifier.padding(padding),
             navController = navController,
             viewModel = viewModel,
-            settingsViewModel = settingsViewModel,
+            preferencesViewModel = preferencesViewModel,
             uiState = uiState
         )
     }

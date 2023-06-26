@@ -6,6 +6,7 @@ import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
 
 interface AltPreference {
     val code: Int
+    val title: String
 }
 
 data class AltPreferencesState(

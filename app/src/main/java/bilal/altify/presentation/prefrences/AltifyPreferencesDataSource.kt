@@ -34,7 +34,8 @@ class AltifyPreferencesDataSource(
                 .find { it.code == preferences[artworkDisplayConfigKey] }
                 ?: ArtworkDisplayConfig.NORMAL
         )
-    }.stateIn(CoroutineScope(IO), SharingStarted.WhileSubscribed(), AltPreferencesState())
+    }
+        .stateIn(CoroutineScope(IO), SharingStarted.Eagerly, AltPreferencesState())
 
     suspend fun setDarkThemeConfig(config: DarkThemeConfig) {
         altPreferences.edit { it[darkThemeConfigKey] = config.code }

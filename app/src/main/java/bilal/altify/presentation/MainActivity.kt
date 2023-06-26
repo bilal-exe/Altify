@@ -5,14 +5,13 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.LoadingScreen
-import bilal.altify.presentation.screens.settings.SettingsViewModel
+import bilal.altify.presentation.screens.preferences.PreferencesViewModel
 import bilal.altify.presentation.theme.AltifyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<AltifyViewModel>()
-    private val settingsViewModel by viewModels<SettingsViewModel>()
+    private val preferencesViewModel by viewModels<PreferencesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +43,10 @@ class MainActivity : ComponentActivity() {
                             buttonFunc = viewModel::connect
                         )
 
-                    AltifyConnectionState.Success ->
+                    is AltifyConnectionState.Success ->
                         AltifyApp(
                             viewModel = viewModel,
-                            settingsViewModel = settingsViewModel,
+                            preferencesViewModel = preferencesViewModel,
                             uiState = uiState
                         )
 
@@ -68,8 +67,10 @@ class MainActivity : ComponentActivity() {
 
 }
 
-enum class DarkThemeConfig(override val code: Int) : AltPreference {
-    FOLLOW_SYSTEM(0), LIGHT(1), DARK(2)
+enum class DarkThemeConfig(override val code: Int, override val title: String) : AltPreference {
+    FOLLOW_SYSTEM(0, "Follow System"),
+    LIGHT(1, "Light"),
+    DARK(2, "Dark")
 }
 
 
