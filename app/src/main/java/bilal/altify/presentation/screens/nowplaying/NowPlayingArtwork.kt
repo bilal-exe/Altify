@@ -1,6 +1,7 @@
 package bilal.altify.presentation.screens.nowplaying
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -23,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import bilal.altify.R
 import bilal.altify.data.spotify.Player
 import bilal.altify.presentation.prefrences.AltPreference
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 enum class ArtworkDisplayConfig(override val code: Int, override val title: String) :
     AltPreference {
@@ -104,15 +109,18 @@ private fun PlaceholderArtwork() {
 
 @Composable
 fun NowPlayingRotatingArtwork(bitmap: Bitmap?, isPaused: Boolean, playbackPosition: Long) {
-    val rotation by animateFloatAsState(
-        targetValue = (playbackPosition+500) * 0.036f,
-        visibilityThreshold = 0f,
-        animationSpec = tween(
-            durationMillis = Player.AltPlayerState.INTERPOLATION_FREQUENCY_MS.toInt(),
-            easing = LinearEasing
-        ),
-
-    )
+    var rotation by remember { mutableFloatStateOf(0f) }
+    val scope = rememberCoroutineScope()
+    DisposableEffect(key1 = isPaused) {
+        val job = if (isPaused) null else scope.launch {
+            while (true) {
+                rotation += 0.36f
+                delay(10)
+            }
+        }
+        onDispose { job?.cancel() }
+    }
+    Log.d("A", rotation.toString())
     Box(
         modifier = Modifier
             .clip(CircleShape)
