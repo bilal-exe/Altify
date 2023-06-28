@@ -78,7 +78,13 @@ fun NowPlayingScreen(
                 rightButtonIcon = Icons.Default.Settings,
                 onRightButtonClick = navToSettings
             )
-            NowPlayingArtwork(uiState.artwork, toggleControls)
+            NowPlayingArtwork(
+                uiState.artwork,
+                toggleControls,
+                uiState.preferences.artworkDisplayConfig,
+                uiState.isPaused,
+                uiState.playbackPosition
+            )
             NowPlayingMusicInfo(uiState.track)
             NowPlayingProgressBar(
                 progress = uiState.playbackPosition,
