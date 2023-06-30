@@ -2,8 +2,13 @@ package bilal.altify.presentation.screens.nowplaying
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,7 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.util.AltText
@@ -24,7 +31,8 @@ var bodyColor by mutableStateOf(Color.Black)
 var titleColor by mutableStateOf(Color.Black)
     private set
 
-enum class BackgroundStyleConfig(override val code: Int, override val title: String) : AltPreference {
+enum class BackgroundStyleConfig(override val code: Int, override val title: String) :
+    AltPreference {
     SOLID(0, "Solid Colour"), GRADIENT(1, "Gradient"), PLAIN(2, "Plain")
 }
 
@@ -36,9 +44,11 @@ fun NowPlayingBackground(
     content: @Composable () -> Unit,
 ) {
 
-    val themeColor = if (darkTheme) Color.White else Color.Black
+    val themeColor = if (darkTheme) Color.Black else Color.White
 
     if (style == BackgroundStyleConfig.PLAIN) {
+        bodyColor = if (darkTheme) Color.White else Color.Black
+        titleColor = if (darkTheme) Color.White else Color.Black
         NowPlayingSolidBackground(backgroundColor = themeColor, content = content)
         return
     }
@@ -48,8 +58,8 @@ fun NowPlayingBackground(
     val surfaceColor = MaterialTheme.colorScheme.surface
 
     if (palette == null) {
-        bodyColor = themeColor
-        titleColor = themeColor
+        bodyColor = if (darkTheme) Color.White else Color.Black
+        titleColor = if (darkTheme) Color.White else Color.Black
     } else {
         titleColor = Color(palette.dominantSwatch!!.titleTextColor)
         bodyColor = Color(palette.dominantSwatch!!.bodyTextColor)
@@ -95,10 +105,10 @@ private fun NowPlayingSolidBackground(
     backgroundColor: Color,
     content: @Composable () -> Unit,
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .background(color = backgroundColor)
-            .fillMaxSize(),
+            .fillMaxSize()
     ) { content() }
 }
 
@@ -148,15 +158,15 @@ private fun NowPlayingGradientBackground(
 ) {
     val brush = Brush.linearGradient(
         colorStops = arrayOf(
-            0.6f to mainColor,
+            0.5f to mainColor,
             1f to endColor
         )
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .background(brush)
-            .fillMaxSize(),
+            .fillMaxSize()
     ) { content() }
 }
 

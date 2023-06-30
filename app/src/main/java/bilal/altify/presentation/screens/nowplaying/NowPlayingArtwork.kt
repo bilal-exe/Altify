@@ -1,5 +1,6 @@
 package bilal.altify.presentation.screens.nowplaying
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -49,17 +50,16 @@ fun NowPlayingArtwork(
         with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.roundToPx() }
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(LocalConfiguration.current.screenWidthDp.dp)
-            .padding(horizontal = 16.dp)
+            .fillMaxWidth(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) 1f else 0.5f)
+            .padding(16.dp)
             .clickable { toggleControls() }
             .offset { IntOffset(offsetX.roundToInt(), 0) }
             .draggable(
                 state = rememberDraggableState { offsetX += it },
                 orientation = Orientation.Horizontal,
                 onDragStopped = {
-                    if (offsetX > screenWidthPx/2) skipNext()
-                    if (offsetX < -(screenWidthPx/2)) skipPrevious()
+                    if (offsetX > screenWidthPx / 2) skipPrevious()
+                    if (offsetX < -(screenWidthPx / 2)) skipNext()
                     offsetX = 0f
                 }
             ),
@@ -90,7 +90,8 @@ private fun NowPlayingArtwork(
         modifier = Modifier
             .fillMaxWidth(size)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.Gray),
+            .background(Color.Gray)
+            .aspectRatio(1f),
         bitmap = bitmap.asImageBitmap(),
         contentDescription = "",
         contentScale = ContentScale.FillWidth,
@@ -103,8 +104,8 @@ private fun NowPlayingStaticArtwork(
     isPaused: Boolean
 ) {
     val size by animateFloatAsState(
-        targetValue = if (isPaused) 0.85f else 1f,
-        tween(durationMillis = 1000, easing = EaseOutBounce),
+        targetValue = if (isPaused) 0.75f else 1f,
+        tween(durationMillis = 1000, easing = if (isPaused) EaseOutBounce else FastOutSlowInEasing),
     )
     NowPlayingArtwork(bitmap = bitmap, size = size)
 }
@@ -115,7 +116,8 @@ private fun PlaceholderArtwork() {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.Gray),
+            .background(Color.Gray)
+            .aspectRatio(1f),
         painter = painterResource(id = R.drawable.music),
         contentDescription = "",
         contentScale = ContentScale.FillWidth,
