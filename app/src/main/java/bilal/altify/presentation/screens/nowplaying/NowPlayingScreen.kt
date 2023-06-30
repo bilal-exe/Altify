@@ -2,7 +2,6 @@ package bilal.altify.presentation.screens.nowplaying
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
@@ -83,7 +82,9 @@ fun NowPlayingScreen(
                 toggleControls,
                 uiState.preferences.artworkDisplayConfig,
                 uiState.isPaused,
-                uiState.playbackPosition
+                uiState.playbackPosition,
+                skipPrevious = skipPrevious,
+                skipNext = skipNext,
             )
             NowPlayingMusicInfo(uiState.track)
             NowPlayingProgressBar(

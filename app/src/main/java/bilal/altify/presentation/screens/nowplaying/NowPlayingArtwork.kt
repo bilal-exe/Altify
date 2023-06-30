@@ -1,11 +1,13 @@
 package bilal.altify.presentation.screens.nowplaying
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,21 +15,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
-import bilal.altify.data.spotify.Player
 import bilal.altify.presentation.prefrences.AltPreference
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 enum class ArtworkDisplayConfig(override val code: Int, override val title: String) :
     AltPreference {
@@ -40,14 +40,29 @@ fun NowPlayingArtwork(
     toggleControls: () -> Unit,
     config: ArtworkDisplayConfig,
     isPaused: Boolean,
-    playbackPosition: Long
+    playbackPosition: Long,
+    skipPrevious: () -> Unit,
+    skipNext: () -> Unit
 ) {
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    val screenWidthPx =
+        with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.roundToPx() }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(LocalConfiguration.current.screenWidthDp.dp)
             .padding(horizontal = 16.dp)
-            .clickable { toggleControls() },
+            .clickable { toggleControls() }
+            .offset { IntOffset(offsetX.roundToInt(), 0) }
+            .draggable(
+                state = rememberDraggableState { offsetX += it },
+                orientation = Orientation.Horizontal,
+                onDragStopped = {
+                    if (offsetX > screenWidthPx/2) skipNext()
+                    if (offsetX < -(screenWidthPx/2)) skipPrevious()
+                    offsetX = 0f
+                }
+            ),
         contentAlignment = Alignment.Center
     ) {
         when (config) {
@@ -109,22 +124,34 @@ private fun PlaceholderArtwork() {
 
 @Composable
 fun NowPlayingRotatingArtwork(bitmap: Bitmap?, isPaused: Boolean, playbackPosition: Long) {
-    var rotation by remember { mutableFloatStateOf(0f) }
-    val scope = rememberCoroutineScope()
-    DisposableEffect(key1 = isPaused) {
-        val job = if (isPaused) null else scope.launch {
-            while (true) {
-                rotation += 0.36f
-                delay(10)
+    var currentRotation by remember { mutableFloatStateOf(0f) }
+    val rotation = remember { Animatable(currentRotation) }
+
+    LaunchedEffect(isPaused) {
+        if (!isPaused) {
+            rotation.animateTo(
+                targetValue = currentRotation + 360f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(10000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                )
+            ) { currentRotation = value }
+        } else {
+            if (currentRotation > 0f) {
+                rotation.animateTo(
+                    targetValue = currentRotation + 36,
+                    animationSpec = tween(
+                        2500,
+                        easing = LinearOutSlowInEasing
+                    )
+                ) { currentRotation = value }
             }
         }
-        onDispose { job?.cancel() }
     }
-    Log.d("A", rotation.toString())
     Box(
         modifier = Modifier
             .clip(CircleShape)
-            .graphicsLayer { rotationZ = rotation }
+            .graphicsLayer { rotationZ = rotation.value }
     ) {
         NowPlayingArtwork(bitmap = bitmap)
     }
