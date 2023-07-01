@@ -29,7 +29,6 @@ fun NowPlayingMusicInfo(name: String, artist: String, album: String) {
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth()
     ) {
         AltText(
             text = name,

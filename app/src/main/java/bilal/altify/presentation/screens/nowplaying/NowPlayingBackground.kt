@@ -124,7 +124,7 @@ private fun NowPlayingGradientBackground(
         content = content
     ) else {
         val mainColor = palette.dominantSwatch?.getColor() ?: MaterialTheme.colorScheme.surface
-        val endColor = (if (darkTheme) palette.darkVibrantSwatch?.getColor()
+        val endColor = (if (darkTheme) palette.darkMutedSwatch?.getColor()
         else palette.lightMutedSwatch?.getColor()) ?: MaterialTheme.colorScheme.surfaceVariant
 
         NowPlayingGradientBackground(

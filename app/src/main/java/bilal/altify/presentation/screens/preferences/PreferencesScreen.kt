@@ -1,14 +1,18 @@
 package bilal.altify.presentation.screens.preferences
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
@@ -91,6 +95,7 @@ private fun PreferencesScreen(
             .fillMaxSize()
             .background(backgroundColor)
             .padding(12.dp)
+            .scrollable(rememberScrollState(), Orientation.Vertical)
     ) {
         SettingsTopAppBar(
             title = "Settings",
@@ -155,12 +160,13 @@ private fun SettingSection(
     onClick: (AltPreference) -> Unit,
     values: Array<AltPreference>,
 ) {
-    SettingsSectionTitle(text = "Theme")
+    SettingsSectionTitle(text = title)
     Column(Modifier.selectableGroup()) {
         values.forEach {
             SettingsChooserRow(text = it.title, selected = it == selected) { onClick(it) }
         }
     }
+    Spacer(modifier = Modifier.height(24.dp))
 }
 
 @Suppress("SameParameterValue")

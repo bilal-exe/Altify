@@ -8,48 +8,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
+import bilal.altify.presentation.util.AltSlider
 
 @Composable
 fun NowPlayingVolumeSlider(
     volume: Float,
     increaseVolume: () -> Unit,
     decreaseVolume: () -> Unit,
-    setVolume: (Float) -> Unit
+    setVolume: (Float) -> Unit,
+    darkTheme: Boolean
 ) {
 
-    val sliderColors = SliderDefaults.colors(
+    SliderDefaults.colors(
         thumbColor = Color.Red,
         activeTrackColor = Color.White,
         inactiveTrackColor = Color.Gray
     )
-    Column(
+
+    Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(LocalConfiguration.current.screenWidthDp.dp)
             .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top)
+        horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Slider(
-            modifier = Modifier.height(20.dp),
-            value = volume,
-            onValueChange = { setVolume(it) },
-            valueRange = 0f..1f,
-            colors = sliderColors
+        Icon(painterResource(id = R.drawable.volume_mute), "", tint = bodyColor)
+        AltSlider(
+            progress = volume, duration = 1f, onSliderMoved = setVolume, darkTheme = darkTheme
         )
-        Row {
-            Icon(painterResource(id = R.drawable.volume_mute), "", tint = Color.White)
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(painterResource(id = R.drawable.volume_up), "", tint = Color.White)
-        }
     }
+
 }
 
 @Preview
 @Composable
 private fun NowPlayingVolumeSliderPreview() {
-    NowPlayingVolumeSlider(0.5f, {}, {}, {})
+    NowPlayingVolumeSlider(0.5f, {}, {}, {}, false)
 }

@@ -1,4 +1,4 @@
-package bilal.altify.data.util
+package bilal.altify.presentation.util
 
 import kotlin.time.Duration.Companion.milliseconds
 

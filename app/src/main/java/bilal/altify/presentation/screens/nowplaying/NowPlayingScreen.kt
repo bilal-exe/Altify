@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,6 +37,7 @@ import bilal.altify.data.dataclasses.AltTrack
 import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.DarkThemeConfig
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun NowPlayingScreen(
@@ -130,7 +132,8 @@ private fun NowPlayingScreen(
                     decreaseVolume = decreaseVolume,
                     setVolume = setVolume,
                     showControls = showControls,
-                    toggleControls = toggleControls
+                    toggleControls = toggleControls,
+                    darkTheme = darkTheme
                 )
             else NowPlayingPortraitContent(
                 paddingValues = paddingValues,
@@ -145,7 +148,8 @@ private fun NowPlayingScreen(
                 decreaseVolume = decreaseVolume,
                 setVolume = setVolume,
                 showControls = showControls,
-                toggleControls = toggleControls
+                toggleControls = toggleControls,
+                darkTheme = darkTheme
             )
         }
     }
@@ -165,14 +169,16 @@ private fun NowPlayingPortraitContent(
     showControls: Boolean,
     decreaseVolume: () -> Unit,
     setVolume: (Float) -> Unit,
-    toggleControls: () -> Unit
+    toggleControls: () -> Unit,
+    darkTheme: Boolean
 ) {
     Column(
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxWidth()
             .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding()),
-        verticalArrangement = Arrangement.SpaceEvenly
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NowPlayingArtwork(
             uiState.artwork,
@@ -193,16 +199,23 @@ private fun NowPlayingPortraitContent(
                 NowPlayingProgressBar(
                     progress = uiState.playbackPosition,
                     duration = uiState.track?.duration ?: 0,
-                    onSliderMoved = { seek(it) }
+                    onSliderMoved = { seek(it) },
+                    darkTheme = darkTheme
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                NowPlayingMusicControls(pauseResume, skipPrevious, skipNext)
+                NowPlayingMusicControls(
+                    pauseResume = pauseResume,
+                    skipPrevious = skipPrevious,
+                    skipNext = skipNext,
+                    isPaused = uiState.isPaused
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 NowPlayingVolumeSlider(
-                    uiState.volume,
-                    increaseVolume,
-                    decreaseVolume,
-                    setVolume
+                    volume = uiState.volume,
+                    increaseVolume = increaseVolume,
+                    decreaseVolume = decreaseVolume,
+                    setVolume = setVolume,
+                    darkTheme = darkTheme
                 )
             }
         }
@@ -223,14 +236,16 @@ private fun NowPlayingLandscapeContent(
     decreaseVolume: () -> Unit,
     setVolume: (Float) -> Unit,
     showControls: Boolean,
-    toggleControls: () -> Unit
+    toggleControls: () -> Unit,
+    darkTheme: Boolean
 ) {
     Row(
         modifier = Modifier
             .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
             .padding(paddingValues)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         NowPlayingArtwork(
             bitmap = uiState.artwork,
@@ -243,7 +258,8 @@ private fun NowPlayingLandscapeContent(
         )
         Column(
             modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             NowPlayingMusicInfo(uiState.track)
             AnimatedVisibility(
@@ -255,16 +271,23 @@ private fun NowPlayingLandscapeContent(
                     NowPlayingProgressBar(
                         progress = uiState.playbackPosition,
                         duration = uiState.track?.duration ?: 0,
-                        onSliderMoved = { seek(it) }
+                        onSliderMoved = { seek(it) },
+                        darkTheme = darkTheme
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    NowPlayingMusicControls(pauseResume, skipPrevious, skipNext)
+                    NowPlayingMusicControls(
+                        pauseResume = pauseResume,
+                        skipPrevious = skipPrevious,
+                        skipNext = skipNext,
+                        isPaused = uiState.isPaused
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingVolumeSlider(
                         volume = uiState.volume,
                         increaseVolume = increaseVolume,
                         decreaseVolume = decreaseVolume,
-                        setVolume = setVolume
+                        setVolume = setVolume,
+                        darkTheme = darkTheme
                     )
                 }
             }
@@ -311,8 +334,8 @@ private fun NowPlayingLandscapePreview() {
         increaseVolume = { /*TODO*/ },
         decreaseVolume = { /*TODO*/ },
         setVolume = {},
-        showControls = true
-    ) {
-
-    }
+        showControls = true,
+        toggleControls = {},
+        darkTheme = false
+    )
 }

@@ -46,12 +46,15 @@ fun NowPlayingArtwork(
     skipNext: () -> Unit
 ) {
     var offsetX by remember { mutableFloatStateOf(0f) }
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
     val screenWidthPx =
-        with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.roundToPx() }
+        with(LocalDensity.current) { screenWidthDp.roundToPx() }
     Box(
         modifier = Modifier
-            .fillMaxWidth(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) 1f else 0.5f)
-            .padding(16.dp)
+            .fillMaxWidth(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) 1f else 0.45f)
+            .height(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) screenWidthDp else screenHeightDp)
+            .padding(24.dp)
             .clickable { toggleControls() }
             .offset { IntOffset(offsetX.roundToInt(), 0) }
             .draggable(
