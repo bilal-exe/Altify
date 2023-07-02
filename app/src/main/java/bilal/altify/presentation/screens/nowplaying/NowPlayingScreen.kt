@@ -4,10 +4,10 @@ import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +44,12 @@ import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.PlaybackCommand
+import bilal.altify.presentation.prefrences.AltPreference
+
+enum class MusicInfoAlignmentConfig(override val code: Int, override val title: String) :
+    AltPreference {
+    CENTER(0, "Center"), LEFT(1, "Left")
+}
 
 @Composable
 fun NowPlayingScreen(
@@ -100,7 +106,17 @@ private fun NowPlayingScreen(
                 }
             },
         ) { paddingValues ->
-            if (LocalConfiguration.current.orientation == ORIENTATION_LANDSCAPE)
+            val isPortrait = LocalConfiguration.current.orientation != ORIENTATION_LANDSCAPE
+            if (isPortrait)
+                NowPlayingPortraitContent(
+                    paddingValues = paddingValues,
+                    uiState = uiState,
+                    executeCommand = executeCommand,
+                    showControls = showControls,
+                    toggleControls = toggleControls,
+                    darkTheme = darkTheme
+                )
+            else
                 NowPlayingLandscapeContent(
                     paddingValues = paddingValues,
                     uiState = uiState,
@@ -109,14 +125,6 @@ private fun NowPlayingScreen(
                     toggleControls = toggleControls,
                     darkTheme = darkTheme
                 )
-            else NowPlayingPortraitContent(
-                paddingValues = paddingValues,
-                uiState = uiState,
-                executeCommand = executeCommand,
-                showControls = showControls,
-                toggleControls = toggleControls,
-                darkTheme = darkTheme
-            )
         }
     }
 }
@@ -133,12 +141,14 @@ private fun NowPlayingPortraitContent(
     Column(
         modifier = Modifier
             .padding(paddingValues)
+            .padding(horizontal = 24.dp)
             .fillMaxWidth()
             .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
             .animateContentSize(),
-        verticalArrangement = Arrangement.SpaceEvenly,
+//        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.weight(1f))
         NowPlayingArtwork(
             bitmap = uiState.artwork,
             toggleControls = toggleControls,
@@ -146,11 +156,16 @@ private fun NowPlayingPortraitContent(
             isPaused = uiState.isPaused,
             executeCommand = executeCommand
         )
-        NowPlayingMusicInfo(uiState.track)
+        Spacer(modifier = Modifier.weight(1f))
+        NowPlayingMusicInfo(
+            track = uiState.track,
+            config = uiState.preferences.musicInfoAlignmentConfig
+        )
+        Spacer(modifier = Modifier.weight(1f))
         AnimatedVisibility(
             visible = showControls,
-            enter = expandVertically(animationSpec = tween(durationMillis = 1500)),
-            exit = shrinkVertically(animationSpec = tween(durationMillis = 1500))
+            enter = expandVertically(),
+            exit = shrinkVertically()
         ) {
             Column {
                 NowPlayingProgressBar(
@@ -172,6 +187,7 @@ private fun NowPlayingPortraitContent(
                 )
             }
         }
+        if (showControls) Spacer(modifier = Modifier.weight(1f))
     }
 }
 
@@ -182,7 +198,7 @@ private fun NowPlayingLandscapeContent(
     executeCommand: (Command) -> Unit,
     showControls: Boolean,
     toggleControls: () -> Unit,
-    darkTheme: Boolean
+    darkTheme: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -204,11 +220,14 @@ private fun NowPlayingLandscapeContent(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NowPlayingMusicInfo(uiState.track)
+            NowPlayingMusicInfo(
+                track = uiState.track,
+                config = uiState.preferences.musicInfoAlignmentConfig
+            )
             AnimatedVisibility(
                 visible = showControls,
-                enter = slideInVertically { it * 2 },
-                exit = slideOutVertically { it * 2 }
+                enter = expandIn(),
+                exit = shrinkOut()
             ) {
                 Column {
                     NowPlayingProgressBar(

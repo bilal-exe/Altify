@@ -47,6 +47,7 @@ import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
 import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
+import bilal.altify.presentation.screens.nowplaying.MusicInfoAlignmentConfig
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private var backgroundColor by mutableStateOf(Color.White)
@@ -63,6 +64,7 @@ fun PreferencesScreen(
     val setDarkThemeConfig = viewModel::setDarkThemeConfig
     val setBackgroundStyleConfig = viewModel::setBackgroundStyleConfig
     val setArtworkDisplayConfig = viewModel::setArtworkDisplayConfig
+    val setMusicInfoAlignmentConfig = viewModel::setMusicInfoAlignmentConfig
 
     when (prefState.darkTheme) {
         DarkThemeConfig.FOLLOW_SYSTEM ->
@@ -84,6 +86,7 @@ fun PreferencesScreen(
         setDarkThemeConfig = setDarkThemeConfig,
         setBackgroundStyleConfig = setBackgroundStyleConfig,
         setArtworkDisplayConfig = setArtworkDisplayConfig,
+        setMusicInfoAlignmentConfig = setMusicInfoAlignmentConfig,
         navToNowPlaying = navToNowPlaying
     )
 }
@@ -95,6 +98,7 @@ private fun PreferencesScreen(
     setDarkThemeConfig: (DarkThemeConfig) -> Unit,
     setBackgroundStyleConfig: (BackgroundStyleConfig) -> Unit,
     setArtworkDisplayConfig: (ArtworkDisplayConfig) -> Unit,
+    setMusicInfoAlignmentConfig : (MusicInfoAlignmentConfig) -> Unit,
     navToNowPlaying: () -> Unit
 ) {
     Column(
@@ -128,6 +132,12 @@ private fun PreferencesScreen(
             selected = prefState.artworkDisplayConfig,
             onClick = setArtworkDisplayConfig as (AltPreference) -> Unit,
             values = ArtworkDisplayConfig.values() as Array<AltPreference>
+        )
+        SettingSection(
+            title = "Music Information Alignment",
+            selected = prefState.musicInfoAlignmentConfig,
+            onClick = setMusicInfoAlignmentConfig as (AltPreference) -> Unit,
+            values = MusicInfoAlignmentConfig.values() as Array<AltPreference>,
         )
     }
 }
@@ -237,6 +247,7 @@ fun PreferencesScreenPreview() {
         setDarkThemeConfig = {},
         setBackgroundStyleConfig = {},
         setArtworkDisplayConfig = {},
+        setMusicInfoAlignmentConfig = {},
         navToNowPlaying = {},
     )
 }

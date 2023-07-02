@@ -32,8 +32,7 @@ fun NowPlayingVolumeSlider(
 
     Row(
         modifier = Modifier
-            .width(LocalConfiguration.current.screenWidthDp.dp)
-            .padding(horizontal = 16.dp),
+            .width(LocalConfiguration.current.screenWidthDp.dp),
         horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically
     ) {

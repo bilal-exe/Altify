@@ -73,7 +73,6 @@ fun NowPlayingArtwork(
         modifier = Modifier
             .fillMaxWidth(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) 1f else 0.45f)
             .height(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) screenWidthDp else screenHeightDp)
-            .padding(24.dp)
             .clickable { toggleControls() }
             .offset { IntOffset(offsetX.roundToInt(), 0) }
             .draggable(

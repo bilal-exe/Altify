@@ -2,6 +2,7 @@ package bilal.altify.presentation.screens.nowplaying
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,22 +13,31 @@ import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.util.AltText
 
 @Composable
-fun NowPlayingMusicInfo(track: AltTrack?) {
+fun NowPlayingMusicInfo(track: AltTrack?, config: MusicInfoAlignmentConfig) {
     if (track != null) {
         NowPlayingMusicInfo(
             name = track.name,
             artist = track.artist,
-            album = track.name
+            album = track.name,
+            config = config
         )
     }
 }
 
 @Composable
-fun NowPlayingMusicInfo(name: String, artist: String, album: String) {
+fun NowPlayingMusicInfo(
+    name: String,
+    artist: String,
+    album: String,
+    config: MusicInfoAlignmentConfig
+) {
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        horizontalAlignment = when (config) {
+            MusicInfoAlignmentConfig.CENTER -> Alignment.CenterHorizontally
+            MusicInfoAlignmentConfig.LEFT -> Alignment.Start
+        },
+        modifier = Modifier.fillMaxWidth()
     ) {
         AltText(
             text = name,
@@ -57,5 +67,6 @@ private fun NowPlayingMusicInfoPreview() {
         name = "name",
         artist = "artist",
         album = "album",
+        config = MusicInfoAlignmentConfig.CENTER
     )
 }

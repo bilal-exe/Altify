@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
 import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
+import bilal.altify.presentation.screens.nowplaying.MusicInfoAlignmentConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,6 +22,7 @@ class AltifyPreferencesDataSource(
     private val darkThemeConfigKey = intPreferencesKey("DARK_THEME")
     private val backgroundStyleConfigKey = intPreferencesKey("BACKGROUND_STYLE")
     private val artworkDisplayConfigKey = intPreferencesKey("ARTWORK_DISPLAY")
+    private val musicInfoAlignmentConfigKey = intPreferencesKey("MUSIC_INFO_ALIGNMENT")
 
     val state = altPreferences.data.map { preferences ->
         AltPreferencesState(
@@ -32,7 +34,10 @@ class AltifyPreferencesDataSource(
                 ?: BackgroundStyleConfig.SOLID,
             artworkDisplayConfig = ArtworkDisplayConfig.values()
                 .find { it.code == preferences[artworkDisplayConfigKey] }
-                ?: ArtworkDisplayConfig.NORMAL
+                ?: ArtworkDisplayConfig.NORMAL,
+            musicInfoAlignmentConfig = MusicInfoAlignmentConfig.values()
+                .find { it.code == preferences[musicInfoAlignmentConfigKey] }
+                ?: MusicInfoAlignmentConfig.CENTER
         )
     }
         .stateIn(CoroutineScope(IO), SharingStarted.Eagerly, AltPreferencesState())
@@ -47,6 +52,10 @@ class AltifyPreferencesDataSource(
 
     suspend fun setArtworkDisplayConfig(config: ArtworkDisplayConfig) {
         altPreferences.edit { it[artworkDisplayConfigKey] = config.code }
+    }
+
+    suspend fun setMusicInfoAlignmentConfig(config: MusicInfoAlignmentConfig) {
+        altPreferences.edit { it[musicInfoAlignmentConfigKey] = config.code }
     }
 
 }
