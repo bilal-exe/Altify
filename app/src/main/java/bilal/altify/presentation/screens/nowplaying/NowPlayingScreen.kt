@@ -3,6 +3,9 @@ package bilal.altify.presentation.screens.nowplaying
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -86,8 +89,8 @@ private fun NowPlayingScreen(
             topBar = {
                 AnimatedVisibility(
                     visible = showControls,
-                    enter = slideInVertically { -it * 2 },
-                    exit = slideOutVertically { -it * 2 }
+                    enter = expandVertically(animationSpec = tween(durationMillis = 1500)),
+                    exit = shrinkVertically(animationSpec = tween(durationMillis = 1500))
                 ) {
                     if (uiState.playerContext != null) NowPlayingTopBar(
                         player = uiState.playerContext,
@@ -141,14 +144,13 @@ private fun NowPlayingPortraitContent(
             toggleControls = toggleControls,
             config = uiState.preferences.artworkDisplayConfig,
             isPaused = uiState.isPaused,
-            playbackPosition = uiState.playbackPosition,
             executeCommand = executeCommand
         )
         NowPlayingMusicInfo(uiState.track)
         AnimatedVisibility(
             visible = showControls,
-            enter = slideInVertically { it * 2 },
-            exit = slideOutVertically { it * 2 }
+            enter = expandVertically(animationSpec = tween(durationMillis = 1500)),
+            exit = shrinkVertically(animationSpec = tween(durationMillis = 1500))
         ) {
             Column {
                 NowPlayingProgressBar(
@@ -195,7 +197,6 @@ private fun NowPlayingLandscapeContent(
             toggleControls = toggleControls,
             config = uiState.preferences.artworkDisplayConfig,
             isPaused = uiState.isPaused,
-            playbackPosition = uiState.playbackPosition,
             executeCommand = executeCommand
         )
         Column(

@@ -1,5 +1,7 @@
 package bilal.altify.presentation.screens.nowplaying
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,12 +35,14 @@ fun NowPlayingMusicControls(
             onClick = { executeCommand(PlaybackCommand.SkipPrevious) },
             painter = painterResource(id = R.drawable.skip_previous)
         )
-        MusicControlButton(
-            onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
-            painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
-            color = bodyColor,
-            iconColor = getComplementaryColor(bodyColor),
-        )
+        Crossfade(targetState = isPaused, animationSpec = tween(durationMillis = 1000)) { isPaused ->
+            MusicControlButton(
+                onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
+                painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
+                color = bodyColor,
+                iconColor = getComplementaryColor(bodyColor),
+            )
+        }
         MusicControlButton(
             onClick = { executeCommand(PlaybackCommand.SkipNext) },
             painter = painterResource(id = R.drawable.skip_next)

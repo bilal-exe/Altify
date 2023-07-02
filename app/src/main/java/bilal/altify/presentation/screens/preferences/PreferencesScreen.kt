@@ -28,6 +28,7 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,7 @@ import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
 import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private var backgroundColor by mutableStateOf(Color.White)
 private var textColor by mutableStateOf(Color.Black)
@@ -69,6 +71,12 @@ fun PreferencesScreen(
             setLightModeColors()
         DarkThemeConfig.DARK ->
             setDarkModeColors()
+    }
+
+    val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(key1 = backgroundColor) {
+        systemUiController.setStatusBarColor(backgroundColor)
     }
 
     PreferencesScreen(
