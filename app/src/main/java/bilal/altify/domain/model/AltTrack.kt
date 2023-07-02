@@ -1,4 +1,4 @@
-package bilal.altify.data.dataclasses
+package bilal.altify.domain.model
 
 data class AltTrack(
     val artist: String,

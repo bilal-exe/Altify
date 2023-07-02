@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,44 +30,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import bilal.altify.data.dataclasses.AltPlayerContext
-import bilal.altify.data.dataclasses.AltTrack
+import androidx.hilt.navigation.compose.hiltViewModel
+import bilal.altify.domain.model.AltPlayerContext
+import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
+import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import bilal.altify.presentation.PlaybackCommand
 
 @Composable
 fun NowPlayingScreen(
-    viewModel: AltifyViewModel,
-    uiState: AltifyUIState,
-    navToSettings: () -> Unit
+    navToSettings: () -> Unit,
+    viewModel: AltifyViewModel = hiltViewModel()
 ) {
-    val pauseResume = viewModel::pauseResume
-    val skipPrevious = viewModel::skipPrevious
-    val skipNext = viewModel::skipNext
-    val play = viewModel::play
-    val queue = viewModel::addToQueue
-    val seek = viewModel::seek
-    val increaseVolume = viewModel::increaseVolume
-    val decreaseVolume = viewModel::decreaseVolume
-    val setVolume = viewModel::setVolume
+
+    val uiState by viewModel.uiState.collectAsState()
 
     NowPlayingScreen(
         uiState = uiState,
         navToSettings = navToSettings,
-        pauseResume = pauseResume,
-        skipPrevious = skipPrevious,
-        skipNext = skipNext,
-        play = play,
-        queue = queue,
-        seek = seek,
-        increaseVolume = increaseVolume,
-        decreaseVolume = decreaseVolume,
-        setVolume = setVolume
+        executeCommand = viewModel::executeCommand
     )
 }
 
@@ -74,15 +60,7 @@ fun NowPlayingScreen(
 private fun NowPlayingScreen(
     uiState: AltifyUIState,
     navToSettings: () -> Unit,
-    pauseResume: () -> Unit,
-    skipPrevious: () -> Unit,
-    skipNext: () -> Unit,
-    play: (String) -> Unit,
-    queue: (String) -> Unit,
-    seek: (Long) -> Unit,
-    increaseVolume: () -> Unit,
-    decreaseVolume: () -> Unit,
-    setVolume: (Float) -> Unit,
+    executeCommand: (Command) -> Unit
 ) {
     val darkTheme = when (uiState.preferences.darkTheme) {
         DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
@@ -122,15 +100,7 @@ private fun NowPlayingScreen(
                 NowPlayingLandscapeContent(
                     paddingValues = paddingValues,
                     uiState = uiState,
-                    pauseResume = pauseResume,
-                    skipPrevious = skipPrevious,
-                    skipNext = skipNext,
-                    play = play,
-                    queue = queue,
-                    seek = seek,
-                    increaseVolume = increaseVolume,
-                    decreaseVolume = decreaseVolume,
-                    setVolume = setVolume,
+                    executeCommand = executeCommand,
                     showControls = showControls,
                     toggleControls = toggleControls,
                     darkTheme = darkTheme
@@ -138,15 +108,7 @@ private fun NowPlayingScreen(
             else NowPlayingPortraitContent(
                 paddingValues = paddingValues,
                 uiState = uiState,
-                pauseResume = pauseResume,
-                skipPrevious = skipPrevious,
-                skipNext = skipNext,
-                play = play,
-                queue = queue,
-                seek = seek,
-                increaseVolume = increaseVolume,
-                decreaseVolume = decreaseVolume,
-                setVolume = setVolume,
+                executeCommand = executeCommand,
                 showControls = showControls,
                 toggleControls = toggleControls,
                 darkTheme = darkTheme
@@ -159,16 +121,8 @@ private fun NowPlayingScreen(
 private fun NowPlayingPortraitContent(
     paddingValues: PaddingValues,
     uiState: AltifyUIState,
-    pauseResume: () -> Unit,
-    skipPrevious: () -> Unit,
-    skipNext: () -> Unit,
-    play: (String) -> Unit,
-    queue: (String) -> Unit,
-    seek: (Long) -> Unit,
-    increaseVolume: () -> Unit,
+    executeCommand: (Command) -> Unit,
     showControls: Boolean,
-    decreaseVolume: () -> Unit,
-    setVolume: (Float) -> Unit,
     toggleControls: () -> Unit,
     darkTheme: Boolean
 ) {
@@ -181,13 +135,12 @@ private fun NowPlayingPortraitContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NowPlayingArtwork(
-            uiState.artwork,
-            toggleControls,
-            uiState.preferences.artworkDisplayConfig,
-            uiState.isPaused,
-            uiState.playbackPosition,
-            skipPrevious = skipPrevious,
-            skipNext = skipNext,
+            bitmap = uiState.artwork,
+            toggleControls = toggleControls,
+            config = uiState.preferences.artworkDisplayConfig,
+            isPaused = uiState.isPaused,
+            playbackPosition = uiState.playbackPosition,
+            executeCommand = executeCommand
         )
         NowPlayingMusicInfo(uiState.track)
         AnimatedVisibility(
@@ -199,22 +152,18 @@ private fun NowPlayingPortraitContent(
                 NowPlayingProgressBar(
                     progress = uiState.playbackPosition,
                     duration = uiState.track?.duration ?: 0,
-                    onSliderMoved = { seek(it) },
+                    onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) },
                     darkTheme = darkTheme
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 NowPlayingMusicControls(
-                    pauseResume = pauseResume,
-                    skipPrevious = skipPrevious,
-                    skipNext = skipNext,
+                    executeCommand = executeCommand,
                     isPaused = uiState.isPaused
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 NowPlayingVolumeSlider(
                     volume = uiState.volume,
-                    increaseVolume = increaseVolume,
-                    decreaseVolume = decreaseVolume,
-                    setVolume = setVolume,
+                    executeCommand = executeCommand,
                     darkTheme = darkTheme
                 )
             }
@@ -226,15 +175,7 @@ private fun NowPlayingPortraitContent(
 private fun NowPlayingLandscapeContent(
     paddingValues: PaddingValues,
     uiState: AltifyUIState,
-    pauseResume: () -> Unit,
-    skipPrevious: () -> Unit,
-    skipNext: () -> Unit,
-    play: (String) -> Unit,
-    queue: (String) -> Unit,
-    seek: (Long) -> Unit,
-    increaseVolume: () -> Unit,
-    decreaseVolume: () -> Unit,
-    setVolume: (Float) -> Unit,
+    executeCommand: (Command) -> Unit,
     showControls: Boolean,
     toggleControls: () -> Unit,
     darkTheme: Boolean
@@ -253,8 +194,7 @@ private fun NowPlayingLandscapeContent(
             config = uiState.preferences.artworkDisplayConfig,
             isPaused = uiState.isPaused,
             playbackPosition = uiState.playbackPosition,
-            skipPrevious = skipPrevious,
-            skipNext = skipNext,
+            executeCommand = executeCommand
         )
         Column(
             modifier = Modifier.fillMaxHeight(),
@@ -271,23 +211,19 @@ private fun NowPlayingLandscapeContent(
                     NowPlayingProgressBar(
                         progress = uiState.playbackPosition,
                         duration = uiState.track?.duration ?: 0,
-                        onSliderMoved = { seek(it) },
+                        onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) },
                         darkTheme = darkTheme
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingMusicControls(
-                        pauseResume = pauseResume,
-                        skipPrevious = skipPrevious,
-                        skipNext = skipNext,
-                        isPaused = uiState.isPaused
+                        isPaused = uiState.isPaused,
+                        executeCommand = executeCommand
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingVolumeSlider(
                         volume = uiState.volume,
-                        increaseVolume = increaseVolume,
-                        decreaseVolume = decreaseVolume,
-                        setVolume = setVolume,
-                        darkTheme = darkTheme
+                        darkTheme = darkTheme,
+                        executeCommand = executeCommand
                     )
                 }
             }
@@ -304,15 +240,7 @@ private fun NowPlayingPreview() {
             track = AltTrack.example,
         ),
         navToSettings = {},
-        pauseResume = { },
-        skipPrevious = { },
-        skipNext = { },
-        play = { },
-        queue = { },
-        seek = { },
-        increaseVolume = {},
-        decreaseVolume = {},
-        setVolume = {}
+        executeCommand = {}
     )
 }
 
@@ -325,15 +253,7 @@ private fun NowPlayingLandscapePreview() {
             playerContext = AltPlayerContext.example,
             track = AltTrack.example,
         ),
-        pauseResume = { /*TODO*/ },
-        skipPrevious = { /*TODO*/ },
-        skipNext = { /*TODO*/ },
-        play = { },
-        queue = { },
-        seek = { },
-        increaseVolume = { /*TODO*/ },
-        decreaseVolume = { /*TODO*/ },
-        setVolume = {},
+        executeCommand = {},
         showControls = true,
         toggleControls = {},
         darkTheme = false

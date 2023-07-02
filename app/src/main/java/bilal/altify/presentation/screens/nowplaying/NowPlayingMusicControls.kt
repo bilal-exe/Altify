@@ -14,13 +14,13 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.R
+import bilal.altify.presentation.Command
+import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.util.getComplementaryColor
 
 @Composable
 fun NowPlayingMusicControls(
-    pauseResume: () -> Unit,
-    skipPrevious: () -> Unit,
-    skipNext: () -> Unit,
+    executeCommand: (Command) -> Unit,
     isPaused: Boolean
 ) {
     Row(
@@ -29,14 +29,20 @@ fun NowPlayingMusicControls(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MusicControlButton(onClick = skipPrevious, painter = painterResource(id = R.drawable.skip_previous))
         MusicControlButton(
-            onClick = pauseResume,
+            onClick = { executeCommand(PlaybackCommand.SkipPrevious) },
+            painter = painterResource(id = R.drawable.skip_previous)
+        )
+        MusicControlButton(
+            onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
             painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
             color = bodyColor,
             iconColor = getComplementaryColor(bodyColor),
         )
-        MusicControlButton(onClick = skipNext, painter = painterResource(id = R.drawable.skip_next))
+        MusicControlButton(
+            onClick = { executeCommand(PlaybackCommand.SkipNext) },
+            painter = painterResource(id = R.drawable.skip_next)
+        )
     }
 }
 
@@ -62,5 +68,5 @@ private fun MusicControlButton(
 @Preview
 @Composable
 private fun NowPlayingMusicControlsPreview() {
-    NowPlayingMusicControls({}, {}, {}, true)
+    NowPlayingMusicControls({}, true)
 }

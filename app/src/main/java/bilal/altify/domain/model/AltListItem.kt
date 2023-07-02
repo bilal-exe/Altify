@@ -1,11 +1,9 @@
-package bilal.altify.data.dataclasses
-
-import com.spotify.protocol.types.ImageUri
+package bilal.altify.domain.model
 
 data class AltListItem(
     val id: String,
     val uri: String,
-    val imageUri: ImageUri,
+    val imageUri: String?,
     val title: String,
     val subtitle: String,
     val playable: Boolean,

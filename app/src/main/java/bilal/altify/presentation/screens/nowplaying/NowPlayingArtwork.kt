@@ -27,6 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
+import bilal.altify.presentation.Command
+import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import kotlin.math.roundToInt
 
@@ -42,8 +44,7 @@ fun NowPlayingArtwork(
     config: ArtworkDisplayConfig,
     isPaused: Boolean,
     playbackPosition: Long,
-    skipPrevious: () -> Unit,
-    skipNext: () -> Unit
+    executeCommand: (Command) -> Unit
 ) {
     var offsetX by remember { mutableFloatStateOf(0f) }
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
@@ -61,8 +62,12 @@ fun NowPlayingArtwork(
                 state = rememberDraggableState { offsetX += it },
                 orientation = Orientation.Horizontal,
                 onDragStopped = {
-                    if (offsetX > screenWidthPx / 2) skipPrevious()
-                    if (offsetX < -(screenWidthPx / 2)) skipNext()
+                    if (offsetX > screenWidthPx / 2) {
+                        executeCommand(PlaybackCommand.SkipPrevious)
+                    }
+                    if (offsetX < -(screenWidthPx / 2)) {
+                        executeCommand(PlaybackCommand.SkipNext)
+                    }
                     offsetX = 0f
                 }
             ),
@@ -128,7 +133,7 @@ private fun PlaceholderArtwork() {
 }
 
 @Composable
-fun NowPlayingRotatingArtwork(bitmap: Bitmap?, isPaused: Boolean, playbackPosition: Long) {
+private fun NowPlayingRotatingArtwork(bitmap: Bitmap?, isPaused: Boolean, playbackPosition: Long) {
     var currentRotation by remember { mutableFloatStateOf(0f) }
     val rotation = remember { Animatable(currentRotation) }
 

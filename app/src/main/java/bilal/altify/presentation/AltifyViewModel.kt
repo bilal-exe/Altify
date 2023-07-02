@@ -2,152 +2,138 @@ package bilal.altify.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bilal.altify.data.spotify.SpotifyController
+import bilal.altify.domain.controller.AltifyRepositories
+import bilal.altify.domain.repository.SpotifyConnector
+import bilal.altify.domain.repository.SpotifyConnectorResponse
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
-import com.spotify.protocol.types.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AltifyViewModel @Inject constructor(
-    private val spotifyControllerFactory: SpotifyController.SpotifyControllerFactory,
+    private val spotifyConnector: SpotifyConnector,
     private val preferences: AltifyPreferencesDataSource
 ) : ViewModel() {
-
-    private var controller: SpotifyController? = null
 
     private val _uiState = MutableStateFlow(AltifyUIState())
     val uiState = _uiState.asStateFlow()
 
+    var repositories: AltifyRepositories? = null
+
     init {
         viewModelScope.launch {
-            spotifyControllerFactory.connectionsFlow.collect { result ->
+            spotifyConnector.spotifyConnectorFlow.collectLatest { response ->
 
-                val onSuccessBlocks = arrayOf<suspend (SpotifyController) -> Unit>(
-                    { sc -> collectSpotifyInfo(sc).collect { new -> _uiState.update { new } } },
-                    { sc ->
-                        while (true) {
-                            delay(2500)
-                            if (!sc.isConnected()) connect()
-                        }
-                    },
-                )
+                when (response) {
+                    is SpotifyConnectorResponse.Connected -> {
 
-                var onSuccessJobs = emptyList<Job>()
+                        repositories = response.repositories
 
-                result.fold(
-                    onSuccess = { sc ->
-                        controller = sc
-                        _uiState.update { it.copy(connectionState = AltifyConnectionState.Success) }
-                        onSuccessJobs = onSuccessBlocks.map { viewModelScope.launch { it(sc) } }
-                    }, onFailure = { exception ->
-                        onSuccessJobs.forEach { it.cancel() }
-                        onSuccessJobs = emptyList()
-                        controller = null
+                        // would i have to create a job var and cancel?
+                        combine(
+                            preferences.state,
+                            repositories!!.player.getPlayerState(),
+                            repositories!!.volume.getVolume(),
+                            repositories!!.content.getListItems(),
+                            repositories!!.images.getArtwork()
+                        ) { pref, player, vol, content, images ->
+                            _uiState.update {
+                                it.copy(
+                                    connectionState = AltifyConnectionState.Success,
+                                    preferences = pref,
+                                    track = player.track,
+                                    isPaused = player.isPaused,
+                                    playbackPosition = player.position,
+                                    playerContext = player.context,
+                                    volume = vol,
+                                    listItems = content,
+                                    artwork = images
+                                )
+                            }
+                        }.launchIn(
+                            viewModelScope
+                        )
+                    }
+
+                    is SpotifyConnectorResponse.ConnectionFailed -> {
                         _uiState.update {
-                            it.copy(
-                                connectionState = AltifyConnectionState.Disconnected(exception.message)
+                            it.copy(connectionState = AltifyConnectionState.Disconnected(
+                                    response.exception.localizedMessage
+                                )
                             )
                         }
-                    })
+                        repositories = null
+                    }
 
+                }
             }
         }
-    }
-
-    private fun collectSpotifyInfo(controller: SpotifyController): Flow<AltifyUIState> = combine(
-        preferences.state,
-        controller.player.altPlayerState,
-        controller.volume.volume,
-        controller.content.listItemsFlow,
-        controller.image.artwork
-    ) { pref, ps, vol, li, art ->
-        ps.track?.imageUri?.let { controller.image.getLargeImage(it) }
-        AltifyUIState(
-            connectionState = _uiState.value.connectionState,
-            preferences = pref,
-            track = ps.track,
-            isPaused = ps.isPaused,
-            playbackPosition = ps.position,
-            playerContext = ps.context,
-            volume = vol,
-            listItems = li,
-            artwork = art
-        )
     }
 
 
     fun connect() {
         _uiState.update { it.copy(connectionState = AltifyConnectionState.Connecting) }
-        spotifyControllerFactory.connect()
+        spotifyConnector.connect()
     }
 
-    fun pauseResume() {
-        if (controller == null) connect()
-        controller!!.player.pauseResume(uiState.value.isPaused)
-    }
+    fun executeCommand(command: Command) {
 
+        if (repositories == null) throw Exception()
 
-    fun skipNext() {
-        if (controller == null) connect()
-        controller!!.player.skipNext()
-    }
+        when (command) {
 
-    fun skipPrevious() {
-        if (controller == null) connect()
-        controller!!.player.skipPrevious()
-    }
+            // playback
+            is PlaybackCommand.PauseResume -> {
+                repositories?.player?.pauseResume(command.isPaused)
+            }
+            PlaybackCommand.SkipPrevious -> {
+                repositories?.player?.skipPrevious()
+            }
+            PlaybackCommand.SkipNext -> {
+                repositories?.player?.skipNext()
+            }
+            is PlaybackCommand.Play -> {
+                repositories?.player?.play(command.uri)
+            }
+            is PlaybackCommand.Seek -> {
+                repositories?.player?.seek(command.position)
+            }
+            is PlaybackCommand.AddToQueue -> {
+                repositories?.player?.addToQueue(command.uri)
+            }
+            is PlaybackCommand.SkipToTrack -> {
+                repositories?.player?.skipToTrack(command.uri, command.index)
+            }
 
-    fun play(uri: String) {
-        if (controller == null) connect()
-        controller!!.player.play(uri)
-    }
+            // content
+            ContentCommand.GetRecommended -> {
+                repositories?.content?.getRecommended()
+            }
+            is ContentCommand.GetChildrenOfItem -> {
+                repositories?.content?.getChildrenOfItem(command.listItem)
+            }
+            is ContentCommand.Play -> {
+                repositories?.content?.play(command.listItem)
+            }
 
-    fun seek(to: Long) {
-        if (controller == null) connect()
-        controller!!.player.seek(to)
-    }
+            //volume
+            VolumeCommand.DecreaseVolume -> {
+                repositories?.volume?.decreaseVolume()
+            }
+            VolumeCommand.IncreaseVolume -> {
+                repositories?.volume?.decreaseVolume()
+            }
+            is VolumeCommand.SetVolume -> {
+                repositories?.volume?.setVolume(command.volume)
+            }
+        }
 
-    fun addToQueue(uri: String) {
-        if (controller == null) connect()
-        controller!!.player.addToQueue(uri)
-    }
-
-    fun increaseVolume() {
-        if (controller == null) connect()
-        controller!!.volume.increaseVolume()
-    }
-
-    fun decreaseVolume() {
-        if (controller == null) connect()
-        controller!!.volume.decreaseVolume()
-    }
-
-    fun setVolume(volume: Float) {
-        if (controller == null) connect()
-        controller!!.volume.setVolume(volume)
-    }
-
-    fun getRecommendedListItems() {
-        if (controller == null) connect()
-        controller!!.content.getRecommended()
-    }
-
-    fun getChildItems(listItem: ListItem) {
-        if (controller == null) connect()
-        controller!!.content.getChildrenOfItem(listItem)
-    }
-
-    fun playListItem(listItem: ListItem) {
-        if (controller == null) connect()
-        controller!!.content.play(listItem)
     }
 }

@@ -2,7 +2,6 @@ package bilal.altify.presentation.screens.nowplaying
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,14 +12,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
+import bilal.altify.presentation.Command
+import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.util.AltSlider
 
 @Composable
 fun NowPlayingVolumeSlider(
     volume: Float,
-    increaseVolume: () -> Unit,
-    decreaseVolume: () -> Unit,
-    setVolume: (Float) -> Unit,
+    executeCommand: (Command) -> Unit,
     darkTheme: Boolean
 ) {
 
@@ -39,7 +38,10 @@ fun NowPlayingVolumeSlider(
     ) {
         Icon(painterResource(id = R.drawable.volume_mute), "", tint = bodyColor)
         AltSlider(
-            progress = volume, duration = 1f, onSliderMoved = setVolume, darkTheme = darkTheme
+            progress = volume,
+            duration = 1f,
+            onSliderMoved = { executeCommand(PlaybackCommand.Seek(it.toLong())) },
+            darkTheme = darkTheme
         )
     }
 
@@ -48,5 +50,5 @@ fun NowPlayingVolumeSlider(
 @Preview
 @Composable
 private fun NowPlayingVolumeSliderPreview() {
-    NowPlayingVolumeSlider(0.5f, {}, {}, {}, false)
+    NowPlayingVolumeSlider(0.5f, {}, false)
 }

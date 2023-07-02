@@ -20,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<AltifyViewModel>()
-    private val preferencesViewModel by viewModels<PreferencesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +43,7 @@ class MainActivity : ComponentActivity() {
                         )
 
                     is AltifyConnectionState.Success ->
-                        AltifyApp(
-                            viewModel = viewModel,
-                            preferencesViewModel = preferencesViewModel,
-                            uiState = uiState
-                        )
+                        AltifyApp()
 
                 }
 
@@ -58,8 +53,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         when (event.keyCode) {
-            KeyEvent.KEYCODE_VOLUME_UP -> viewModel.increaseVolume()
-            KeyEvent.KEYCODE_VOLUME_DOWN -> viewModel.decreaseVolume()
+            KeyEvent.KEYCODE_VOLUME_UP ->
+                viewModel.executeCommand(VolumeCommand.IncreaseVolume)
+            KeyEvent.KEYCODE_VOLUME_DOWN ->
+                viewModel.executeCommand(VolumeCommand.DecreaseVolume)
             else -> return false
         }
         return true

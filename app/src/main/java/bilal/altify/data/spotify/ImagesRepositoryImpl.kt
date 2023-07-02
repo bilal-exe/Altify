@@ -1,43 +1,45 @@
 package bilal.altify.data.spotify
 
 import android.graphics.Bitmap
+import bilal.altify.domain.repository.ImagesRepository
 import com.spotify.android.appremote.api.ImagesApi
 import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ImageUri
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import java.util.concurrent.TimeUnit
 
-class Images(
+class ImagesRepositoryImpl(
     private val imagesApi: ImagesApi
-) {
+) : ImagesRepository {
 
     private lateinit var artworkCallback: (Bitmap?) -> Unit
 
-    val artwork = callbackFlow {
+    override fun getArtwork(): Flow<Bitmap?> = callbackFlow {
+        trySend(null)
         artworkCallback = { trySend(it) }
-        awaitClose{ this.cancel() }
+        awaitClose { this.cancel() }
     }
         .flowOn(IO)
-        .stateIn(CoroutineScope(IO), SharingStarted.Eagerly, null)
 
-    fun getLargeImage(uri: String) {
+    override fun getArtwork(uri: String) {
         imagesApi.getImage(ImageUri(uri), Image.Dimension.LARGE)
             .setResultCallback { artworkCallback(it) }
             .setErrorCallback { throw Exception("Error callback") }
     }
 
-    suspend fun getSmallImage(uri: String): Bitmap? {
+    override suspend fun getThumbnail(uri: String): Bitmap? {
         val res = imagesApi.getImage(
-            ImageUri(uri), Image.Dimension.SMALL
-        )
-            .await(5, TimeUnit.SECONDS)
+            /* imageUri = */ ImageUri(uri),
+            /* dimension = */ Image.Dimension.SMALL
+        ).await(
+                /* timeout = */ 5,
+                /* timeUnit = */ TimeUnit.SECONDS
+            )
         if (res.isSuccessful) return res.data
         else throw Exception("Error callback")
     }

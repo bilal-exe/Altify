@@ -1,13 +1,10 @@
 package bilal.altify.presentation
 
 import android.graphics.Bitmap
-import bilal.altify.data.dataclasses.AltListItem
-import bilal.altify.data.dataclasses.AltPlayerContext
-import bilal.altify.data.dataclasses.AltTrack
+import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltPlayerContext
+import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 
 sealed interface AltifyConnectionState {
 

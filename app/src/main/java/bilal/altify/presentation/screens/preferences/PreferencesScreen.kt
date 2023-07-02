@@ -40,7 +40,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import bilal.altify.presentation.AltifyUIState
+import androidx.hilt.navigation.compose.hiltViewModel
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.prefrences.AltPreferencesState
@@ -53,9 +53,8 @@ private var radioButtonUnselected by mutableStateOf(Color.DarkGray)
 
 @Composable
 fun PreferencesScreen(
-    viewModel: PreferencesViewModel,
-    uiState: AltifyUIState,
-    navToNowPlaying: () -> Unit
+    navToNowPlaying: () -> Unit,
+    viewModel: PreferencesViewModel = hiltViewModel()
 ) {
     val prefState by viewModel.state.collectAsState()
 
