@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
@@ -204,6 +205,7 @@ private fun NowPlayingLandscapeContent(
         modifier = Modifier
             .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
             .padding(paddingValues)
+            .padding(horizontal = 24.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -215,6 +217,7 @@ private fun NowPlayingLandscapeContent(
             isPaused = uiState.isPaused,
             executeCommand = executeCommand
         )
+        Spacer(modifier = Modifier.width(24.dp))
         Column(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceEvenly,

@@ -54,7 +54,7 @@ fun NowPlayingBackground(
     val systemUiController = rememberSystemUiController()
     val surfaceColor = MaterialTheme.colorScheme.surface
 
-    if (palette == null) {
+    if (palette == null || style == BackgroundStyleConfig.VERTICAL_GRADIENT) {
         bodyColor = if (darkTheme) Color.White else Color.Black
         titleColor = if (darkTheme) Color.White else Color.Black
     } else {
@@ -63,13 +63,15 @@ fun NowPlayingBackground(
     }
 
     LaunchedEffect(key1 = palette) {
-//        val statusBarColor = if (palette == null) surfaceColor else {
-//            when (darkTheme) {
-//                true -> palette.darkMutedSwatch?.getColor()
-//                false -> palette.lightMutedSwatch?.getColor()
-//            } ?: surfaceColor
-//        }
-        val statusBarColor = palette?.dominantSwatch?.getColor() ?: surfaceColor
+        val statusBarColor = when (style) {
+            BackgroundStyleConfig.SOLID ->
+                palette?.dominantSwatch?.getColor() ?: surfaceColor
+            BackgroundStyleConfig.DIAGONAL_GRADIENT ->
+                palette?.dominantSwatch?.getColor() ?: surfaceColor
+            BackgroundStyleConfig.VERTICAL_GRADIENT ->
+                palette?.vibrantSwatch?.getColor() ?: surfaceColor
+            else -> throw Exception()
+        }
         systemUiController.setStatusBarColor(statusBarColor)
     }
 
@@ -162,7 +164,7 @@ private fun NowPlayingVerticalGradientBackground(
     content: @Composable () -> Unit
 ) {
     NowPlayingVerticalGradientBackground(
-        mainColor = palette?.darkVibrantSwatch?.getColor() ?: MaterialTheme.colorScheme.surface,
+        mainColor = palette?.vibrantSwatch?.getColor() ?: MaterialTheme.colorScheme.surface,
         darkTheme = darkTheme,
         content = content
     )

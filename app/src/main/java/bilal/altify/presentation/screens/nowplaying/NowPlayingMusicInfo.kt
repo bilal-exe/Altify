@@ -1,5 +1,14 @@
 package bilal.altify.presentation.screens.nowplaying
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,13 +23,18 @@ import bilal.altify.presentation.util.AltText
 
 @Composable
 fun NowPlayingMusicInfo(track: AltTrack?, config: MusicInfoAlignmentConfig) {
-    if (track != null) {
-        NowPlayingMusicInfo(
-            name = track.name,
-            artist = track.artist,
-            album = track.name,
-            config = config
-        )
+    Crossfade(
+        targetState = track,
+        animationSpec = tween(durationMillis = 1000)
+    ) {
+        if (it != null) {
+            NowPlayingMusicInfo(
+                name = it.name,
+                artist = it.artist,
+                album = it.name,
+                config = config
+            )
+        }
     }
 }
 
@@ -47,13 +61,13 @@ fun NowPlayingMusicInfo(
         )
         AltText(
             text = "by $artist",
-            fontSize = 20.sp,
+            fontSize = 15.sp,
             maxLines = 1,
             fontWeight = FontWeight.SemiBold
         )
         AltText(
             text = album,
-            fontSize = 20.sp,
+            fontSize = 15.sp,
             maxLines = 1,
             fontWeight = FontWeight.SemiBold
         )

@@ -75,9 +75,9 @@ class AltifyViewModel @Inject constructor(
                 }
             }
         }
+        var latestImageUri: String? = ""
         viewModelScope.launch {
-            var latestImageUri: String? = ""
-            uiState.collectLatest {
+            uiState.collect {
                 if (it.track?.imageUri != latestImageUri) {
                     latestImageUri = it.track?.imageUri
                     it.track?.imageUri?.let { it1 -> repositories?.images?.getArtwork(it1) }

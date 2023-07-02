@@ -2,6 +2,8 @@ package bilal.altify.presentation.screens.nowplaying
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOutBounce
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -11,6 +13,11 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +30,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -90,16 +96,29 @@ fun NowPlayingArtwork(
             ),
         contentAlignment = Alignment.Center
     ) {
-        when (config) {
-            ArtworkDisplayConfig.NORMAL -> NowPlayingStaticArtwork(
-                bitmap = bitmap,
-                isPaused = isPaused
-            )
+        AnimatedContent(
+            targetState = bitmap,
+            transitionSpec = {
+                (slideInHorizontally { height -> height } + fadeIn())
+                    .togetherWith(
+                        slideOutHorizontally { height -> -height } + fadeOut()
+                    )
+                    .using(
+                        SizeTransform(clip = false)
+                    )
+            }
+        ) {
+            when (config) {
+                ArtworkDisplayConfig.NORMAL -> NowPlayingStaticArtwork(
+                    bitmap = it,
+                    isPaused = isPaused
+                )
 
-            ArtworkDisplayConfig.SPINNING_DISC -> NowPlayingRotatingArtwork(
-                bitmap = bitmap,
-                isPaused = isPaused
-            )
+                ArtworkDisplayConfig.SPINNING_DISC -> NowPlayingRotatingArtwork(
+                    bitmap = it,
+                    isPaused = isPaused
+                )
+            }
         }
     }
 }
