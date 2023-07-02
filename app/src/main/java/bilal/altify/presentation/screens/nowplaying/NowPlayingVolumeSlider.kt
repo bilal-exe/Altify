@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import bilal.altify.R
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.PlaybackCommand
+import bilal.altify.presentation.VolumeCommand
 import bilal.altify.presentation.util.AltSlider
 
 @Composable
@@ -40,7 +41,7 @@ fun NowPlayingVolumeSlider(
         AltSlider(
             progress = volume,
             duration = 1f,
-            onSliderMoved = { executeCommand(PlaybackCommand.Seek(it.toLong())) },
+            onSliderMoved = { executeCommand(VolumeCommand.SetVolume(it)) },
             darkTheme = darkTheme
         )
     }

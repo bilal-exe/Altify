@@ -2,6 +2,7 @@ package bilal.altify.presentation.screens.nowplaying
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -130,7 +131,8 @@ private fun NowPlayingPortraitContent(
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxWidth()
-            .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding()),
+            .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
+            .animateContentSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -238,9 +240,27 @@ private fun NowPlayingPreview() {
         uiState = AltifyUIState(
             playerContext = AltPlayerContext.example,
             track = AltTrack.example,
+            playbackPosition = 5000
         ),
         navToSettings = {},
         executeCommand = {}
+    )
+}
+
+@Preview(name = "NowPlaying", showBackground = true)
+@Composable
+private fun NowPlayingToggledPreview() {
+    NowPlayingPortraitContent(
+        paddingValues = PaddingValues(),
+        uiState = AltifyUIState(
+            playerContext = AltPlayerContext.example,
+            track = AltTrack.example,
+            playbackPosition = 5000
+        ),
+        executeCommand = {},
+        showControls = false,
+        toggleControls = {},
+        darkTheme = false
     )
 }
 
@@ -252,6 +272,7 @@ private fun NowPlayingLandscapePreview() {
         uiState = AltifyUIState(
             playerContext = AltPlayerContext.example,
             track = AltTrack.example,
+            playbackPosition = 5000
         ),
         executeCommand = {},
         showControls = true,
