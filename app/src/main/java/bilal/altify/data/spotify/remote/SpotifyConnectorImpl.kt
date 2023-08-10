@@ -34,12 +34,19 @@ class SpotifyConnectorImpl(
 
         listener = object : Connector.ConnectionListener {
 
-            override fun onConnected(appRemote: SpotifyAppRemote) {
+            override fun onConnected(sar: SpotifyAppRemote) {
                 Log.d("SpotifyAppRemote", "Connected")
                 trySend(
-                    SpotifyConnectorResponse.Connected(getRepositories(appRemote))
+                    SpotifyConnectorResponse.Connected(
+                        AltifyRepositories(
+                            player = PlayerRepositoryImpl(sar.playerApi),
+                            content = ContentRepositoryImpl(sar.contentApi),
+                            images = ImagesRepositoryImpl(sar.imagesApi),
+                            volume = VolumeRepositoryImpl(sar.connectApi)
+                        )
+                    )
                 )
-                spotifyAppRemote = appRemote
+                spotifyAppRemote = sar
             }
 
             override fun onFailure(throwable: Throwable) {
@@ -62,14 +69,6 @@ class SpotifyConnectorImpl(
     override fun connect() {
         SpotifyAppRemote.connect(context, connectionParams, listener)
     }
-
-    private fun getRepositories(sar: SpotifyAppRemote): AltifyRepositories =
-        AltifyRepositories(
-            player = PlayerRepositoryImpl(sar.playerApi),
-            content = ContentRepositoryImpl(sar.contentApi),
-            images = ImagesRepositoryImpl(sar.imagesApi),
-            volume = VolumeRepositoryImpl(sar.connectApi)
-        )
 
     companion object {
         private const val clientId = "50109e10614941e596e264af1e7b3685"

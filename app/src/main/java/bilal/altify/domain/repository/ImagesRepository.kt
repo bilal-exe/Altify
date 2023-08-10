@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ImagesRepository {
 
-    fun getArtwork(): Flow<Bitmap?>
+    fun getArtworkFlow(): Flow<Bitmap?>
 
     fun getArtwork(uri: String)
 

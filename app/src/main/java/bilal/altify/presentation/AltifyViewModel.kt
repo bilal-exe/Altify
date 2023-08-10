@@ -41,8 +41,8 @@ class AltifyViewModel @Inject constructor(
                             preferences.state,
                             repositories!!.player.getPlayerState(),
                             repositories!!.volume.getVolume(),
-                            repositories!!.content.getListItems(),
-                            repositories!!.images.getArtwork()
+                            repositories!!.content.getListItemsFlow(),
+                            repositories!!.images.getArtworkFlow()
                         ) { pref, player, vol, content, images ->
                             _uiState.update {
                                 it.copy(
@@ -137,7 +137,7 @@ class AltifyViewModel @Inject constructor(
                 repositories?.volume?.decreaseVolume()
             }
             VolumeCommand.IncreaseVolume -> {
-                repositories?.volume?.decreaseVolume()
+                repositories?.volume?.increaseVolume()
             }
             is VolumeCommand.SetVolume -> {
                 repositories?.volume?.setVolume(command.volume)

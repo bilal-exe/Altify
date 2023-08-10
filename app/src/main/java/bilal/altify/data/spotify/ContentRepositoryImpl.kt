@@ -7,44 +7,34 @@ import bilal.altify.domain.repository.ContentRepository
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.protocol.types.ListItem
 import com.spotify.protocol.types.ListItems
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ContentRepositoryImpl(
     private val contentApi: ContentApi
 ) : ContentRepository {
 
-    private lateinit var listItemsCallback: (ListItems) -> Unit
+    private fun listItemsCallback(lis: ListItems) {
+        _listItemsFlow.value = lis.items.map { it.toAlt() }
+    }
 
-    override fun getListItems() =
-        callbackFlow {
+    private val _listItemsFlow = MutableStateFlow<List<AltListItem>?>(null)
+    private val listItemsFlow = _listItemsFlow.asStateFlow()
 
-            trySend(null)
-
-            listItemsCallback = { li ->
-                trySend(
-                    li.items.map { it.toAlt() }
-                )
-            }
-
-            awaitClose { this.cancel() }
-
-        }.flowOn(IO)
+    override fun getListItemsFlow() =
+        listItemsFlow
 
     override fun getRecommended() {
         contentApi
             .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
-            .setResultCallback(listItemsCallback)
+            .setResultCallback(::listItemsCallback)
             .setErrorCallback { throw Exception("Error callback") }
     }
 
     override fun getChildrenOfItem(listItem: AltListItem) {
         contentApi
             .getChildrenOfItem(listItem.toOriginal(), 25, 0)
-            .setResultCallback(listItemsCallback)
+            .setResultCallback(::listItemsCallback)
             .setErrorCallback { throw Exception("Error callback") }
     }
 

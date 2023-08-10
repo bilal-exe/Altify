@@ -5,50 +5,63 @@ import bilal.altify.domain.model.AltPlayerState
 import bilal.altify.domain.model.AltPlayerState.Companion.INTERPOLATION_FREQUENCY_MS
 import bilal.altify.domain.repository.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
+import com.spotify.protocol.types.PlayerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PlayerRepositoryImpl(
     private val playerApi: PlayerApi,
 ) : PlayerRepository {
 
-    private fun playerState() = callbackFlow {
+    private val _playerState = MutableStateFlow(AltPlayerState())
+    private val playerState = _playerState.asStateFlow()
 
-        var job: Job? = null
-        val block: suspend (AltPlayerState) -> Unit = {
-            if (!it.isPaused) {
-                var pos = it.position
-                while (true) {
-                    delay(INTERPOLATION_FREQUENCY_MS)
-                    pos += INTERPOLATION_FREQUENCY_MS
-                    trySend(it.copy(position = pos))
-                }
+    private var job: Job? = null
+    private fun interpolatePosition(alt: AltPlayerState) {
+        job?.cancel()
+        job = CoroutineScope(IO).launch {
+            if (alt.isPaused) this.cancel()
+            var pos = alt.position
+            while (true) {
+                delay(INTERPOLATION_FREQUENCY_MS)
+                pos += INTERPOLATION_FREQUENCY_MS
+                _playerState.update { it.copy(position = pos) }
             }
         }
+    }
 
-        val subscription = playerApi.subscribeToPlayerState()
+    private fun playerStateCallback(playerState: PlayerState) {
+        val alt = playerState.toAlt()
+        if (alt.isPaused != playerState.isPaused) interpolatePosition(alt)
+        _playerState.value = alt
+    }
+
+    private fun playerState() =
+        playerState
+
+    init {
+        playerApi.subscribeToPlayerState()
             .setEventCallback {
-                val alt = it.toAlt()
-                trySend(alt)
-                job?.cancel()
-                job = CoroutineScope(IO).launch { block(alt) }
+                playerStateCallback(it)
             }
             .setErrorCallback {
                 throw Exception("Error callback")
             }
+    }
 
-        awaitClose { subscription.cancel() }
-
-    }.flowOn(IO)
 
     private fun playerContext() = callbackFlow {
 

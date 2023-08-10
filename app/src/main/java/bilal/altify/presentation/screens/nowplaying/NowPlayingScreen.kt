@@ -47,8 +47,7 @@ import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.prefrences.AltPreference
 
-enum class MusicInfoAlignmentConfig(override val code: Int, override val title: String) :
-    AltPreference {
+enum class MusicInfoAlignmentConfig(override val code: Int, override val title: String) : AltPreference {
     CENTER(0, "Center"), LEFT(1, "Left")
 }
 
@@ -146,7 +145,6 @@ private fun NowPlayingPortraitContent(
             .fillMaxWidth()
             .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
             .animateContentSize(),
-//        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
