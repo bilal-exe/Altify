@@ -3,7 +3,6 @@ package bilal.altify.presentation.screens.nowplaying
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkOut
@@ -90,8 +89,8 @@ private fun NowPlayingScreen(
             topBar = {
                 AnimatedVisibility(
                     visible = showControls,
-                    enter = expandVertically(animationSpec = tween(durationMillis = 1500)),
-                    exit = shrinkVertically(animationSpec = tween(durationMillis = 1500))
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
                 ) {
                     if (uiState.playerContext != null) NowPlayingTopBar(
                         player = uiState.playerContext,
@@ -196,9 +195,8 @@ private fun NowPlayingLandscapeContent(
 ) {
     Row(
         modifier = Modifier
-            .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
             .padding(paddingValues)
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 24.dp, vertical = 12.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically

@@ -1,6 +1,5 @@
 package bilal.altify.presentation.screens.nowplaying
 
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,13 +65,12 @@ fun NowPlayingArtwork(
 ) {
     var offsetX by remember { mutableFloatStateOf(0f) }
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
     val screenWidthPx =
         with(LocalDensity.current) { screenWidthDp.roundToPx() }
     Box(
         modifier = Modifier
-            .fillMaxWidth(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) 1f else 0.45f)
-            .height(if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) screenWidthDp else screenHeightDp)
+            .aspectRatio(1f)
+            .fillMaxSize()
             .clickable { toggleControls() }
             .offset { IntOffset(offsetX.roundToInt(), 0) }
             .draggable(
