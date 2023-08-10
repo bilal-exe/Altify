@@ -15,23 +15,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.palette.graphics.Palette
-import bilal.altify.presentation.prefrences.AltPreference
+import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.util.AltText
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import java.lang.Exception
 
 var bodyColor by mutableStateOf(Color.Black)
     private set
 var titleColor by mutableStateOf(Color.Black)
     private set
-
-enum class BackgroundStyleConfig(override val code: Int, override val title: String) :
-    AltPreference {
-    SOLID(0, "Solid Colour"),
-    DIAGONAL_GRADIENT(1, "Diagonal Gradient"),
-    VERTICAL_GRADIENT(2, "Vertical Gradient"),
-    PLAIN(3, "Plain")
-}
 
 @Composable
 fun NowPlayingBackground(

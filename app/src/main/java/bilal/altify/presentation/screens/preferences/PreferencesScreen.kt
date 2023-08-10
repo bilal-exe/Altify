@@ -45,9 +45,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
-import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
-import bilal.altify.presentation.screens.nowplaying.MusicInfoAlignmentConfig
+import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
+import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private var backgroundColor by mutableStateOf(Color.White)

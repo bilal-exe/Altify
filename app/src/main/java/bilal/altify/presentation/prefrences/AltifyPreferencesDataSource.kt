@@ -5,9 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import bilal.altify.presentation.DarkThemeConfig
-import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
-import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
-import bilal.altify.presentation.screens.nowplaying.MusicInfoAlignmentConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.SharingStarted

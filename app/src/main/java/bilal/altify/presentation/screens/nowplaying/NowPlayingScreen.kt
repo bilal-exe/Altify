@@ -45,11 +45,6 @@ import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.PlaybackCommand
-import bilal.altify.presentation.prefrences.AltPreference
-
-enum class MusicInfoAlignmentConfig(override val code: Int, override val title: String) : AltPreference {
-    CENTER(0, "Center"), LEFT(1, "Left")
-}
 
 @Composable
 fun NowPlayingScreen(

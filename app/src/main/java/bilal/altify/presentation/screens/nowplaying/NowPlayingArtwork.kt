@@ -54,13 +54,8 @@ import androidx.compose.ui.unit.dp
 import bilal.altify.R
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.PlaybackCommand
-import bilal.altify.presentation.prefrences.AltPreference
+import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import kotlin.math.roundToInt
-
-enum class ArtworkDisplayConfig(override val code: Int, override val title: String) :
-    AltPreference {
-    NORMAL(0, "Normal"), SPINNING_DISC(1, "Spinning Record")
-}
 
 @Composable
 fun NowPlayingArtwork(

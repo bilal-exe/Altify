@@ -2,12 +2,11 @@ package bilal.altify.presentation.screens.preferences
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
-import bilal.altify.presentation.screens.nowplaying.ArtworkDisplayConfig
-import bilal.altify.presentation.screens.nowplaying.BackgroundStyleConfig
-import bilal.altify.presentation.screens.nowplaying.MusicInfoAlignmentConfig
+import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
+import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
