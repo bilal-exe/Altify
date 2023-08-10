@@ -197,38 +197,38 @@ private fun NowPlayingRotatingArtwork(bitmap: Bitmap?, isPaused: Boolean) {
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingStaticArtworkPreview() {
-    NowPlayingBackground {
+    NowPlayingBackground(content = {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
             NowPlayingStaticArtwork(null, isPaused = false)
         }
-    }
+    })
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingStaticPausedArtworkPreview() {
-    NowPlayingBackground {
+    NowPlayingBackground(content = {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
             NowPlayingStaticArtwork(null, isPaused = true)
         }
-    }
+    })
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingSpinningArtworkPreview() {
-    NowPlayingBackground {
+    NowPlayingBackground(content = {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
             NowPlayingRotatingArtwork(null, isPaused = false)
         }
-    }
+    })
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.palette.graphics.Palette
+import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.util.AltText
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -29,6 +30,7 @@ fun NowPlayingBackground(
     bitmap: Bitmap? = null,
     darkTheme: Boolean = false,
     style: BackgroundStyleConfig = BackgroundStyleConfig.SOLID,
+    color: BackgroundColourConfig = BackgroundColourConfig.VIBRANT,
     content: @Composable () -> Unit,
 ) {
 
@@ -57,10 +59,15 @@ fun NowPlayingBackground(
         val statusBarColor = when (style) {
             BackgroundStyleConfig.SOLID ->
                 palette?.dominantSwatch?.getColor() ?: surfaceColor
+
             BackgroundStyleConfig.DIAGONAL_GRADIENT ->
                 palette?.dominantSwatch?.getColor() ?: surfaceColor
-            BackgroundStyleConfig.VERTICAL_GRADIENT ->
-                palette?.vibrantSwatch?.getColor() ?: surfaceColor
+
+            BackgroundStyleConfig.VERTICAL_GRADIENT -> when (color) {
+                BackgroundColourConfig.VIBRANT -> palette?.vibrantSwatch
+                BackgroundColourConfig.MUTED -> palette?.mutedSwatch
+            }?.getColor() ?: surfaceColor
+
             else -> throw Exception()
         }
         systemUiController.setStatusBarColor(statusBarColor)
@@ -78,6 +85,7 @@ fun NowPlayingBackground(
         BackgroundStyleConfig.DIAGONAL_GRADIENT -> NowPlayingDiagonalGradientBackground(
             palette = palette,
             darkTheme = darkTheme,
+            color = color,
             content = content
         )
 
@@ -85,6 +93,7 @@ fun NowPlayingBackground(
         BackgroundStyleConfig.VERTICAL_GRADIENT -> NowPlayingVerticalGradientBackground(
             palette = palette,
             darkTheme = darkTheme,
+            color = color,
             content = content
         )
 
@@ -108,6 +117,7 @@ private fun NowPlayingSolidBackground(
 private fun NowPlayingDiagonalGradientBackground(
     palette: Palette?,
     darkTheme: Boolean,
+    color: BackgroundColourConfig,
     content: @Composable () -> Unit
 ) {
 
@@ -117,12 +127,17 @@ private fun NowPlayingDiagonalGradientBackground(
         content = content
     ) else {
         val mainColor = palette.dominantSwatch?.getColor() ?: MaterialTheme.colorScheme.surface
-        val endColor = (if (darkTheme) palette.darkMutedSwatch?.getColor()
-        else palette.lightMutedSwatch?.getColor()) ?: MaterialTheme.colorScheme.surfaceVariant
+        val endColor = when (color) {
+            BackgroundColourConfig.VIBRANT ->
+                if (darkTheme) palette.darkVibrantSwatch else palette.lightVibrantSwatch
+
+            BackgroundColourConfig.MUTED ->
+                if (darkTheme) palette.darkMutedSwatch else palette.lightMutedSwatch
+        }
 
         NowPlayingDiagonalGradientBackground(
             mainColor = mainColor,
-            endColor = endColor,
+            endColor = endColor?.getColor() ?: MaterialTheme.colorScheme.surfaceVariant,
             content = content
         )
     }
@@ -152,10 +167,16 @@ private fun NowPlayingDiagonalGradientBackground(
 private fun NowPlayingVerticalGradientBackground(
     palette: Palette?,
     darkTheme: Boolean,
+    color: BackgroundColourConfig,
     content: @Composable () -> Unit
 ) {
+    val mainColor = when (color) {
+        BackgroundColourConfig.VIBRANT -> palette?.vibrantSwatch
+        BackgroundColourConfig.MUTED -> palette?.mutedSwatch
+    }?.getColor() ?: MaterialTheme.colorScheme.surface
+
     NowPlayingVerticalGradientBackground(
-        mainColor = palette?.vibrantSwatch?.getColor() ?: MaterialTheme.colorScheme.surface,
+        mainColor = mainColor,
         darkTheme = darkTheme,
         content = content
     )
@@ -206,7 +227,7 @@ private fun NowPlayingDiagonalGradientBackgroundPreview() {
         bitmap = null,
         darkTheme = false,
         style = BackgroundStyleConfig.DIAGONAL_GRADIENT,
-        content = { AltText(text = "Hello", isTitle = true) }
+        content = { AltText(text = "Hello", isTitle = true) },
     )
 }
 

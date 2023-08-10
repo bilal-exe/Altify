@@ -78,7 +78,8 @@ private fun NowPlayingScreen(
     NowPlayingBackground(
         bitmap = uiState.artwork,
         darkTheme = darkTheme,
-        style = uiState.preferences.backgroundStyle
+        style = uiState.preferences.backgroundStyle,
+        color = uiState.preferences.backgroundColour
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -145,14 +146,14 @@ private fun NowPlayingPortraitContent(
         NowPlayingArtwork(
             bitmap = uiState.artwork,
             toggleControls = toggleControls,
-            config = uiState.preferences.artworkDisplayConfig,
+            config = uiState.preferences.artworkDisplay,
             isPaused = uiState.isPaused,
             executeCommand = executeCommand
         )
         Spacer(modifier = Modifier.weight(1f))
         NowPlayingMusicInfo(
             track = uiState.track,
-            config = uiState.preferences.musicInfoAlignmentConfig
+            config = uiState.preferences.musicInfoAlignment
         )
         Spacer(modifier = Modifier.weight(1f))
         AnimatedVisibility(
@@ -204,7 +205,7 @@ private fun NowPlayingLandscapeContent(
         NowPlayingArtwork(
             bitmap = uiState.artwork,
             toggleControls = toggleControls,
-            config = uiState.preferences.artworkDisplayConfig,
+            config = uiState.preferences.artworkDisplay,
             isPaused = uiState.isPaused,
             executeCommand = executeCommand
         )
@@ -216,7 +217,7 @@ private fun NowPlayingLandscapeContent(
         ) {
             NowPlayingMusicInfo(
                 track = uiState.track,
-                config = uiState.preferences.musicInfoAlignmentConfig
+                config = uiState.preferences.musicInfoAlignment
             )
             AnimatedVisibility(
                 visible = showControls,

@@ -1,13 +1,10 @@
 package bilal.altify.presentation.screens.preferences
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -46,6 +44,7 @@ import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
+import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -65,6 +64,7 @@ fun PreferencesScreen(
     val setBackgroundStyleConfig = viewModel::setBackgroundStyleConfig
     val setArtworkDisplayConfig = viewModel::setArtworkDisplayConfig
     val setMusicInfoAlignmentConfig = viewModel::setMusicInfoAlignmentConfig
+    val setBackgroundColourConfig = viewModel::setBackgroundColourConfig
 
     when (prefState.darkTheme) {
         DarkThemeConfig.FOLLOW_SYSTEM ->
@@ -78,7 +78,7 @@ fun PreferencesScreen(
     val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(key1 = backgroundColor) {
-        systemUiController.setStatusBarColor(backgroundColor)
+//        systemUiController.setStatusBarColor(backgroundColor)
     }
 
     PreferencesScreen(
@@ -87,6 +87,7 @@ fun PreferencesScreen(
         setBackgroundStyleConfig = setBackgroundStyleConfig,
         setArtworkDisplayConfig = setArtworkDisplayConfig,
         setMusicInfoAlignmentConfig = setMusicInfoAlignmentConfig,
+        setBackgroundColourConfig = setBackgroundColourConfig,
         navToNowPlaying = navToNowPlaying
     )
 }
@@ -98,15 +99,15 @@ private fun PreferencesScreen(
     setDarkThemeConfig: (DarkThemeConfig) -> Unit,
     setBackgroundStyleConfig: (BackgroundStyleConfig) -> Unit,
     setArtworkDisplayConfig: (ArtworkDisplayConfig) -> Unit,
-    setMusicInfoAlignmentConfig : (MusicInfoAlignmentConfig) -> Unit,
+    setMusicInfoAlignmentConfig: (MusicInfoAlignmentConfig) -> Unit,
+    setBackgroundColourConfig: (BackgroundColourConfig) -> Unit,
     navToNowPlaying: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(backgroundColor)
             .padding(12.dp)
-            .scrollable(rememberScrollState(), Orientation.Vertical)
     ) {
         SettingsTopAppBar(
             title = "Settings",
@@ -129,15 +130,21 @@ private fun PreferencesScreen(
         )
         SettingSection(
             title = "Artwork Display Style",
-            selected = prefState.artworkDisplayConfig,
+            selected = prefState.artworkDisplay,
             onClick = setArtworkDisplayConfig as (AltPreference) -> Unit,
             values = ArtworkDisplayConfig.values() as Array<AltPreference>
         )
         SettingSection(
             title = "Music Information Alignment",
-            selected = prefState.musicInfoAlignmentConfig,
+            selected = prefState.musicInfoAlignment,
             onClick = setMusicInfoAlignmentConfig as (AltPreference) -> Unit,
             values = MusicInfoAlignmentConfig.values() as Array<AltPreference>,
+        )
+        SettingSection(
+            title = "Background Colour Style",
+            selected = prefState.backgroundColour,
+            onClick = setBackgroundColourConfig as (AltPreference) -> Unit,
+            values = BackgroundColourConfig.values() as Array<AltPreference>
         )
     }
 }
@@ -248,6 +255,7 @@ fun PreferencesScreenPreview() {
         setBackgroundStyleConfig = {},
         setArtworkDisplayConfig = {},
         setMusicInfoAlignmentConfig = {},
+        setBackgroundColourConfig = {},
         navToNowPlaying = {},
     )
 }

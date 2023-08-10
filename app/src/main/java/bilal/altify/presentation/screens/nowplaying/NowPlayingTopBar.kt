@@ -93,7 +93,7 @@ private fun TopAppBarText(
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingTopBarPreview() {
-    NowPlayingBackground {
+    NowPlayingBackground(content = {
         NowPlayingTopBar(
             title = "Title",
             subtitle = "Subtitle",
@@ -101,5 +101,5 @@ private fun NowPlayingTopBarPreview() {
             actionIcon = Icons.Default.Settings,
             onActionClick = {}
         )
-    }
+    })
 }

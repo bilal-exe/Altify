@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
+import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +40,12 @@ class PreferencesViewModel @Inject constructor(
     fun setMusicInfoAlignmentConfig(config: MusicInfoAlignmentConfig) {
         viewModelScope.launch {
             preferences.setMusicInfoAlignmentConfig(config)
+        }
+    }
+
+    fun setBackgroundColourConfig(config: BackgroundColourConfig) {
+        viewModelScope.launch {
+            preferences.setBackgroundColourConfig(config)
         }
     }
 

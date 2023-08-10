@@ -22,9 +22,15 @@ enum class MusicInfoAlignmentConfig(override val code: Int, override val title: 
     CENTER(0, "Center"), LEFT(1, "Left")
 }
 
+enum class BackgroundColourConfig(override val code: Int, override val title: String) : AltPreference {
+    VIBRANT(0, "Vibrant"),
+    MUTED(1, "Muted"),
+}
+
 data class AltPreferencesState(
     val darkTheme: DarkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
     val backgroundStyle: BackgroundStyleConfig = BackgroundStyleConfig.SOLID,
-    val artworkDisplayConfig: ArtworkDisplayConfig = ArtworkDisplayConfig.NORMAL,
-    val musicInfoAlignmentConfig: MusicInfoAlignmentConfig = MusicInfoAlignmentConfig.CENTER
+    val artworkDisplay: ArtworkDisplayConfig = ArtworkDisplayConfig.NORMAL,
+    val musicInfoAlignment: MusicInfoAlignmentConfig = MusicInfoAlignmentConfig.CENTER,
+    val backgroundColour: BackgroundColourConfig = BackgroundColourConfig.VIBRANT
 )
