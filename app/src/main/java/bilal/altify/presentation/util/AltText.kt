@@ -14,8 +14,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import bilal.altify.presentation.screens.nowplaying.bodyColor
-import bilal.altify.presentation.screens.nowplaying.titleColor
+import bilal.altify.presentation.screens.nowplaying.current_track.bodyColor
+import bilal.altify.presentation.screens.nowplaying.current_track.titleColor
 
 @Composable
 fun AltText(

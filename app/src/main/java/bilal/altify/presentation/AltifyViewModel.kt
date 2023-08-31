@@ -3,11 +3,13 @@ package bilal.altify.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.controller.AltifyRepositories
+import bilal.altify.domain.model.AltPlayerStateAndContext.Companion.INTERPOLATION_FREQUENCY_MS
 import bilal.altify.domain.repository.SpotifyConnector
 import bilal.altify.domain.repository.SpotifyConnectorResponse
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -41,6 +43,14 @@ class AltifyViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            uiState.collectLatest {
+                while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.isPaused) {
+                    delay(INTERPOLATION_FREQUENCY_MS)
+                    _uiState.update { uiState.value.copy(playbackPosition = uiState.value.playbackPosition + INTERPOLATION_FREQUENCY_MS) }
+                }
+            }
+        }
     }
 
 
@@ -54,7 +64,6 @@ class AltifyViewModel @Inject constructor(
 
                         repositories = response.repositories
 
-                        // would i have to create a job var and cancel?
                         combine(
                             preferences.state,
                             repositories!!.player.getPlayerStateAndContext(),
@@ -150,6 +159,9 @@ class AltifyViewModel @Inject constructor(
             is VolumeCommand.SetVolume -> {
                 repositories?.volume?.setVolume(command.volume)
             }
+
+            // images
+            is ImagesCommand.GetThumbnail -> TODO()
         }
 
     }

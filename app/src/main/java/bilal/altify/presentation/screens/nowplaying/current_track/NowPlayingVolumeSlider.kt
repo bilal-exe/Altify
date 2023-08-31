@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying
+package bilal.altify.presentation.screens.nowplaying.current_track
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
 import bilal.altify.presentation.Command
-import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.VolumeCommand
 import bilal.altify.presentation.util.AltSlider
 

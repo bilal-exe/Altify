@@ -4,11 +4,9 @@ import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.domain.model.AltPlayerStateAndContext
 import bilal.altify.domain.repository.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
 
 class PlayerRepositoryImpl(
     private val playerApi: PlayerApi,
@@ -41,18 +39,17 @@ class PlayerRepositoryImpl(
         awaitClose { subscription.cancel() }
 
     }
-        .flowOn(IO)
 
     override fun getPlayerStateAndContext() =
         combine(
             playerState(),
             playerContext()
-        ) { ps, pc ->
+        ) { playerState, playerContext ->
             AltPlayerStateAndContext(
-                track = ps.track.toAlt(),
-                isPaused = ps.isPaused,
-                position = ps.playbackPosition,
-                context = pc.toAlt()
+                track = playerState.track.toAlt(),
+                isPaused = playerState.isPaused,
+                position = playerState.playbackPosition,
+                context = playerContext.toAlt()
             )
         }
 

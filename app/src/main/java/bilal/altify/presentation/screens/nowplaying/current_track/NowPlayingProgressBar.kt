@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying
+package bilal.altify.presentation.screens.nowplaying.current_track
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api

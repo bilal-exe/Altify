@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ContentRepository {
 
-    fun getListItemsFlow(): Flow<List<AltListItem>?>
+    fun getListItemsFlow(): Flow<List<AltListItem>>
 
     fun getRecommended()
 

@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
@@ -37,13 +39,24 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.palette.graphics.Palette
 import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
+import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.PlaybackCommand
+import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.screens.nowplaying.browse.Browser
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingArtwork
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingBackground
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingMusicControls
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingMusicInfo
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingProgressBar
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingTopBar
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingVolumeSlider
 
 @Composable
 fun NowPlayingScreen(
@@ -53,30 +66,57 @@ fun NowPlayingScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    NowPlayingScreen(
-        uiState = uiState,
-        navToSettings = navToSettings,
-        executeCommand = viewModel::executeCommand
-    )
-}
+    val palette = uiState.artwork?.let {
+        if (uiState.preferences.backgroundStyle != BackgroundStyleConfig.PLAIN)
+            Palette.from(it).generate()
+        else null
+    }
 
-@Composable
-private fun NowPlayingScreen(
-    uiState: AltifyUIState,
-    navToSettings: () -> Unit,
-    executeCommand: (Command) -> Unit
-) {
     val darkTheme = when (uiState.preferences.darkTheme) {
         DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
         DarkThemeConfig.LIGHT -> false
         DarkThemeConfig.DARK -> true
     }
 
+    Column (
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
+        NowPlayingScreen(
+            uiState = uiState,
+            navToSettings = navToSettings,
+            executeCommand = viewModel::executeCommand,
+            palette = palette,
+            darkTheme = darkTheme
+        )
+        Browser(
+            preferences = uiState.preferences,
+            palette = palette,
+            track = uiState.track,
+            listItems = uiState.listItems,
+            darkTheme = darkTheme,
+            getThumbnail = {
+                viewModel.executeCommand(ImagesCommand.GetThumbnail(it))
+                // return a map of bitmaps to listitems indexes instead
+            }
+        )
+    }
+}
+
+@Composable
+private fun NowPlayingScreen(
+    uiState: AltifyUIState,
+    navToSettings: () -> Unit,
+    executeCommand: (Command) -> Unit,
+    palette: Palette? = null,
+    darkTheme: Boolean
+) {
+
     var showControls by remember { mutableStateOf(true) }
     val toggleControls = { showControls = !showControls }
 
     NowPlayingBackground(
-        bitmap = uiState.artwork,
+        palette = palette,
         darkTheme = darkTheme,
         style = uiState.preferences.backgroundStyle,
         color = uiState.preferences.backgroundColour
@@ -258,7 +298,8 @@ private fun NowPlayingPreview() {
             playbackPosition = 5000
         ),
         navToSettings = {},
-        executeCommand = {}
+        executeCommand = {},
+        darkTheme = true
     )
 }
 

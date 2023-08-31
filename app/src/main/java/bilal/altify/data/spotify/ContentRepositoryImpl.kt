@@ -18,7 +18,7 @@ class ContentRepositoryImpl(
         _listItemsFlow.value = lis.items.map { it.toAlt() }
     }
 
-    private val _listItemsFlow = MutableStateFlow<List<AltListItem>?>(null)
+    private val _listItemsFlow = MutableStateFlow<List<AltListItem>>(emptyList())
     private val listItemsFlow = _listItemsFlow.asStateFlow()
 
     override fun getListItemsFlow() =

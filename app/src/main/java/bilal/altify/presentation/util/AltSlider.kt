@@ -12,7 +12,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import bilal.altify.presentation.screens.nowplaying.titleColor
+import bilal.altify.presentation.screens.nowplaying.current_track.titleColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

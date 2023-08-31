@@ -1,6 +1,5 @@
-package bilal.altify.presentation.screens.nowplaying
+package bilal.altify.presentation.screens.nowplaying.current_track
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +17,7 @@ import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.util.AltText
+import bilal.altify.presentation.util.getColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 var bodyColor by mutableStateOf(Color.Black)
@@ -27,7 +27,7 @@ var titleColor by mutableStateOf(Color.Black)
 
 @Composable
 fun NowPlayingBackground(
-    bitmap: Bitmap? = null,
+    palette: Palette? = null,
     darkTheme: Boolean = false,
     style: BackgroundStyleConfig = BackgroundStyleConfig.SOLID,
     color: BackgroundColourConfig = BackgroundColourConfig.VIBRANT,
@@ -36,18 +36,17 @@ fun NowPlayingBackground(
 
     val themeColor = if (darkTheme) Color.Black else Color.White
 
-    if (style == BackgroundStyleConfig.PLAIN) {
+    if (palette == null) {
         bodyColor = if (darkTheme) Color.White else Color.Black
         titleColor = if (darkTheme) Color.White else Color.Black
         NowPlayingSolidBackground(backgroundColor = themeColor, content = content)
         return
     }
 
-    val palette = bitmap?.let { Palette.from(it).generate() }
     val systemUiController = rememberSystemUiController()
     val surfaceColor = MaterialTheme.colorScheme.surface
 
-    if (palette == null || style == BackgroundStyleConfig.VERTICAL_GRADIENT) {
+    if (style == BackgroundStyleConfig.VERTICAL_GRADIENT) {
         bodyColor = if (darkTheme) Color.White else Color.Black
         titleColor = if (darkTheme) Color.White else Color.Black
     } else {
@@ -58,14 +57,14 @@ fun NowPlayingBackground(
     LaunchedEffect(key1 = palette) {
         val statusBarColor = when (style) {
             BackgroundStyleConfig.SOLID ->
-                palette?.dominantSwatch?.getColor() ?: surfaceColor
+                palette.dominantSwatch?.getColor() ?: surfaceColor
 
             BackgroundStyleConfig.DIAGONAL_GRADIENT ->
-                palette?.dominantSwatch?.getColor() ?: surfaceColor
+                palette.dominantSwatch?.getColor() ?: surfaceColor
 
             BackgroundStyleConfig.VERTICAL_GRADIENT -> when (color) {
-                BackgroundColourConfig.VIBRANT -> palette?.vibrantSwatch
-                BackgroundColourConfig.MUTED -> palette?.mutedSwatch
+                BackgroundColourConfig.VIBRANT -> palette.vibrantSwatch
+                BackgroundColourConfig.MUTED -> palette.mutedSwatch
             }?.getColor() ?: surfaceColor
 
             else -> throw Exception()
@@ -76,7 +75,7 @@ fun NowPlayingBackground(
     when (style) {
 
         BackgroundStyleConfig.SOLID -> {
-            val backgroundColor = if (palette?.dominantSwatch == null) {
+            val backgroundColor = if (palette.dominantSwatch == null) {
                 if (darkTheme) Color.Black else Color.White
             } else palette.dominantSwatch!!.getColor()
             NowPlayingSolidBackground(backgroundColor = backgroundColor, content = content)
@@ -202,8 +201,6 @@ private fun NowPlayingVerticalGradientBackground(
     ) { content() }
 }
 
-private fun Palette.Swatch.getColor() = Color(rgb)
-
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingDefaultPlainBackgroundPreview() {
@@ -224,7 +221,7 @@ private fun NowPlayingDefaultSolidBackgroundPreview() {
 @Composable
 private fun NowPlayingDiagonalGradientBackgroundPreview() {
     NowPlayingBackground(
-        bitmap = null,
+        palette = null,
         darkTheme = false,
         style = BackgroundStyleConfig.DIAGONAL_GRADIENT,
         content = { AltText(text = "Hello", isTitle = true) },

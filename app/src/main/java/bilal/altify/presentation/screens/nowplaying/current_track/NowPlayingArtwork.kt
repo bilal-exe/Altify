@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying
+package bilal.altify.presentation.screens.nowplaying.current_track
 
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedContent

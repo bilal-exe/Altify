@@ -42,3 +42,9 @@ sealed interface VolumeCommand : Command {
     data class SetVolume(val volume: Float) : VolumeCommand
 
 }
+
+sealed interface ImagesCommand : Command {
+
+    data class GetThumbnail(val uri: String) : ImagesCommand
+
+}
