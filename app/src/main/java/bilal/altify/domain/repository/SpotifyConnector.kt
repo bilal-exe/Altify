@@ -6,9 +6,7 @@ import java.lang.Exception
 
 interface SpotifyConnector {
 
-    val spotifyConnectorFlow: Flow<SpotifyConnectorResponse>
-
-    fun connect()
+    fun connect(): Flow<SpotifyConnectorResponse>
 
 }
 

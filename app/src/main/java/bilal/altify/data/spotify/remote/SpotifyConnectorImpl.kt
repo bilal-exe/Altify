@@ -26,13 +26,11 @@ class SpotifyConnectorImpl(
         .showAuthView(true)
         .build()
 
-    private lateinit var listener: Connector.ConnectionListener
-
-    override val spotifyConnectorFlow = callbackFlow {
+    override fun connect() = callbackFlow {
 
         var spotifyAppRemote: SpotifyAppRemote? = null
 
-        listener = object : Connector.ConnectionListener {
+        val listener = object : Connector.ConnectionListener {
 
             override fun onConnected(sar: SpotifyAppRemote) {
                 Log.d("SpotifyAppRemote", "Connected")
@@ -58,16 +56,12 @@ class SpotifyConnectorImpl(
 
         }
 
-        connect()
+        SpotifyAppRemote.connect(context, connectionParams, listener)
 
         awaitClose {
-            if (spotifyAppRemote != null) SpotifyAppRemote.disconnect(spotifyAppRemote)
+            SpotifyAppRemote.disconnect(spotifyAppRemote)
         }
 
-    }
-
-    override fun connect() {
-        SpotifyAppRemote.connect(context, connectionParams, listener)
     }
 
     companion object {

@@ -1,11 +1,11 @@
 package bilal.altify.domain.repository
 
-import bilal.altify.domain.model.AltPlayerState
+import bilal.altify.domain.model.AltPlayerStateAndContext
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
 
-    fun getPlayerState(): Flow<AltPlayerState>
+    fun getPlayerStateAndContext(): Flow<AltPlayerStateAndContext>
 
     fun pauseResume(isPaused: Boolean)
 

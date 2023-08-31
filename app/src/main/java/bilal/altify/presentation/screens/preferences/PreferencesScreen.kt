@@ -58,7 +58,7 @@ fun PreferencesScreen(
     navToNowPlaying: () -> Unit,
     viewModel: PreferencesViewModel = hiltViewModel()
 ) {
-    val prefState by viewModel.state.collectAsState()
+    val prefState by viewModel.state.collectAsState(initial = AltPreferencesState())
 
     val setDarkThemeConfig = viewModel::setDarkThemeConfig
     val setBackgroundStyleConfig = viewModel::setBackgroundStyleConfig

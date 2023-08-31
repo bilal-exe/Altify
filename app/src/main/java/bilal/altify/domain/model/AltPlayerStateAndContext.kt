@@ -1,6 +1,6 @@
 package bilal.altify.domain.model
 
-data class AltPlayerState(
+data class AltPlayerStateAndContext(
     val track: AltTrack? = null,
     val isPaused: Boolean = true,
     val position: Long = 0L,

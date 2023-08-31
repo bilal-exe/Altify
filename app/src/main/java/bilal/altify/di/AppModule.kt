@@ -6,6 +6,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import bilal.altify.data.spotify.remote.SpotifyConnectorImpl
 import bilal.altify.domain.repository.SpotifyConnector
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
+import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +31,10 @@ object AppModule {
                 produceFile = { context.preferencesDataStoreFile("Settings") }
             )
         )
+
+    @Provides
+    @Singleton
+    fun providesVolumeNotifications(@ApplicationContext context: Context) : VolumeNotifications =
+        VolumeNotifications(context)
 
 }

@@ -6,12 +6,14 @@ import bilal.altify.domain.controller.AltifyRepositories
 import bilal.altify.domain.repository.SpotifyConnector
 import bilal.altify.domain.repository.SpotifyConnectorResponse
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
+import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,17 +21,33 @@ import javax.inject.Inject
 @HiltViewModel
 class AltifyViewModel @Inject constructor(
     private val spotifyConnector: SpotifyConnector,
-    private val preferences: AltifyPreferencesDataSource
+    private val preferences: AltifyPreferencesDataSource,
+    private val volumeNotifications: VolumeNotifications
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AltifyUIState())
     val uiState = _uiState.asStateFlow()
 
-    var repositories: AltifyRepositories? = null
+    private var repositories: AltifyRepositories? = null
 
     init {
+        connect()
+        var latestImageUri: String? = ""
         viewModelScope.launch {
-            spotifyConnector.spotifyConnectorFlow.collectLatest { response ->
+            uiState.collect {
+                if (it.track?.imageUri != latestImageUri) {
+                    latestImageUri = it.track?.imageUri
+                    it.track?.imageUri?.let { it1 -> repositories?.images?.getArtwork(it1) }
+                }
+            }
+        }
+    }
+
+
+    fun connect() {
+        _uiState.update { it.copy(connectionState = AltifyConnectionState.Connecting) }
+        viewModelScope.launch {
+            spotifyConnector.connect().collectLatest { response ->
 
                 when (response) {
                     is SpotifyConnectorResponse.Connected -> {
@@ -39,7 +57,7 @@ class AltifyViewModel @Inject constructor(
                         // would i have to create a job var and cancel?
                         combine(
                             preferences.state,
-                            repositories!!.player.getPlayerState(),
+                            repositories!!.player.getPlayerStateAndContext(),
                             repositories!!.volume.getVolume(),
                             repositories!!.content.getListItemsFlow(),
                             repositories!!.images.getArtworkFlow()
@@ -60,36 +78,26 @@ class AltifyViewModel @Inject constructor(
                         }.launchIn(
                             viewModelScope
                         )
+
+                        volumeNotifications.show(viewModelScope, uiState.map { it.volume })
                     }
 
                     is SpotifyConnectorResponse.ConnectionFailed -> {
                         _uiState.update {
-                            it.copy(connectionState = AltifyConnectionState.Disconnected(
+                            it.copy(
+                                connectionState = AltifyConnectionState.Disconnected(
                                     response.exception.localizedMessage
                                 )
                             )
                         }
                         repositories = null
+
+                        volumeNotifications.delete()
                     }
 
                 }
             }
         }
-        var latestImageUri: String? = ""
-        viewModelScope.launch {
-            uiState.collect {
-                if (it.track?.imageUri != latestImageUri) {
-                    latestImageUri = it.track?.imageUri
-                    it.track?.imageUri?.let { it1 -> repositories?.images?.getArtwork(it1) }
-                }
-            }
-        }
-    }
-
-
-    fun connect() {
-        _uiState.update { it.copy(connectionState = AltifyConnectionState.Connecting) }
-        spotifyConnector.connect()
     }
 
     fun executeCommand(command: Command) {
@@ -144,5 +152,10 @@ class AltifyViewModel @Inject constructor(
             }
         }
 
+    }
+
+    override fun onCleared() {
+        volumeNotifications.delete()
+        super.onCleared()
     }
 }

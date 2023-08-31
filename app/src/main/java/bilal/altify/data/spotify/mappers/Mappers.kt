@@ -2,7 +2,7 @@ package bilal.altify.data.spotify.mappers
 
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltPlayerContext
-import bilal.altify.domain.model.AltPlayerState
+import bilal.altify.domain.model.AltPlayerStateAndContext
 import bilal.altify.domain.model.AltTrack
 import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.ListItem
@@ -21,7 +21,7 @@ fun Track?.toAlt() =
     ) else null
 
 fun PlayerState.toAlt() =
-    AltPlayerState(
+    AltPlayerStateAndContext(
         track = this.track.toAlt(),
         isPaused = this.isPaused,
         position = this.playbackPosition,
