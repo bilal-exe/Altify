@@ -3,7 +3,6 @@ package bilal.altify.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.controller.AltifyRepositories
-import bilal.altify.domain.model.AltPlayerStateAndContext.Companion.INTERPOLATION_FREQUENCY_MS
 import bilal.altify.domain.repository.SpotifyConnector
 import bilal.altify.domain.repository.SpotifyConnectorResponse
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
@@ -169,5 +168,9 @@ class AltifyViewModel @Inject constructor(
     override fun onCleared() {
         volumeNotifications.delete()
         super.onCleared()
+    }
+
+    companion object {
+        const val INTERPOLATION_FREQUENCY_MS = 500L
     }
 }

@@ -5,8 +5,4 @@ data class AltPlayerStateAndContext(
     val isPaused: Boolean = true,
     val position: Long = 0L,
     val context: AltPlayerContext? = null
-){
-    companion object {
-        const val INTERPOLATION_FREQUENCY_MS = 500L
-    }
-}
+)

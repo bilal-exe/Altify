@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
@@ -46,10 +44,8 @@ import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
-import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
-import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingArtwork
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingBackground
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingMusicControls
@@ -77,11 +73,11 @@ fun NowPlayingScreen(
         DarkThemeConfig.LIGHT -> false
         DarkThemeConfig.DARK -> true
     }
-
-    Column (
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
+//
+//    Column (
+//        modifier = Modifier
+//            .verticalScroll(rememberScrollState())
+//    ) {
         NowPlayingScreen(
             uiState = uiState,
             navToSettings = navToSettings,
@@ -89,18 +85,18 @@ fun NowPlayingScreen(
             palette = palette,
             darkTheme = darkTheme
         )
-        Browser(
-            preferences = uiState.preferences,
-            palette = palette,
-            track = uiState.track,
-            listItems = uiState.listItems,
-            darkTheme = darkTheme,
-            getThumbnail = {
-                viewModel.executeCommand(ImagesCommand.GetThumbnail(it))
-                // return a map of bitmaps to listitems indexes instead
-            }
-        )
-    }
+//        Browser(
+//            preferences = uiState.preferences,
+//            palette = palette,
+//            track = uiState.track,
+//            listItems = uiState.listItems,
+//            darkTheme = darkTheme,
+//            getThumbnail = {
+//                viewModel.executeCommand(ImagesCommand.GetThumbnail(it))
+//                // return a map of bitmaps to listitems indexes instead
+//            }
+//        )
+//    }
 }
 
 @Composable
@@ -118,8 +114,8 @@ private fun NowPlayingScreen(
     NowPlayingBackground(
         palette = palette,
         darkTheme = darkTheme,
-        style = uiState.preferences.backgroundStyle,
-        color = uiState.preferences.backgroundColour
+        styleConfig = uiState.preferences.backgroundStyle,
+        colourConfig = uiState.preferences.backgroundColour
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
 
