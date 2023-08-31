@@ -4,27 +4,27 @@ import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.domain.model.AltPlayerStateAndContext
 import bilal.altify.domain.repository.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 
 class PlayerRepositoryImpl(
     private val playerApi: PlayerApi,
 ) : PlayerRepository {
 
     private fun playerState() = callbackFlow {
-        playerApi.subscribeToPlayerState()
+        val subscription = playerApi.subscribeToPlayerState()
             .setEventCallback {
                 trySend(it)
             }
             .setErrorCallback {
                 throw Exception("Error callback")
             }
+        awaitClose {
+            subscription.cancel()
+        }
     }
 
 
