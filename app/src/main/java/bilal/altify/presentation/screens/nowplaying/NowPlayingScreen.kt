@@ -91,10 +91,7 @@ fun NowPlayingScreen(
 //            track = uiState.track,
 //            listItems = uiState.listItems,
 //            darkTheme = darkTheme,
-//            getThumbnail = {
-//                viewModel.executeCommand(ImagesCommand.GetThumbnail(it))
-//                // return a map of bitmaps to listitems indexes instead
-//            }
+//            executeCommand = viewModel::executeCommand
 //        )
 //    }
 }

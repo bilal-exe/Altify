@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +19,9 @@ import androidx.palette.graphics.Palette
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
+import bilal.altify.presentation.Command
+import bilal.altify.presentation.ContentCommand
+import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.screens.nowplaying.current_track.bodyColor
@@ -31,7 +35,8 @@ fun Browser(
     track: AltTrack?,
     listItems: List<AltListItem>,
     darkTheme: Boolean,
-    getThumbnail: (String) -> Unit
+    thumbnailMap: Map<String, Bitmap>,
+    executeCommand: (Command) -> Unit
 ) {
 
     val backgroundColor = if (palette == null) {
@@ -46,15 +51,37 @@ fun Browser(
         }?.getColor() ?: MaterialTheme.colorScheme.surface
     }
 
+    val getRecommended: () -> Unit = {
+        executeCommand(ContentCommand.GetRecommended)
+    }
+    val playItem: (AltListItem) -> Unit = {
+        executeCommand(ContentCommand.Play(it))
+    }
+    val getChildrenOfItem: (AltListItem) -> Unit = {
+        executeCommand(ContentCommand.GetChildrenOfItem(it))
+    }
+    val getThumbnail: (String) -> Unit = {
+        executeCommand(ImagesCommand.GetThumbnail(it))
+    }
+
+    LaunchedEffect(key1 = listItems) {
+        executeCommand(ImagesCommand.ClearThumbnails)
+        listItems.forEach { item -> item.imageUri?.let { getThumbnail(it) } }
+    }
+
     BrowserSolidBackground(backgroundColor = backgroundColor) {
         when {
             listItems.isEmpty() ->
                 EmptyListItems(preferences, palette, darkTheme)
             else ->
                 ItemsList(
-                    listItems,
-                    track,
-                    palette
+                    listItems = listItems,
+                    track = track,
+                    palette = palette,
+                    playItem = playItem,
+                    getChildrenOfItem = getChildrenOfItem,
+                    getThumbnail = getThumbnail,
+                    thumbnailMap = thumbnailMap
                 )
         }
     }
@@ -102,6 +129,7 @@ private fun EmptyPreview() {
         track = null,
         listItems = emptyList(),
         darkTheme = true,
-        getThumbnail = {}
+        thumbnailMap = emptyMap(),
+        executeCommand = {}
     )
 }

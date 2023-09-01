@@ -98,7 +98,7 @@ fun NowPlayingArtwork(
                     .using(
                         SizeTransform(clip = false)
                     )
-            }
+            }, label = ""
         ) {
             when (config) {
                 ArtworkDisplayConfig.NORMAL -> NowPlayingStaticArtwork(

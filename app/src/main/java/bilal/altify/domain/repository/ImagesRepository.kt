@@ -9,6 +9,10 @@ interface ImagesRepository {
 
     fun getArtwork(uri: String)
 
-    suspend fun getThumbnail(uri: String): Bitmap?
+    fun getThumbnailFlow(): Flow<Map<String, Bitmap>>
+
+    suspend fun getThumbnail(uri: String)
+
+    fun clearThumbnails()
 
 }

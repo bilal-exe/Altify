@@ -9,21 +9,27 @@ import com.spotify.protocol.types.ImageUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.flow.update
 
 class ImagesRepositoryImpl(
     private val imagesApi: ImagesApi
 ) : ImagesRepository {
 
-    private fun artworkCallback(bmp: Bitmap?) {
-        _artworkFlow.value = bmp
-    }
-
     private val _artworkFlow = MutableStateFlow<Bitmap?>(null)
     private val artworkFlow = _artworkFlow.asStateFlow()
+    private fun artworkCallback(bmp: Bitmap?) { _artworkFlow.value = bmp }
+    override fun getArtworkFlow(): Flow<Bitmap?> = artworkFlow
 
-    override fun getArtworkFlow(): Flow<Bitmap?> =
-        artworkFlow
+    private val _thumbnailFlow = MutableStateFlow<Map<String, Bitmap>>(emptyMap())
+    private val thumbnailFlow = _thumbnailFlow.asStateFlow()
+    private fun thumbnailCallback(bmp: Bitmap, uri: String) {
+        _thumbnailFlow.update {
+            val map = thumbnailFlow.value.toMutableMap()
+            map[uri] = bmp
+            map.toMap()
+        }
+    }
+    override fun getThumbnailFlow(): Flow<Map<String, Bitmap>> = thumbnailFlow
 
     override fun getArtwork(uri: String) {
         imagesApi.getImage(ImageUri(uri), Image.Dimension.LARGE)
@@ -35,16 +41,17 @@ class ImagesRepositoryImpl(
             }
     }
 
-    override suspend fun getThumbnail(uri: String): Bitmap? {
-        val res = imagesApi.getImage(
-            /* imageUri = */ ImageUri(uri),
-            /* dimension = */ Image.Dimension.SMALL
-        ).await(
-            /* timeout = */ 5,
-            /* timeUnit = */ TimeUnit.SECONDS
-        )
-        if (res.isSuccessful) return res.data
-        else throw Exception("Error callback")
+    override suspend fun getThumbnail(uri: String) {
+        imagesApi.getImage(ImageUri(uri), Image.Dimension.THUMBNAIL)
+            .setResultCallback {
+                thumbnailCallback(it, uri)
+            }
+            .setErrorCallback {
+                Log.d("Error", it.localizedMessage ?: "")
+            }
     }
 
+    override fun clearThumbnails() {
+        _thumbnailFlow.value = emptyMap()
+    }
 }

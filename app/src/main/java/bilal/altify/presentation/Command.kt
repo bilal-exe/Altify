@@ -1,7 +1,6 @@
 package bilal.altify.presentation
 
 import bilal.altify.domain.model.AltListItem
-import com.spotify.protocol.types.ListItem
 
 sealed interface Command
 
@@ -29,7 +28,7 @@ sealed interface ContentCommand : Command {
 
     data class GetChildrenOfItem(val listItem: AltListItem) : ContentCommand
 
-    data class Play(val listItem: ListItem) : ContentCommand
+    data class Play(val listItem: AltListItem) : ContentCommand
 
 }
 
@@ -46,5 +45,7 @@ sealed interface VolumeCommand : Command {
 sealed interface ImagesCommand : Command {
 
     data class GetThumbnail(val uri: String) : ImagesCommand
+
+    object ClearThumbnails : ImagesCommand
 
 }

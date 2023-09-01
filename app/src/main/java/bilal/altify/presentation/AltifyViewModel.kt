@@ -1,10 +1,15 @@
 package bilal.altify.presentation
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import bilal.altify.data.spotify.mappers.toOriginal
 import bilal.altify.domain.controller.AltifyRepositories
+import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltPlayerStateAndContext
 import bilal.altify.domain.repository.SpotifyConnector
 import bilal.altify.domain.repository.SpotifyConnectorResponse
+import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,6 +48,9 @@ class AltifyViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
+
+        }
+        viewModelScope.launch {
             uiState.collectLatest {
                 while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.isPaused) {
                     delay(INTERPOLATION_FREQUENCY_MS)
@@ -53,6 +61,7 @@ class AltifyViewModel @Inject constructor(
     }
 
 
+    @Suppress("UNCHECKED_CAST")
     fun connect() {
         _uiState.update { it.copy(connectionState = AltifyConnectionState.Connecting) }
         viewModelScope.launch {
@@ -68,19 +77,21 @@ class AltifyViewModel @Inject constructor(
                             repositories!!.player.getPlayerStateAndContext(),
                             repositories!!.volume.getVolume(),
                             repositories!!.content.getListItemsFlow(),
-                            repositories!!.images.getArtworkFlow()
-                        ) { pref, player, vol, content, images ->
+                            repositories!!.images.getArtworkFlow(),
+                            repositories!!.images.getThumbnailFlow()
+                        ) { arr ->
                             _uiState.update {
                                 it.copy(
                                     connectionState = AltifyConnectionState.Success,
-                                    preferences = pref,
-                                    track = player.track,
-                                    isPaused = player.isPaused,
-                                    playbackPosition = player.position,
-                                    playerContext = player.context,
-                                    volume = vol,
-                                    listItems = content,
-                                    artwork = images
+                                    preferences = arr[0] as AltPreferencesState,
+                                    track = (arr[1] as AltPlayerStateAndContext).track,
+                                    isPaused = (arr[1] as AltPlayerStateAndContext).isPaused,
+                                    playbackPosition = (arr[1] as AltPlayerStateAndContext).position,
+                                    playerContext = (arr[1] as AltPlayerStateAndContext).context,
+                                    volume = arr[2] as Float,
+                                    listItems = arr[3] as List<AltListItem>,
+                                    artwork = arr[4] as Bitmap?,
+                                    thumbnailMap = arr[5] as Map<String, Bitmap>
                                 )
                             }
                         }.launchIn(
@@ -145,7 +156,7 @@ class AltifyViewModel @Inject constructor(
                 repositories?.content?.getChildrenOfItem(command.listItem)
             }
             is ContentCommand.Play -> {
-                repositories?.content?.play(command.listItem)
+                repositories?.content?.play(command.listItem.toOriginal())
             }
 
             //volume
@@ -160,7 +171,11 @@ class AltifyViewModel @Inject constructor(
             }
 
             // images
-            is ImagesCommand.GetThumbnail -> TODO()
+            is ImagesCommand.GetThumbnail ->
+                repositories?.images?.getArtwork(command.uri)
+
+            is ImagesCommand.ClearThumbnails ->
+                repositories?.images?.clearThumbnails()
         }
 
     }
