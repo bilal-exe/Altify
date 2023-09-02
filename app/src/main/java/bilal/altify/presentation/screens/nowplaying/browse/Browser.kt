@@ -83,10 +83,7 @@ fun Browser(
     }
 
     BrowserSolidBackground(backgroundColor = bottomColor) {
-        Column(
-            modifier = Modifier
-                .height(LocalConfiguration.current.screenHeightDp.dp)
-        ) {
+        Column {
             GetRecommendedButton(getRecommended)
             when {
                 listItems.isEmpty() ->

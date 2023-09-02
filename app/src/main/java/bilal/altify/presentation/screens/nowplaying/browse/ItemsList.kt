@@ -110,7 +110,7 @@ fun PlayButton(playItem: () -> Unit) {
 fun ListItemInfo(title: String, subtitle: String) {
     Column {
         AltText(text = title, fontStyle = MaterialTheme.typography.labelLarge.fontStyle)
-        AltText(text = subtitle, fontStyle = MaterialTheme.typography.labelMedium.fontStyle)
+        if (subtitle.isNotBlank()) AltText(text = subtitle, fontStyle = MaterialTheme.typography.labelMedium.fontStyle)
     }
 }
 
