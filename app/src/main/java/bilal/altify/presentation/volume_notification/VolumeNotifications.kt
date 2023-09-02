@@ -2,15 +2,11 @@ package bilal.altify.presentation.volume_notification
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.Notification.MediaStyle
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.media3.common.Player
 import bilal.altify.AltifyApp.Companion.VOLUME_CHANNEL_ID
 import bilal.altify.R
 import bilal.altify.presentation.util.quickCheckPerms
@@ -41,17 +37,18 @@ class VolumeNotifications @Inject constructor(private val context: Context) {
             scope.launch {
                 volume.collectLatest { vol ->
                     builder.setProgress(MAX_PROGRESS, (vol * 100).toInt(), false)
-                    Log.d("Vol", "${(vol * 100).toInt()} $MAX_PROGRESS")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         if (context.quickCheckPerms(Manifest.permission.POST_NOTIFICATIONS))
                             notify(notificationId, builder.build())
                 }
+            }.invokeOnCompletion {
+                notificationManager.cancel(notificationId)
             }
         }
     }
 
     fun delete() {
-        notificationManager.cancelAll()
+//        notificationManager.cancelAll()
     }
 
     companion object {

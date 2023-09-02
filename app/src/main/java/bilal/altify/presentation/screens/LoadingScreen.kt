@@ -22,21 +22,21 @@ fun LoadingScreen(
     text: String = "Loading..."
 ) {
     // todo extract this for use with other screens
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "")
     val bounce by infiniteTransition.animateFloat(
         initialValue = -150f,
         targetValue = 150f,
         animationSpec = infiniteRepeatable(
             tween(1000, 0, FastOutSlowInEasing),
             RepeatMode.Reverse
-        )
+        ), label = ""
     )
     val spin by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
             tween(1000, 0, FastOutLinearInEasing)
-        )
+        ), label = ""
     )
     Column(
         modifier = Modifier

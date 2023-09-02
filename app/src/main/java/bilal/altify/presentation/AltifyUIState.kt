@@ -16,6 +16,7 @@ sealed interface AltifyConnectionState {
 
 }
 
+// TODO: Combine artwork with track and thumbmap with listitiems
 data class AltifyUIState(
     val connectionState: AltifyConnectionState = AltifyConnectionState.Connecting,
     val preferences: AltPreferencesState = AltPreferencesState(),
