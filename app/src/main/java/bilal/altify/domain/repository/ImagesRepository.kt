@@ -11,7 +11,7 @@ interface ImagesRepository {
 
     fun getThumbnailFlow(): Flow<Map<String, Bitmap>>
 
-    suspend fun getThumbnail(uri: String)
+    fun getThumbnail(uri: String)
 
     fun clearThumbnails()
 

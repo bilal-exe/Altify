@@ -172,7 +172,7 @@ class AltifyViewModel @Inject constructor(
 
             // images
             is ImagesCommand.GetThumbnail ->
-                repositories?.images?.getArtwork(command.uri)
+                repositories?.images?.getThumbnail(command.uri)
 
             is ImagesCommand.ClearThumbnails ->
                 repositories?.images?.clearThumbnails()

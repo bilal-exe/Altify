@@ -2,19 +2,19 @@ package bilal.altify.presentation.screens.nowplaying.browse
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -23,9 +23,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.palette.graphics.Palette
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
@@ -78,12 +78,14 @@ fun Browser(
     LaunchedEffect(key1 = listItems) {
         if (listItems.isNotEmpty()) {
             executeCommand(ImagesCommand.ClearThumbnails)
-            listItems.forEach { item -> item.imageUri?.let { getThumbnail(it) } }
+            listItems.forEach { item ->
+                if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
+            }
         }
     }
 
     BrowserSolidBackground(backgroundColor = backgroundColor) {
-        Column (
+        Column(
             modifier = Modifier
                 .height(LocalConfiguration.current.screenHeightDp.dp)
         ) {
@@ -108,7 +110,7 @@ fun Browser(
 
 @Composable
 fun GetRecommendedButton(getRecommended: () -> Unit) {
-    OutlinedButton (
+    OutlinedButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -116,7 +118,7 @@ fun GetRecommendedButton(getRecommended: () -> Unit) {
         onClick = { getRecommended() },
         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Gray)
     ) {
-        AltText(text = "Get Recommended Items",)
+        AltText(text = "Get Recommended Items")
     }
 }
 
@@ -139,16 +141,22 @@ private fun EmptyListItems(
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 100.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(vertical = 100.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Icon(
+            modifier = Modifier
+                .size(150.dp),
             painter = painterResource(id = R.drawable.error),
             contentDescription = "",
             tint = bodyColor
         )
+        Spacer(modifier = Modifier.height(24.dp))
         AltText(
-            text = "Nothing to browse..."
+            text = "Nothing to browse...",
+            fontSize = 25.sp
         )
     }
 }
@@ -161,7 +169,7 @@ private fun EmptyPreview() {
         palette = null,
         track = null,
         listItems = emptyList(),
-        darkTheme = true,
+        darkTheme = false,
         thumbnailMap = emptyMap(),
         executeCommand = {}
     )

@@ -41,7 +41,7 @@ class ImagesRepositoryImpl(
             }
     }
 
-    override suspend fun getThumbnail(uri: String) {
+    override fun getThumbnail(uri: String) {
         imagesApi.getImage(ImageUri(uri), Image.Dimension.THUMBNAIL)
             .setResultCallback {
                 thumbnailCallback(it, uri)

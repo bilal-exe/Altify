@@ -32,7 +32,6 @@ import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.screens.nowplaying.current_track.bodyColor
-import bilal.altify.presentation.screens.nowplaying.current_track.titleColor
 import bilal.altify.presentation.util.AltText
 import com.spotify.protocol.types.Image.Dimension
 
@@ -81,7 +80,10 @@ fun ListItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp)
-            .background(if (selected) titleColor else Color.Transparent),
+            .background(
+                color = if (selected) Color.LightGray.copy(alpha = 0.25f) else Color.Transparent,
+                shape = RoundedCornerShape(8.dp)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
@@ -89,8 +91,8 @@ fun ListItemRow(
                 .clickable { getChildrenOfItem() },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (thumbnail == null) PlaceholderThumbnail(listItemModifier)
-            else ItemThumbnail(thumbnail, listItemModifier)
+            if (thumbnail != null) ItemThumbnail(thumbnail, listItemModifier)
+            else PlaceholderThumbnail(listItemModifier)
             Spacer(modifier = Modifier.width(16.dp))
             ListItemInfo(title = item.title, subtitle = item.subtitle)
         }
