@@ -38,18 +38,7 @@ class AltifyViewModel @Inject constructor(
 
     init {
         connect()
-        var latestImageUri: String? = ""
-        viewModelScope.launch {
-            uiState.collect {
-                if (it.track?.imageUri != latestImageUri) {
-                    latestImageUri = it.track?.imageUri
-                    it.track?.imageUri?.let { it1 -> repositories?.images?.getArtwork(it1) }
-                }
-            }
-        }
-        viewModelScope.launch {
-
-        }
+        // interpolates playback position between Spotify callbacks
         viewModelScope.launch {
             uiState.collectLatest {
                 while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.isPaused) {
@@ -71,6 +60,7 @@ class AltifyViewModel @Inject constructor(
                     is SpotifyConnectorResponse.Connected -> {
 
                         repositories = response.repositories
+                        executeCommand(ContentCommand.GetRecommended)
 
                         combine(
                             preferences.state,
@@ -176,6 +166,9 @@ class AltifyViewModel @Inject constructor(
 
             is ImagesCommand.ClearThumbnails ->
                 repositories?.images?.clearThumbnails()
+
+            is ImagesCommand.GetArtwork ->
+                repositories?.images?.getArtwork(command.uri)
         }
 
     }

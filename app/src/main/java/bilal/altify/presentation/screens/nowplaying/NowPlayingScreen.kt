@@ -7,8 +7,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,14 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +46,7 @@ import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
+import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.screens.nowplaying.browse.Browser
@@ -80,26 +78,31 @@ fun NowPlayingScreen(
         DarkThemeConfig.DARK -> true
     }
 
-    Column (
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
-        NowPlayingScreen(
-            uiState = uiState,
-            navToSettings = navToSettings,
-            executeCommand = viewModel::executeCommand,
-            palette = palette,
-            darkTheme = darkTheme
-        )
-        Browser(
-            preferences = uiState.preferences,
-            palette = palette,
-            track = uiState.track,
-            listItems = uiState.listItems,
-            darkTheme = darkTheme,
-            executeCommand = viewModel::executeCommand,
-            thumbnailMap = uiState.thumbnailMap
-        )
+    LaunchedEffect(key1 = uiState.track?.imageUri) {
+        uiState.track?.imageUri?.let {viewModel.executeCommand(ImagesCommand.GetArtwork(it)) }
+    }
+
+    LazyColumn {
+        item {
+            NowPlayingScreen(
+                uiState = uiState,
+                navToSettings = navToSettings,
+                executeCommand = viewModel::executeCommand,
+                palette = palette,
+                darkTheme = darkTheme
+            )
+        }
+        item {
+            Browser(
+                preferences = uiState.preferences,
+                palette = palette,
+                track = uiState.track,
+                listItems = uiState.listItems,
+                darkTheme = darkTheme,
+                executeCommand = viewModel::executeCommand,
+                thumbnailMap = uiState.thumbnailMap
+            )
+        }
     }
 }
 

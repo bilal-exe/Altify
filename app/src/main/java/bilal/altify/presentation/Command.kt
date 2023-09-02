@@ -44,6 +44,8 @@ sealed interface VolumeCommand : Command {
 
 sealed interface ImagesCommand : Command {
 
+    data class GetArtwork(val uri: String) : ImagesCommand
+
     data class GetThumbnail(val uri: String) : ImagesCommand
 
     object ClearThumbnails : ImagesCommand

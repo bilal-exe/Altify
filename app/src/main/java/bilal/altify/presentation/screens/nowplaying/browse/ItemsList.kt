@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,11 +43,8 @@ fun ItemsList(
     getChildrenOfItem: (AltListItem) -> Unit,
     thumbnailMap: Map<String, Bitmap>
 ) {
-    LazyColumn {
-        items(
-            items = listItems,
-            key = { it.id },
-        ) { item ->
+    Column {
+        listItems.forEach { item ->
             ListItemRow(
                 item = item,
                 selected = track?.uri == item.uri,

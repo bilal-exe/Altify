@@ -26,6 +26,8 @@ var bodyColor by mutableStateOf(Color.Black)
     private set
 var titleColor by mutableStateOf(Color.Black)
     private set
+var bottomColor by mutableStateOf(Color.Black)
+    private set
 
 @Composable
 fun NowPlayingBackground(
@@ -94,6 +96,7 @@ private fun NowPlayingSolidBackground(
     backgroundColor: Color,
     content: @Composable () -> Unit,
 ) {
+    bottomColor = backgroundColor
     SetStatusBarColor(color = backgroundColor)
     Box(
         modifier = Modifier
@@ -132,6 +135,8 @@ private fun NowPlayingDiagonalGradientBackground(
     endColor: Color,
     content: @Composable () -> Unit
 ) {
+    bottomColor = endColor
+
     val brush = Brush.linearGradient(
         colorStops = arrayOf(
             0.5f to mainColor,
@@ -176,6 +181,8 @@ private fun NowPlayingVerticalGradientBackground(
     darkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
+    bottomColor = if (darkTheme) Color.Black else Color.White
+
     val brush = Brush.verticalGradient(
         colors = listOf(mainColor, if (darkTheme) Color.Black else Color.White)
     )
