@@ -7,6 +7,8 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
@@ -46,6 +51,7 @@ import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingArtwork
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingBackground
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingMusicControls
@@ -73,11 +79,11 @@ fun NowPlayingScreen(
         DarkThemeConfig.LIGHT -> false
         DarkThemeConfig.DARK -> true
     }
-//
-//    Column (
-//        modifier = Modifier
-//            .verticalScroll(rememberScrollState())
-//    ) {
+
+    Column (
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         NowPlayingScreen(
             uiState = uiState,
             navToSettings = navToSettings,
@@ -85,15 +91,16 @@ fun NowPlayingScreen(
             palette = palette,
             darkTheme = darkTheme
         )
-//        Browser(
-//            preferences = uiState.preferences,
-//            palette = palette,
-//            track = uiState.track,
-//            listItems = uiState.listItems,
-//            darkTheme = darkTheme,
-//            executeCommand = viewModel::executeCommand
-//        )
-//    }
+        Browser(
+            preferences = uiState.preferences,
+            palette = palette,
+            track = uiState.track,
+            listItems = uiState.listItems,
+            darkTheme = darkTheme,
+            executeCommand = viewModel::executeCommand,
+            thumbnailMap = uiState.thumbnailMap
+        )
+    }
 }
 
 @Composable

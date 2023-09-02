@@ -4,15 +4,26 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
@@ -65,25 +76,47 @@ fun Browser(
     }
 
     LaunchedEffect(key1 = listItems) {
-        executeCommand(ImagesCommand.ClearThumbnails)
-        listItems.forEach { item -> item.imageUri?.let { getThumbnail(it) } }
+        if (listItems.isNotEmpty()) {
+            executeCommand(ImagesCommand.ClearThumbnails)
+            listItems.forEach { item -> item.imageUri?.let { getThumbnail(it) } }
+        }
     }
 
     BrowserSolidBackground(backgroundColor = backgroundColor) {
-        when {
-            listItems.isEmpty() ->
-                EmptyListItems(preferences, palette, darkTheme)
-            else ->
-                ItemsList(
-                    listItems = listItems,
-                    track = track,
-                    palette = palette,
-                    playItem = playItem,
-                    getChildrenOfItem = getChildrenOfItem,
-                    getThumbnail = getThumbnail,
-                    thumbnailMap = thumbnailMap
-                )
+        Column (
+            modifier = Modifier
+                .height(LocalConfiguration.current.screenHeightDp.dp)
+        ) {
+            GetRecommendedButton(getRecommended)
+            when {
+                listItems.isEmpty() ->
+                    EmptyListItems(preferences, palette, darkTheme)
+
+                else ->
+                    ItemsList(
+                        listItems = listItems,
+                        track = track,
+                        palette = palette,
+                        playItem = playItem,
+                        getChildrenOfItem = getChildrenOfItem,
+                        thumbnailMap = thumbnailMap
+                    )
+            }
         }
+    }
+}
+
+@Composable
+fun GetRecommendedButton(getRecommended: () -> Unit) {
+    OutlinedButton (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        onClick = { getRecommended() },
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Gray)
+    ) {
+        AltText(text = "Get Recommended Items",)
     }
 }
 
@@ -129,6 +162,33 @@ private fun EmptyPreview() {
         track = null,
         listItems = emptyList(),
         darkTheme = true,
+        thumbnailMap = emptyMap(),
+        executeCommand = {}
+    )
+}
+
+@Preview
+@Composable
+fun BrowserPreview() {
+    val items = mutableListOf<AltListItem>()
+    repeat(5) {
+        val ali = AltListItem(
+            id = it.toString(),
+            uri = "",
+            imageUri = "",
+            title = "Title",
+            subtitle = "Subtitle",
+            playable = it % 2 == 0,
+            hasChildren = true
+        )
+        items.add(ali)
+    }
+    Browser(
+        preferences = AltPreferencesState(),
+        palette = null,
+        track = null,
+        listItems = items,
+        darkTheme = false,
         thumbnailMap = emptyMap(),
         executeCommand = {}
     )

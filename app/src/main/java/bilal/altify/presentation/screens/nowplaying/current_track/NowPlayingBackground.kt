@@ -3,7 +3,7 @@ package bilal.altify.presentation.screens.nowplaying.current_track
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,7 +12,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
@@ -58,6 +60,7 @@ fun NowPlayingBackground(
     val mainColor = when (colourConfig) {
         BackgroundColourConfig.VIBRANT ->
             if (darkTheme) palette.darkVibrantSwatch else palette.lightVibrantSwatch
+
         BackgroundColourConfig.MUTED ->
             if (darkTheme) palette.darkMutedSwatch else palette.lightMutedSwatch
     }?.getColor() ?: surfaceColor
@@ -95,7 +98,10 @@ private fun NowPlayingSolidBackground(
     Box(
         modifier = Modifier
             .background(color = backgroundColor)
-            .fillMaxSize()
+            .size(
+                width = LocalConfiguration.current.screenWidthDp.dp,
+                height = LocalConfiguration.current.screenHeightDp.dp
+            )
     ) { content() }
 }
 
@@ -137,7 +143,10 @@ private fun NowPlayingDiagonalGradientBackground(
     Box(
         modifier = Modifier
             .background(brush)
-            .fillMaxSize()
+            .size(
+                width = LocalConfiguration.current.screenWidthDp.dp,
+                height = LocalConfiguration.current.screenHeightDp.dp
+            )
     ) { content() }
 }
 
@@ -175,7 +184,10 @@ private fun NowPlayingVerticalGradientBackground(
     Box(
         modifier = Modifier
             .background(brush)
-            .fillMaxSize()
+            .size(
+                width = LocalConfiguration.current.screenWidthDp.dp,
+                height = LocalConfiguration.current.screenHeightDp.dp
+            )
     ) { content() }
 }
 
