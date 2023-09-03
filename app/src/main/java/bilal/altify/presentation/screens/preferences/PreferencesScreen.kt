@@ -48,9 +48,9 @@ import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import bilal.altify.presentation.util.SetStatusBarColor
 
-private var backgroundColor by mutableStateOf(Color.White)
-private var textColor by mutableStateOf(Color.Black)
-private var radioButtonUnselected by mutableStateOf(Color.DarkGray)
+private var backgroundColor by mutableStateOf(Color.Black)
+private var textColor by mutableStateOf(Color.White)
+private var radioButtonUnselected by mutableStateOf(Color.LightGray)
 
 @Composable
 fun PreferencesScreen(

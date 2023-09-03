@@ -58,6 +58,9 @@ import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingProg
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingTopBar
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingVolumeSlider
 
+var complementColor by mutableStateOf(Color.Black)
+    private set
+
 @Composable
 fun NowPlayingScreen(
     navToSettings: () -> Unit,
@@ -77,6 +80,8 @@ fun NowPlayingScreen(
         DarkThemeConfig.LIGHT -> false
         DarkThemeConfig.DARK -> true
     }
+
+    complementColor = if (darkTheme) Color.White else Color.Black
 
     LaunchedEffect(key1 = uiState.track?.imageUri) {
         uiState.track?.imageUri?.let {viewModel.executeCommand(ImagesCommand.GetArtwork(it)) }

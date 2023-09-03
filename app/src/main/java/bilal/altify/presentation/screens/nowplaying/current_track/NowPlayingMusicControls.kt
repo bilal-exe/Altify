@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.R
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.PlaybackCommand
+import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.getComplementaryColor
 
 @Composable
@@ -39,8 +40,8 @@ fun NowPlayingMusicControls(
             MusicControlButton(
                 onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
                 painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
-                color = bodyColor,
-                iconColor = getComplementaryColor(bodyColor),
+                color = complementColor,
+                iconColor = getComplementaryColor(complementColor),
             )
         }
         MusicControlButton(
@@ -55,7 +56,7 @@ private fun MusicControlButton(
     onClick: () -> Unit,
     painter: Painter,
     color: Color = Color.Transparent,
-    iconColor: Color = bodyColor
+    iconColor: Color = complementColor
 ) {
     Button(
         onClick = onClick,

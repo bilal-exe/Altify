@@ -29,7 +29,7 @@ import androidx.palette.graphics.Palette
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
-import bilal.altify.presentation.screens.nowplaying.current_track.bodyColor
+import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.AltText
 import com.spotify.protocol.types.Image.Dimension
 
@@ -102,7 +102,7 @@ fun PlayButton(playItem: () -> Unit) {
         painter = painterResource(id = R.drawable.play),
         contentDescription = "",
         modifier = Modifier.clickable { playItem() },
-        tint = bodyColor
+        tint = complementColor
     )
 }
 

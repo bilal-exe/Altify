@@ -18,15 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.SetStatusBarColor
-import bilal.altify.presentation.util.complement
 import bilal.altify.presentation.util.getColor
 
-var bodyColor by mutableStateOf(Color.Black)
-    private set
-var titleColor by mutableStateOf(Color.Black)
-    private set
 var bottomColor by mutableStateOf(Color.Black)
     private set
 
@@ -39,33 +35,25 @@ fun NowPlayingBackground(
     content: @Composable () -> Unit,
 ) {
 
-    val themeColor = if (darkTheme) Color.Black else Color.White
-
     if (palette == null) {
         Log.d("UI", "Null palette")
-        bodyColor = if (darkTheme) Color.White else Color.Black
-        titleColor = if (darkTheme) Color.White else Color.Black
-        NowPlayingSolidBackground(backgroundColor = themeColor, content = content)
+        NowPlayingSolidBackground(
+            backgroundColor = if (darkTheme) Color.Black else Color.White,
+            content = content
+        )
         return
     } else Log.d("UI", "Non Null palette")
 
     val surfaceColor = MaterialTheme.colorScheme.surface
 
-    if (styleConfig == BackgroundStyleConfig.VERTICAL_GRADIENT) {
-        bodyColor = if (darkTheme) Color.White else Color.Black
-        titleColor = if (darkTheme) Color.White else Color.Black
-    } else {
-        titleColor = palette.dominantSwatch!!.getColor().complement()
-        bodyColor = palette.dominantSwatch!!.getColor().complement()
-    }
-
-
     val mainColor = when (colourConfig) {
+
         BackgroundColourConfig.VIBRANT ->
             if (darkTheme) palette.darkVibrantSwatch else palette.lightVibrantSwatch
 
         BackgroundColourConfig.MUTED ->
             if (darkTheme) palette.darkMutedSwatch else palette.lightMutedSwatch
+
     }?.getColor() ?: surfaceColor
 
     when (styleConfig) {
@@ -185,7 +173,7 @@ private fun NowPlayingVerticalGradientBackground(
     bottomColor = if (darkTheme) Color.Black else Color.White
 
     val brush = Brush.verticalGradient(
-        colors = listOf(mainColor, if (darkTheme) Color.Black else Color.White)
+        colors = listOf(mainColor, bottomColor)
     )
 
     SetStatusBarColor(color = mainColor)

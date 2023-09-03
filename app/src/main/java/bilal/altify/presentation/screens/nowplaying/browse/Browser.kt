@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +32,7 @@ import bilal.altify.presentation.Command
 import bilal.altify.presentation.ContentCommand
 import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.presentation.screens.nowplaying.current_track.bodyColor
+import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
 import bilal.altify.presentation.util.AltText
 
@@ -146,7 +145,7 @@ private fun EmptyListItems(
                 .size(150.dp),
             painter = painterResource(id = R.drawable.error),
             contentDescription = "",
-            tint = bodyColor
+            tint = complementColor
         )
         Spacer(modifier = Modifier.height(24.dp))
         AltText(
