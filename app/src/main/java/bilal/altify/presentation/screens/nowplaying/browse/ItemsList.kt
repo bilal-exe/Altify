@@ -23,14 +23,17 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.palette.graphics.Palette
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.AltText
+import bilal.altify.presentation.util.clipLen
 import com.spotify.protocol.types.Image.Dimension
 
 
@@ -109,9 +112,18 @@ fun PlayButton(playItem: () -> Unit) {
 @Composable
 fun ListItemInfo(title: String, subtitle: String) {
     Column {
-        AltText(text = title, fontStyle = MaterialTheme.typography.labelLarge.fontStyle)
+        AltText(
+            text = title,
+            fontSize = 22.sp,
+            fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
+            fontWeight = FontWeight.Bold
+        )
         if (subtitle.isNotBlank())
-            AltText(text = subtitle, fontStyle = MaterialTheme.typography.labelMedium.fontStyle)
+            AltText(
+                text = subtitle.clipLen(40),
+                fontStyle = MaterialTheme.typography.labelMedium.fontStyle,
+                fontSize = 18.sp
+            )
     }
 }
 

@@ -56,14 +56,14 @@ fun NowPlayingMusicInfo(
         AltText(
             text = "by $artist",
             fontSize = 15.sp,
-            maxLines = 1,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
         )
         AltText(
             text = album,
             fontSize = 15.sp,
-            maxLines = 1,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
         )
     }
 }

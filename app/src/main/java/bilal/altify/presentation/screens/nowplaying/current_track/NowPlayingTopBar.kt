@@ -82,12 +82,11 @@ private fun TopAppBarText(
 ) {
     AltText(
         buildAnnotatedString {
-            withStyle(SpanStyle()) { append("$subtitle: ") }
+            withStyle(SpanStyle()) { append("$subtitle${if (title.isNotBlank() )":" else ""} ") }
             withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
                 append(title.clipLen(20))
             }
-        },
-        isTitle = true
+        }
     )
 }
 

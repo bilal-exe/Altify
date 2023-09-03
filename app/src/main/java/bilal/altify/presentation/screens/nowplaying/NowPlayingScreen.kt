@@ -103,9 +103,8 @@ fun NowPlayingScreen(
                 palette = palette,
                 track = uiState.track,
                 listItems = uiState.listItems,
-                darkTheme = darkTheme,
-                executeCommand = viewModel::executeCommand,
-                thumbnailMap = uiState.thumbnailMap
+                thumbnailMap = uiState.thumbnailMap,
+                executeCommand = viewModel::executeCommand
             )
         }
     }

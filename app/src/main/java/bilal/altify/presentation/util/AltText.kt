@@ -20,7 +20,6 @@ import bilal.altify.presentation.screens.nowplaying.complementColor
 fun AltText(
     text: String,
     modifier: Modifier = Modifier,
-    isTitle: Boolean = true,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
@@ -39,7 +38,7 @@ fun AltText(
     Text(
         text = text,
         modifier = modifier,
-        color = if (isTitle) complementColor else complementColor,
+        color = complementColor,
         fontSize = fontSize,
         fontStyle = fontStyle,
         fontWeight = fontWeight,
@@ -61,7 +60,6 @@ fun AltText(
 fun AltText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
-    isTitle: Boolean = true,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
@@ -80,7 +78,7 @@ fun AltText(
     Text(
         text = text,
         modifier = modifier,
-        color = if (isTitle) complementColor else complementColor,
+        color = complementColor,
         fontSize = fontSize,
         fontStyle = fontStyle,
         fontWeight = fontWeight,

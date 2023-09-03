@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
-import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.SetStatusBarColor
 import bilal.altify.presentation.util.getColor
@@ -209,7 +208,7 @@ private fun NowPlayingDiagonalGradientBackgroundPreview() {
     NowPlayingDiagonalGradientBackground(
         mainColor = Color.Black,
         endColor = Color.White,
-        content = { AltText(text = "Hello", isTitle = true) },
+        content = { AltText(text = "Hello") },
     )
 }
 
@@ -219,6 +218,6 @@ fun NowPlayingVerticalGradientBackgroundPreview() {
     NowPlayingVerticalGradientBackground(
         mainColor = Color.Red,
         darkTheme = false,
-        content = { AltText(text = "Hello", isTitle = true) }
+        content = { AltText(text = "Hello") }
     )
 }

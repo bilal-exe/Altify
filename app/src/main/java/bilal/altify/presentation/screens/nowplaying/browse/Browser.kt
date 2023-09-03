@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -35,6 +36,7 @@ import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
 import bilal.altify.presentation.util.AltText
+import bilal.altify.presentation.util.complement
 
 @Composable
 fun Browser(
@@ -42,7 +44,6 @@ fun Browser(
     palette: Palette? = null,
     track: AltTrack?,
     listItems: List<AltListItem>,
-    darkTheme: Boolean,
     thumbnailMap: Map<String, Bitmap>,
     executeCommand: (Command) -> Unit
 ) {
@@ -86,7 +87,7 @@ fun Browser(
             GetRecommendedButton(getRecommended)
             when {
                 listItems.isEmpty() ->
-                    EmptyListItems(preferences, palette, darkTheme)
+                    EmptyListItems()
 
                 else ->
                     ItemsList(
@@ -110,9 +111,12 @@ fun GetRecommendedButton(getRecommended: () -> Unit) {
             .padding(horizontal = 24.dp, vertical = 16.dp)
             .clip(RoundedCornerShape(16.dp)),
         onClick = { getRecommended() },
-        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Gray)
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = complementColor)
     ) {
-        AltText(text = "Get Recommended Items")
+        Text(
+            text = "Get Recommended Items",
+            color = bottomColor
+        )
     }
 }
 
@@ -128,11 +132,7 @@ private fun BrowserSolidBackground(
 }
 
 @Composable
-private fun EmptyListItems(
-    preferences: AltPreferencesState,
-    palette: Palette?,
-    darkTheme: Boolean
-) {
+private fun EmptyListItems() {
     Column(
         modifier = Modifier
             .padding(vertical = 100.dp)
@@ -163,10 +163,8 @@ private fun EmptyPreview() {
         palette = null,
         track = null,
         listItems = emptyList(),
-        darkTheme = false,
-        thumbnailMap = emptyMap(),
-        executeCommand = {}
-    )
+        thumbnailMap = emptyMap()
+    ) {}
 }
 
 @Preview
@@ -190,8 +188,6 @@ fun BrowserPreview() {
         palette = null,
         track = null,
         listItems = items,
-        darkTheme = false,
-        thumbnailMap = emptyMap(),
-        executeCommand = {}
-    )
+        thumbnailMap = emptyMap()
+    ) {}
 }
