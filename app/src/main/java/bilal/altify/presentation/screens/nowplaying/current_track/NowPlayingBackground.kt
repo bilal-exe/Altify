@@ -20,6 +20,7 @@ import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.SetStatusBarColor
+import bilal.altify.presentation.util.complement
 import bilal.altify.presentation.util.getColor
 
 var bodyColor by mutableStateOf(Color.Black)
@@ -54,8 +55,8 @@ fun NowPlayingBackground(
         bodyColor = if (darkTheme) Color.White else Color.Black
         titleColor = if (darkTheme) Color.White else Color.Black
     } else {
-        titleColor = Color(palette.dominantSwatch!!.titleTextColor)
-        bodyColor = Color(palette.dominantSwatch!!.bodyTextColor)
+        titleColor = palette.dominantSwatch!!.getColor().complement()
+        bodyColor = palette.dominantSwatch!!.getColor().complement()
     }
 
 
