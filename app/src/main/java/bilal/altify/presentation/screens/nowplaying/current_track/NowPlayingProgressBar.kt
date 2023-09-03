@@ -11,7 +11,6 @@ import bilal.altify.presentation.util.toMinsSecs
 import bilal.altify.presentation.util.AltSlider
 import bilal.altify.presentation.util.AltText
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingProgressBar(
     progress: Long,

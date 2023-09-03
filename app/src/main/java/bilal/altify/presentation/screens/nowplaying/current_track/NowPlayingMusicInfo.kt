@@ -19,7 +19,7 @@ import bilal.altify.presentation.util.AltText
 fun NowPlayingMusicInfo(track: AltTrack?, config: MusicInfoAlignmentConfig) {
     Crossfade(
         targetState = track,
-        animationSpec = tween(durationMillis = 1000)
+        animationSpec = tween(durationMillis = 1000), label = ""
     ) {
         if (it != null) {
             NowPlayingMusicInfo(
