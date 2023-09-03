@@ -35,9 +35,7 @@ fun NowPlayingMusicControls(
             onClick = { executeCommand(PlaybackCommand.SkipPrevious) },
             painter = painterResource(id = R.drawable.skip_previous)
         )
-        Crossfade(targetState = isPaused, animationSpec = tween(durationMillis = 1000),
-            label = ""
-        ) { isPaused ->
+        Crossfade(targetState = isPaused, animationSpec = tween(durationMillis = 1000)) { isPaused ->
             MusicControlButton(
                 onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
                 painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),

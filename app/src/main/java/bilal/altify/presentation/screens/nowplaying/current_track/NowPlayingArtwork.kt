@@ -141,7 +141,6 @@ private fun NowPlayingStaticArtwork(
     val size by animateFloatAsState(
         targetValue = if (isPaused) 0.75f else 1f,
         tween(durationMillis = 1000, easing = if (isPaused) EaseOutBounce else FastOutSlowInEasing),
-        label = "",
     )
     NowPlayingArtwork(bitmap = bitmap, size = size)
 }
