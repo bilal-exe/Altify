@@ -41,14 +41,13 @@ fun ItemsList(
     palette: Palette?,
     playItem: (AltListItem) -> Unit,
     getChildrenOfItem: (AltListItem) -> Unit,
-    thumbnailMap: Map<String, Bitmap>
 ) {
     Column {
         listItems.forEach { item ->
             ListItemRow(
                 item = item,
                 selected = track?.uri == item.uri,
-                thumbnail = thumbnailMap[item.imageUri],
+                thumbnail = item.thumbnail,
                 playItem = { playItem(item) },
                 getChildrenOfItem = { getChildrenOfItem(item) }
             )
@@ -178,6 +177,6 @@ fun ItemsListPreview() {
         palette = null,
         playItem = {},
         getChildrenOfItem = {},
-        thumbnailMap = emptyMap()
+//        thumbnailMap = emptyMap()
     )
 }

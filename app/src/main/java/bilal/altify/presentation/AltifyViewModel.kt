@@ -71,17 +71,16 @@ class AltifyViewModel @Inject constructor(
                             repositories!!.images.getThumbnailFlow()
                         ) { arr ->
                             _uiState.update {
+                                val thumbnailMap = arr[5] as Map<String, Bitmap>
                                 it.copy(
                                     connectionState = AltifyConnectionState.Success,
                                     preferences = arr[0] as AltPreferencesState,
-                                    track = (arr[1] as AltPlayerStateAndContext).track,
+                                    track = (arr[1] as AltPlayerStateAndContext).track?.copy(artwork = arr[4] as Bitmap?),
                                     isPaused = (arr[1] as AltPlayerStateAndContext).isPaused,
                                     playbackPosition = (arr[1] as AltPlayerStateAndContext).position,
                                     playerContext = (arr[1] as AltPlayerStateAndContext).context,
                                     volume = arr[2] as Float,
-                                    listItems = arr[3] as List<AltListItem>,
-                                    artwork = arr[4] as Bitmap?,
-                                    thumbnailMap = arr[5] as Map<String, Bitmap>
+                                    listItems = (arr[3] as List<AltListItem>).map { li -> li.copy(thumbnail = thumbnailMap[li.imageUri]) },
                                 )
                             }
                         }.launchIn(

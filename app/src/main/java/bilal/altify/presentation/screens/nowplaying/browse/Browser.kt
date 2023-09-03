@@ -44,7 +44,6 @@ fun Browser(
     track: AltTrack?,
     listItems: List<AltListItem>,
     darkTheme: Boolean,
-    thumbnailMap: Map<String, Bitmap>,
     executeCommand: (Command) -> Unit
 ) {
 
@@ -73,7 +72,7 @@ fun Browser(
         executeCommand(ImagesCommand.GetThumbnail(it))
     }
 
-    LaunchedEffect(key1 = listItems) {
+    LaunchedEffect(key1 = listItems.map {it.id}) {
         if (listItems.isNotEmpty()) {
             executeCommand(ImagesCommand.ClearThumbnails)
             listItems.forEach { item ->
@@ -96,7 +95,6 @@ fun Browser(
                         palette = palette,
                         playItem = playItem,
                         getChildrenOfItem = getChildrenOfItem,
-                        thumbnailMap = thumbnailMap
                     )
             }
         }
@@ -165,7 +163,7 @@ private fun EmptyPreview() {
         track = null,
         listItems = emptyList(),
         darkTheme = false,
-        thumbnailMap = emptyMap(),
+//        thumbnailMap = emptyMap(),
         executeCommand = {}
     )
 }
@@ -192,7 +190,7 @@ fun BrowserPreview() {
         track = null,
         listItems = items,
         darkTheme = false,
-        thumbnailMap = emptyMap(),
+//        thumbnailMap = emptyMap(),
         executeCommand = {}
     )
 }

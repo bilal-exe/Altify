@@ -66,7 +66,7 @@ fun NowPlayingScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    val palette = uiState.artwork?.let {
+    val palette = uiState.track?.artwork?.let {
         if (uiState.preferences.backgroundStyle != BackgroundStyleConfig.PLAIN)
             Palette.from(it).generate()
         else null
@@ -100,7 +100,6 @@ fun NowPlayingScreen(
                 listItems = uiState.listItems,
                 darkTheme = darkTheme,
                 executeCommand = viewModel::executeCommand,
-                thumbnailMap = uiState.thumbnailMap
             )
         }
     }
@@ -187,7 +186,7 @@ private fun NowPlayingPortraitContent(
     ) {
         Spacer(modifier = Modifier.weight(1f))
         NowPlayingArtwork(
-            bitmap = uiState.artwork,
+            bitmap = uiState.track?.artwork,
             toggleControls = toggleControls,
             config = uiState.preferences.artworkDisplay,
             isPaused = uiState.isPaused,
@@ -246,7 +245,7 @@ private fun NowPlayingLandscapeContent(
         verticalAlignment = Alignment.CenterVertically
     ) {
         NowPlayingArtwork(
-            bitmap = uiState.artwork,
+            bitmap = uiState.track?.artwork,
             toggleControls = toggleControls,
             config = uiState.preferences.artworkDisplay,
             isPaused = uiState.isPaused,

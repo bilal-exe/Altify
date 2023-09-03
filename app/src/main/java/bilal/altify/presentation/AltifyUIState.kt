@@ -26,6 +26,6 @@ data class AltifyUIState(
     val playerContext: AltPlayerContext? = null,
     val volume: Float = 0f,
     val listItems: List<AltListItem> = emptyList(),
-    val artwork: Bitmap? = null,
-    val thumbnailMap: Map<String, Bitmap> = emptyMap()
+//    val artwork: Bitmap? = null,
+//    val thumbnailMap: Map<String, Bitmap> = emptyMap()
 )
