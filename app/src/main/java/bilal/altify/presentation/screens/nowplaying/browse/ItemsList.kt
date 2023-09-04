@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.palette.graphics.Palette
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
@@ -41,7 +40,6 @@ import com.spotify.protocol.types.Image.Dimension
 fun ItemsList(
     listItems: List<AltListItem>,
     track: AltTrack?,
-    palette: Palette?,
     playItem: (AltListItem) -> Unit,
     getChildrenOfItem: (AltListItem) -> Unit,
     thumbnailMap: Map<String, Bitmap>
@@ -187,7 +185,6 @@ fun ItemsListPreview() {
     ItemsList(
         listItems = items,
         track = null,
-        palette = null,
         playItem = {},
         getChildrenOfItem = {},
         thumbnailMap = emptyMap()
