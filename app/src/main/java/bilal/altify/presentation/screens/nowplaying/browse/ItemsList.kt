@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +37,7 @@ import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.clipLen
 import com.spotify.protocol.types.Image.Dimension
+import kotlin.math.ceil
 
 
 @Composable
@@ -44,8 +48,18 @@ fun ItemsList(
     getChildrenOfItem: (AltListItem) -> Unit,
     thumbnailMap: Map<String, Bitmap>
 ) {
-    Column {
-        listItems.forEach { item ->
+    LazyColumn(
+//         calculates the height of the list by the thumbnail height plus padding for each list item
+//         allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
+        modifier = Modifier.height(
+            (listItems.size * ceil((144 / LocalDensity.current.density) + 16)).dp + 4.dp
+        ),
+        userScrollEnabled = false
+    ) {
+        items(
+            items = listItems,
+            key = { it.id }
+        ) { item ->
             ListItemRow(
                 item = item,
                 selected = track?.uri == item.uri,
