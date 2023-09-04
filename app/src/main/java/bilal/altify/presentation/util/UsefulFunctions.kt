@@ -2,16 +2,11 @@ package bilal.altify.presentation.util
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.ColorSpace
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import androidx.palette.graphics.Palette
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlin.math.max

@@ -1,7 +1,6 @@
 package bilal.altify
 
 import android.app.Application
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import dagger.hilt.android.HiltAndroidApp

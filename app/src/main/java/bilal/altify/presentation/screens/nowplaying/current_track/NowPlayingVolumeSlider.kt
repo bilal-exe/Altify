@@ -20,8 +20,7 @@ import bilal.altify.presentation.util.AltSlider
 @Composable
 fun NowPlayingVolumeSlider(
     volume: Float,
-    executeCommand: (Command) -> Unit,
-    darkTheme: Boolean
+    executeCommand: (Command) -> Unit
 ) {
 
     SliderDefaults.colors(
@@ -39,10 +38,8 @@ fun NowPlayingVolumeSlider(
         Icon(painterResource(id = R.drawable.volume_mute), "", tint = complementColor)
         AltSlider(
             progress = volume,
-            duration = 1f,
-            onSliderMoved = { executeCommand(VolumeCommand.SetVolume(it)) },
-            darkTheme = darkTheme
-        )
+            duration = 1f
+        ) { executeCommand(VolumeCommand.SetVolume(it)) }
     }
 
 }
@@ -50,5 +47,5 @@ fun NowPlayingVolumeSlider(
 @Preview
 @Composable
 private fun NowPlayingVolumeSliderPreview() {
-    NowPlayingVolumeSlider(0.5f, {}, false)
+    NowPlayingVolumeSlider(0.5f) {}
 }

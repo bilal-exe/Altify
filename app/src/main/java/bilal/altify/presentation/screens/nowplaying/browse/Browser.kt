@@ -25,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.palette.graphics.Palette
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
@@ -36,29 +35,15 @@ import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
 import bilal.altify.presentation.util.AltText
-import bilal.altify.presentation.util.complement
 
 @Composable
 fun Browser(
     preferences: AltPreferencesState,
-    palette: Palette? = null,
     track: AltTrack?,
     listItems: List<AltListItem>,
     thumbnailMap: Map<String, Bitmap>,
     executeCommand: (Command) -> Unit
 ) {
-
-//    val backgroundColor = if (palette == null) {
-//        when {
-//            darkTheme -> Color.Black
-//            else -> Color.White
-//        }
-//    } else {
-//        when (preferences.backgroundColour) {
-//            BackgroundColourConfig.VIBRANT -> palette.vibrantSwatch
-//            BackgroundColourConfig.MUTED -> palette.mutedSwatch
-//        }?.getColor() ?: MaterialTheme.colorScheme.surface
-//    }
 
     val getRecommended: () -> Unit = {
         executeCommand(ContentCommand.GetRecommended)
@@ -93,10 +78,9 @@ fun Browser(
                     ItemsList(
                         listItems = listItems,
                         track = track,
-                        palette = palette,
                         playItem = playItem,
                         getChildrenOfItem = getChildrenOfItem,
-                        thumbnailMap = thumbnailMap
+                        thumbnailMap = thumbnailMap,
                     )
             }
         }
@@ -160,7 +144,6 @@ private fun EmptyListItems() {
 private fun EmptyPreview() {
     Browser(
         preferences = AltPreferencesState(),
-        palette = null,
         track = null,
         listItems = emptyList(),
         thumbnailMap = emptyMap()
@@ -185,7 +168,6 @@ fun BrowserPreview() {
     }
     Browser(
         preferences = AltPreferencesState(),
-        palette = null,
         track = null,
         listItems = items,
         thumbnailMap = emptyMap()

@@ -1,7 +1,6 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,13 +10,11 @@ import bilal.altify.presentation.util.toMinsSecs
 import bilal.altify.presentation.util.AltSlider
 import bilal.altify.presentation.util.AltText
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingProgressBar(
     progress: Long,
     duration: Long = 0,
-    onSliderMoved: (Long) -> Unit,
-    darkTheme: Boolean
+    onSliderMoved: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -27,9 +24,8 @@ fun NowPlayingProgressBar(
     ) {
         AltSlider(
             progress = progress,
-            onSliderMoved = onSliderMoved,
             duration = duration,
-            darkTheme = darkTheme
+            onSliderMoved = onSliderMoved
         )
         Row {
             AltText(text = progress.toMinsSecs())
@@ -42,5 +38,5 @@ fun NowPlayingProgressBar(
 @Preview
 @Composable
 private fun NowPlayingProgressBarPreview() {
-    NowPlayingProgressBar(5000L, 10000L, {}, false)
+    NowPlayingProgressBar(5000L, 10000L) {}
 }

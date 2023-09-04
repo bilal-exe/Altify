@@ -100,7 +100,6 @@ fun NowPlayingScreen(
         item {
             Browser(
                 preferences = uiState.preferences,
-                palette = palette,
                 track = uiState.track,
                 listItems = uiState.listItems,
                 thumbnailMap = uiState.thumbnailMap,
@@ -155,8 +154,7 @@ private fun NowPlayingScreen(
                     uiState = uiState,
                     executeCommand = executeCommand,
                     showControls = showControls,
-                    toggleControls = toggleControls,
-                    darkTheme = darkTheme
+                    toggleControls = toggleControls
                 )
             else
                 NowPlayingLandscapeContent(
@@ -164,8 +162,7 @@ private fun NowPlayingScreen(
                     uiState = uiState,
                     executeCommand = executeCommand,
                     showControls = showControls,
-                    toggleControls = toggleControls,
-                    darkTheme = darkTheme
+                    toggleControls = toggleControls
                 )
         }
     }
@@ -177,8 +174,7 @@ private fun NowPlayingPortraitContent(
     uiState: AltifyUIState,
     executeCommand: (Command) -> Unit,
     showControls: Boolean,
-    toggleControls: () -> Unit,
-    darkTheme: Boolean
+    toggleControls: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -211,10 +207,8 @@ private fun NowPlayingPortraitContent(
             Column {
                 NowPlayingProgressBar(
                     progress = uiState.playbackPosition,
-                    duration = uiState.track?.duration ?: 0,
-                    onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) },
-                    darkTheme = darkTheme
-                )
+                    duration = uiState.track?.duration ?: 0
+                ) { executeCommand(PlaybackCommand.Seek(it)) }
                 Spacer(modifier = Modifier.height(16.dp))
                 NowPlayingMusicControls(
                     executeCommand = executeCommand,
@@ -223,8 +217,7 @@ private fun NowPlayingPortraitContent(
                 Spacer(modifier = Modifier.height(16.dp))
                 NowPlayingVolumeSlider(
                     volume = uiState.volume,
-                    executeCommand = executeCommand,
-                    darkTheme = darkTheme
+                    executeCommand = executeCommand
                 )
             }
         }
@@ -239,7 +232,6 @@ private fun NowPlayingLandscapeContent(
     executeCommand: (Command) -> Unit,
     showControls: Boolean,
     toggleControls: () -> Unit,
-    darkTheme: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -274,10 +266,8 @@ private fun NowPlayingLandscapeContent(
                 Column {
                     NowPlayingProgressBar(
                         progress = uiState.playbackPosition,
-                        duration = uiState.track?.duration ?: 0,
-                        onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) },
-                        darkTheme = darkTheme
-                    )
+                        duration = uiState.track?.duration ?: 0
+                    ) { executeCommand(PlaybackCommand.Seek(it)) }
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingMusicControls(
                         isPaused = uiState.isPaused,
@@ -286,7 +276,6 @@ private fun NowPlayingLandscapeContent(
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingVolumeSlider(
                         volume = uiState.volume,
-                        darkTheme = darkTheme,
                         executeCommand = executeCommand
                     )
                 }
@@ -321,10 +310,8 @@ private fun NowPlayingToggledPreview() {
             playbackPosition = 5000
         ),
         executeCommand = {},
-        showControls = false,
-        toggleControls = {},
-        darkTheme = false
-    )
+        showControls = false
+    ) {}
 }
 
 @Preview
@@ -338,8 +325,6 @@ private fun NowPlayingLandscapePreview() {
             playbackPosition = 5000
         ),
         executeCommand = {},
-        showControls = true,
-        toggleControls = {},
-        darkTheme = false
-    )
+        showControls = true
+    ) {}
 }

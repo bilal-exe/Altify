@@ -1,14 +1,10 @@
 package bilal.altify.presentation.player
 
-import android.media.session.PlaybackState
 import android.os.Looper
-import androidx.media3.common.C.VolumeFlags
 import androidx.media3.common.Player
 import androidx.media3.common.SimpleBasePlayer
 import androidx.media3.common.util.UnstableApi
 import com.google.common.util.concurrent.ListenableFuture
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @UnstableApi class AltifyPlayer: SimpleBasePlayer(Looper.getMainLooper()) {
 

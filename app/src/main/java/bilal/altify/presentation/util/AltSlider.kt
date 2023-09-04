@@ -9,7 +9,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import bilal.altify.presentation.screens.nowplaying.complementColor
@@ -21,7 +20,6 @@ fun AltSlider(
     modifier: Modifier = Modifier,
     duration: Long = 0,
     onSliderMoved: (Long) -> Unit,
-    darkTheme: Boolean,
 ) {
     val sliderColors = SliderDefaults.colors(
         activeTrackColor = complementColor,
@@ -53,8 +51,7 @@ fun AltSlider(
     progress: Float,
     modifier: Modifier = Modifier,
     duration: Float,
-    onSliderMoved: (Float) -> Unit,
-    darkTheme: Boolean
+    onSliderMoved: (Float) -> Unit
 ) {
     val sliderColors = SliderDefaults.colors(
         activeTrackColor = complementColor,
