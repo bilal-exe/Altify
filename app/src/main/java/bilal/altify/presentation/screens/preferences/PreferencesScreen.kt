@@ -46,7 +46,7 @@ import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
-import bilal.altify.presentation.prefrences.NowPlayingLayoutConfig
+import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.util.SetStatusBarColor
 
 private var backgroundColor by mutableStateOf(Color.Black)
@@ -80,7 +80,7 @@ fun PreferencesScreen(
         setArtworkDisplayConfig = viewModel::setArtworkDisplayConfig,
         setMusicInfoAlignmentConfig = viewModel::setMusicInfoAlignmentConfig,
         setBackgroundColourConfig = viewModel::setBackgroundColourConfig,
-        setNowPlayingLayoutConfig = viewModel::setNowPlayingLayoutConfig,
+        setFullscreenInfoAlignmentConfig = viewModel::setFullscreenInfoAlignmentConfig,
         navToNowPlaying = navToNowPlaying
     )
 }
@@ -94,7 +94,7 @@ private fun PreferencesScreen(
     setArtworkDisplayConfig: (ArtworkDisplayConfig) -> Unit,
     setMusicInfoAlignmentConfig: (MusicInfoAlignmentConfig) -> Unit,
     setBackgroundColourConfig: (BackgroundColourConfig) -> Unit,
-    setNowPlayingLayoutConfig: (NowPlayingLayoutConfig) -> Unit,
+    setFullscreenInfoAlignmentConfig: (FullScreenMusicInfoAlignment) -> Unit,
     navToNowPlaying: () -> Unit
 ) {
     Column(
@@ -141,10 +141,10 @@ private fun PreferencesScreen(
             values = BackgroundColourConfig.values() as Array<AltPreference>
         )
         SettingSection(
-            title = "Now Playing Layout",
-            selected = prefState.layoutConfig,
-            onClick = setNowPlayingLayoutConfig as (AltPreference) -> Unit,
-            values = NowPlayingLayoutConfig.values() as Array<AltPreference>
+            title = "Full Screen Music Information Placement",
+            selected = prefState.fullScreenInfoAlignment,
+            onClick = setFullscreenInfoAlignmentConfig as (AltPreference) -> Unit,
+            values = FullScreenMusicInfoAlignment.values() as Array<AltPreference>
         )
     }
 }
@@ -256,7 +256,7 @@ fun PreferencesScreenPreview() {
         setArtworkDisplayConfig = {},
         setMusicInfoAlignmentConfig = {},
         setBackgroundColourConfig = {},
-        setNowPlayingLayoutConfig = {},
+        setFullscreenInfoAlignmentConfig = {},
         navToNowPlaying = {},
     )
 }

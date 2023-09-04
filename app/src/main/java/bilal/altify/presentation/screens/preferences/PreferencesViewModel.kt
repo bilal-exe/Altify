@@ -8,7 +8,7 @@ import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
-import bilal.altify.presentation.prefrences.NowPlayingLayoutConfig
+import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,9 +50,9 @@ class PreferencesViewModel @Inject constructor(
         }
     }
 
-    fun setNowPlayingLayoutConfig(config: NowPlayingLayoutConfig) {
+    fun setFullscreenInfoAlignmentConfig(config: FullScreenMusicInfoAlignment) {
         viewModelScope.launch {
-            preferences.setNowPlayingLayoutConfig(config)
+            preferences.setFullscreenInfoAlignmentConfig(config)
         }
     }
 

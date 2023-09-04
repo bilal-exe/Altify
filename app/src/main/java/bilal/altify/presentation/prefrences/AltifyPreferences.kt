@@ -27,9 +27,9 @@ enum class BackgroundColourConfig(override val code: Int, override val title: St
     MUTED(1, "Muted"),
 }
 
-enum class NowPlayingLayoutConfig(override val code: Int, override val title: String) : AltPreference {
-    SPACED(0, "Spaced"),
-    CONDENSED(1, "Condensed")
+enum class FullScreenMusicInfoAlignment(override val code: Int, override val title: String) : AltPreference {
+    MIDDLE(0, "Middle"),
+    BOTTOM(1, "Bottom")
 }
 
 data class AltPreferencesState(
@@ -38,5 +38,5 @@ data class AltPreferencesState(
     val artworkDisplay: ArtworkDisplayConfig = ArtworkDisplayConfig.NORMAL,
     val musicInfoAlignment: MusicInfoAlignmentConfig = MusicInfoAlignmentConfig.CENTER,
     val backgroundColour: BackgroundColourConfig = BackgroundColourConfig.VIBRANT,
-    val layoutConfig: NowPlayingLayoutConfig = NowPlayingLayoutConfig.SPACED
+    val fullScreenInfoAlignment: FullScreenMusicInfoAlignment = FullScreenMusicInfoAlignment.MIDDLE
 )

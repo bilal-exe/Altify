@@ -21,7 +21,7 @@ class AltifyPreferencesDataSource(
     private val artworkDisplayConfigKey = intPreferencesKey("ARTWORK_DISPLAY")
     private val musicInfoAlignmentConfigKey = intPreferencesKey("MUSIC_INFO_ALIGNMENT")
     private val backgroundColourConfigKey = intPreferencesKey("BACKGROUND_COLOUR")
-    private val nowPlayingLayoutConfigKey = intPreferencesKey("NOW_PLAYING_LAYOUT")
+    private val fullscreenInfoAlignmentConfigKey = intPreferencesKey("FULLSCREEN_INFO_ALIGNMENT")
 
     val state = altPreferences.data.map { preferences ->
         AltPreferencesState(
@@ -40,9 +40,9 @@ class AltifyPreferencesDataSource(
             backgroundColour = BackgroundColourConfig.values()
                 .find { it.code == preferences[backgroundColourConfigKey] }
                 ?: BackgroundColourConfig.VIBRANT,
-            layoutConfig = NowPlayingLayoutConfig.values()
-                .find { it.code == preferences[nowPlayingLayoutConfigKey] }
-                ?: NowPlayingLayoutConfig.SPACED
+            fullScreenInfoAlignment = FullScreenMusicInfoAlignment.values()
+                .find { it.code == preferences[fullscreenInfoAlignmentConfigKey] }
+                ?: FullScreenMusicInfoAlignment.MIDDLE
         )
     }
         .stateIn(CoroutineScope(IO), SharingStarted.Eagerly, AltPreferencesState())
@@ -67,8 +67,8 @@ class AltifyPreferencesDataSource(
         altPreferences.edit { it[backgroundColourConfigKey] = config.code }
     }
 
-    suspend fun setNowPlayingLayoutConfig(config: NowPlayingLayoutConfig) {
-        altPreferences.edit { it[nowPlayingLayoutConfigKey] = config.code }
+    suspend fun setFullscreenInfoAlignmentConfig(config: FullScreenMusicInfoAlignment) {
+        altPreferences.edit { it[fullscreenInfoAlignmentConfigKey] = config.code }
     }
 
 }

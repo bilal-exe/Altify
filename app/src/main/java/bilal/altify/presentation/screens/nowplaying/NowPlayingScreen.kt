@@ -3,6 +3,7 @@ package bilal.altify.presentation.screens.nowplaying
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkOut
@@ -43,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,7 +58,7 @@ import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.VolumeCommand
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
-import bilal.altify.presentation.prefrences.NowPlayingLayoutConfig
+import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingArtwork
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingBackground
@@ -212,6 +212,7 @@ private fun NowPlayingScreen(
     }
 }
 
+@Suppress("AnimateAsStateLabel")
 @Composable
 private fun NowPlayingPortraitContent(
     paddingValues: PaddingValues,
@@ -230,15 +231,15 @@ private fun NowPlayingPortraitContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val spacing: @Composable () -> Unit = when (uiState.preferences.layoutConfig) {
-            NowPlayingLayoutConfig.SPACED -> {
-                { Spacer(modifier = Modifier.weight(0.5f)) }
+        val bottomSpacingModifier: Modifier =
+            when (uiState.preferences.fullScreenInfoAlignment) {
+                FullScreenMusicInfoAlignment.MIDDLE -> {
+                    val float by animateFloatAsState(targetValue = if (showControls) 0.05f else 1f)
+                    Modifier.weight(float)
+                }
+                FullScreenMusicInfoAlignment.BOTTOM ->
+                    Modifier.height(16.dp)
             }
-
-            NowPlayingLayoutConfig.CONDENSED -> {
-                {}
-            }
-        }
 
         Spacer(modifier = Modifier.weight(1f))
         NowPlayingArtwork(
@@ -253,11 +254,11 @@ private fun NowPlayingPortraitContent(
             track = uiState.track,
             config = uiState.preferences.musicInfoAlignment
         )
-        spacing()
+        Spacer(modifier = Modifier.height(8.dp))
         AnimatedVisibility(
             visible = showControls,
-            enter = expandVertically(),
-            exit = shrinkVertically()
+//            enter = expandVertically(),
+//            exit = shrinkVertically()
         ) {
             Column {
                 NowPlayingProgressBar(
@@ -265,17 +266,19 @@ private fun NowPlayingPortraitContent(
                     duration = uiState.track?.duration ?: 0,
                     onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingMusicControls(
                     executeCommand = executeCommand,
                     isPaused = uiState.isPaused
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingVolumeSlider(
                     volume = uiState.volume,
                     setVolume = { executeCommand(VolumeCommand.SetVolume(it)) }
                 )
             }
         }
-        if (showControls) spacing()
+        Spacer(modifier = bottomSpacingModifier)
     }
 }
 
