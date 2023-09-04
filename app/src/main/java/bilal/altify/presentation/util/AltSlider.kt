@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.bodyColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,8 +23,8 @@ fun AltSlider(
     onSliderMoved: (Long) -> Unit,
 ) {
     val sliderColors = SliderDefaults.colors(
-        activeTrackColor = complementColor,
-        inactiveTrackColor = getComplementaryColor(complementColor)
+        activeTrackColor = titleColor,
+        inactiveTrackColor = bodyColor
     )
     Slider(
         modifier = modifier.height(20.dp),
@@ -36,7 +37,7 @@ fun AltSlider(
                 modifier = Modifier.size(DpSize(20.dp, 20.dp)),
             ) {
                 drawCircle(
-                    color = complementColor,
+                    color = titleColor,
                     center = Offset(x = size.width / 2, y = size.height / 2),
                     radius = 10f
                 )
@@ -54,8 +55,8 @@ fun AltSlider(
     onSliderMoved: (Float) -> Unit
 ) {
     val sliderColors = SliderDefaults.colors(
-        activeTrackColor = complementColor,
-        inactiveTrackColor = getComplementaryColor(complementColor)
+        activeTrackColor = titleColor,
+        inactiveTrackColor = bodyColor
     )
     Slider(
         modifier = modifier.height(20.dp),
@@ -68,7 +69,7 @@ fun AltSlider(
                 modifier = Modifier.size(DpSize(20.dp, 20.dp)),
             ) {
                 drawCircle(
-                    color = complementColor,
+                    color = titleColor,
                     center = Offset(x = size.width / 2, y = size.height / 2),
                     radius = 10f
                 )

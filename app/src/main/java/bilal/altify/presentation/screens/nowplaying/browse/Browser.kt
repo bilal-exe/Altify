@@ -32,7 +32,7 @@ import bilal.altify.presentation.Command
 import bilal.altify.presentation.ContentCommand
 import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
 import bilal.altify.presentation.util.AltText
 
@@ -95,7 +95,7 @@ fun GetRecommendedButton(getRecommended: () -> Unit) {
             .padding(horizontal = 24.dp, vertical = 16.dp)
             .clip(RoundedCornerShape(16.dp)),
         onClick = { getRecommended() },
-        colors = ButtonDefaults.outlinedButtonColors(containerColor = complementColor)
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = titleColor)
     ) {
         Text(
             text = "Get Recommended Items",
@@ -129,7 +129,7 @@ private fun EmptyListItems() {
                 .size(150.dp),
             painter = painterResource(id = R.drawable.error),
             contentDescription = "",
-            tint = complementColor
+            tint = titleColor
         )
         Spacer(modifier = Modifier.height(24.dp))
         AltText(

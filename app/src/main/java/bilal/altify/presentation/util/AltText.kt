@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 
 @Composable
 fun AltText(
@@ -38,7 +38,7 @@ fun AltText(
     Text(
         text = text,
         modifier = modifier,
-        color = complementColor,
+        color = titleColor,
         fontSize = fontSize,
         fontStyle = fontStyle,
         fontWeight = fontWeight,
@@ -78,7 +78,7 @@ fun AltText(
     Text(
         text = text,
         modifier = modifier,
-        color = complementColor,
+        color = titleColor,
         fontSize = fontSize,
         fontStyle = fontStyle,
         fontWeight = fontWeight,

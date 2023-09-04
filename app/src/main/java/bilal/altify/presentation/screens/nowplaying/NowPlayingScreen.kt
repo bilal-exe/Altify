@@ -69,7 +69,9 @@ import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingTopB
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingVolumeSlider
 import kotlinx.coroutines.launch
 
-var complementColor by mutableStateOf(Color.Black)
+var titleColor by mutableStateOf(Color.Black)
+    private set
+var bodyColor by mutableStateOf(Color.DarkGray)
     private set
 
 val nowPlayingItemsPadding = PaddingValues(bottom = 8.dp)
@@ -94,7 +96,13 @@ fun NowPlayingScreen(
         DarkThemeConfig.DARK -> true
     }
 
-    complementColor = if (darkTheme) Color.White else Color.Black
+    if (darkTheme) {
+        titleColor = Color.White
+        bodyColor = Color.LightGray
+    } else {
+        titleColor = Color.Black
+        bodyColor = Color.DarkGray
+    }
 
     LaunchedEffect(key1 = uiState.track?.imageUri) {
         uiState.track?.imageUri?.let { viewModel.executeCommand(ImagesCommand.GetArtwork(it)) }
@@ -133,9 +141,7 @@ const val BROWSER_FAB_HEIGHT = 65
 @Composable
 fun ScrollToTopButton(scrollState: ScrollState) {
     val scope = rememberCoroutineScope()
-    val screenHeightPx =
-        with(LocalDensity.current) { LocalConfiguration.current.screenHeightDp.dp.toPx() }
-    AnimatedVisibility(visible = scrollState.value > screenHeightPx) {
+    if (scrollState.value > 0) {
         FloatingActionButton(
             onClick = { scope.launch { scrollState.animateScrollTo(0) } },
             modifier = Modifier
@@ -228,7 +234,10 @@ private fun NowPlayingPortraitContent(
             NowPlayingLayoutConfig.SPACED -> {
                 { Spacer(modifier = Modifier.weight(0.5f)) }
             }
-            NowPlayingLayoutConfig.CONDENSED -> {{}}
+
+            NowPlayingLayoutConfig.CONDENSED -> {
+                {}
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))

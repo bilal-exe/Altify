@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.domain.model.AltPlayerContext
-import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.clipLen
 import bilal.altify.presentation.util.AltText
 
@@ -63,7 +63,7 @@ private fun NowPlayingTopBar(
                     Icon(
                         imageVector = actionIcon,
                         contentDescription = actionIconContentDescription,
-                        tint = complementColor,
+                        tint = titleColor,
                     )
                 }
         },

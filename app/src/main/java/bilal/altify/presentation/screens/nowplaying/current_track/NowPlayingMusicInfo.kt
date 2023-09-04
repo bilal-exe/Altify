@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
+import bilal.altify.presentation.screens.nowplaying.bodyColor
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.util.AltText
 
@@ -57,17 +59,19 @@ fun NowPlayingMusicInfo(
             fontWeight = FontWeight.ExtraBold,
             maxLines = 1
         )
-        AltText(
+        Text(
             text = "by $artist",
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            maxLines = 1
+            maxLines = 1,
+            color = bodyColor
         )
-        AltText(
+        Text(
             text = album,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            maxLines = 1
+            maxLines = 1,
+            color = bodyColor
         )
     }
 }

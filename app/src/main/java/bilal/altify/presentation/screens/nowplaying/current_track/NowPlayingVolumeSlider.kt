@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
-import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.util.AltSlider
 
@@ -27,7 +27,7 @@ fun NowPlayingVolumeSlider(
 
     SliderDefaults.colors(
         thumbColor = Color.Red,
-        activeTrackColor = complementColor,
+        activeTrackColor = titleColor,
         inactiveTrackColor = Color.Gray
     )
 
@@ -38,7 +38,7 @@ fun NowPlayingVolumeSlider(
         horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(painterResource(id = R.drawable.volume_mute), "", tint = complementColor)
+        Icon(painterResource(id = R.drawable.volume_mute), "", tint = titleColor)
         AltSlider(
             progress = volume,
             duration = 1f

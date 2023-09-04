@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +35,8 @@ import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.screens.nowplaying.BROWSER_FAB_HEIGHT
-import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.bodyColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.clipLen
 import com.spotify.protocol.types.Image.Dimension
@@ -120,7 +122,7 @@ fun PlayButton(playItem: () -> Unit) {
         painter = painterResource(id = R.drawable.play),
         contentDescription = "",
         modifier = Modifier.clickable { playItem() },
-        tint = complementColor
+        tint = titleColor
     )
 }
 
@@ -134,10 +136,11 @@ fun ListItemInfo(title: String, subtitle: String) {
             fontWeight = FontWeight.Bold
         )
         if (subtitle.isNotBlank())
-            AltText(
+            Text(
                 text = subtitle.clipLen(40),
                 fontStyle = MaterialTheme.typography.labelMedium.fontStyle,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = bodyColor
             )
     }
 }
