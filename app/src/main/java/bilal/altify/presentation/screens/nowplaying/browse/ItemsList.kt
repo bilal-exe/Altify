@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import bilal.altify.R
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
+import bilal.altify.presentation.screens.nowplaying.BROWSER_FAB_HEIGHT
 import bilal.altify.presentation.screens.nowplaying.complementColor
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.clipLen
@@ -52,7 +53,9 @@ fun ItemsList(
 //         calculates the height of the list by the thumbnail height plus padding for each list item
 //         allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
         modifier = Modifier.height(
-            (listItems.size * ceil((144 / LocalDensity.current.density) + 16)).dp + 4.dp
+            (listItems.size * ceil((144 / LocalDensity.current.density) + 16)).dp
+                    + 16.dp // extra room
+                    + BROWSER_FAB_HEIGHT.dp // so floating action button doesn't overlap
         ),
         userScrollEnabled = false
     ) {

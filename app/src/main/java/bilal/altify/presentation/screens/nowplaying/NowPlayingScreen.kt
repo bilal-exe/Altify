@@ -7,12 +7,14 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +24,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -32,11 +37,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,6 +65,7 @@ import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingMusi
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingProgressBar
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingTopBar
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingVolumeSlider
+import kotlinx.coroutines.launch
 
 var complementColor by mutableStateOf(Color.Black)
     private set
@@ -88,23 +96,50 @@ fun NowPlayingScreen(
         uiState.track?.imageUri?.let { viewModel.executeCommand(ImagesCommand.GetArtwork(it)) }
     }
 
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
-    ) {
-        NowPlayingScreen(
-            uiState = uiState,
-            navToSettings = navToSettings,
-            executeCommand = viewModel::executeCommand,
-            palette = palette,
-            darkTheme = darkTheme
-        )
-        Browser(
-            preferences = uiState.preferences,
-            track = uiState.track,
-            listItems = uiState.listItems,
-            thumbnailMap = uiState.thumbnailMap,
-            executeCommand = viewModel::executeCommand
-        )
+    val scrollState = rememberScrollState()
+
+    Scaffold (
+        floatingActionButton = { ScrollToTopButton(scrollState) }
+    ) { pv ->
+        Column(
+            modifier = Modifier
+                .padding(pv)
+                .verticalScroll(scrollState)
+        ) {
+            NowPlayingScreen(
+                uiState = uiState,
+                navToSettings = navToSettings,
+                executeCommand = viewModel::executeCommand,
+                palette = palette,
+                darkTheme = darkTheme
+            )
+            Browser(
+                preferences = uiState.preferences,
+                track = uiState.track,
+                listItems = uiState.listItems,
+                thumbnailMap = uiState.thumbnailMap,
+                executeCommand = viewModel::executeCommand
+            )
+        }
+    }
+}
+
+const val BROWSER_FAB_HEIGHT = 65
+
+@Composable
+fun ScrollToTopButton(scrollState: ScrollState) {
+    val scope = rememberCoroutineScope()
+    val screenHeightPx =
+        with(LocalDensity.current) { LocalConfiguration.current.screenHeightDp.dp.toPx()}
+    if (scrollState.value > screenHeightPx) {
+        FloatingActionButton(
+            onClick = { scope.launch { scrollState.animateScrollTo(0) } },
+            modifier = Modifier
+                .height(BROWSER_FAB_HEIGHT.dp)
+                .aspectRatio(1f)
+        ) {
+            Icon(imageVector = Icons.Default.KeyboardArrowUp, contentDescription = "")
+        }
     }
 }
 
