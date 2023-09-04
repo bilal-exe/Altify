@@ -8,6 +8,7 @@ import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
+import bilal.altify.presentation.prefrences.NowPlayingLayoutConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,6 +47,12 @@ class PreferencesViewModel @Inject constructor(
     fun setBackgroundColourConfig(config: BackgroundColourConfig) {
         viewModelScope.launch {
             preferences.setBackgroundColourConfig(config)
+        }
+    }
+
+    fun setNowPlayingLayoutConfig(config: NowPlayingLayoutConfig) {
+        viewModelScope.launch {
+            preferences.setNowPlayingLayoutConfig(config)
         }
     }
 

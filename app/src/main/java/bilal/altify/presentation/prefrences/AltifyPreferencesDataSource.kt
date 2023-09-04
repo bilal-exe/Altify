@@ -21,6 +21,7 @@ class AltifyPreferencesDataSource(
     private val artworkDisplayConfigKey = intPreferencesKey("ARTWORK_DISPLAY")
     private val musicInfoAlignmentConfigKey = intPreferencesKey("MUSIC_INFO_ALIGNMENT")
     private val backgroundColourConfigKey = intPreferencesKey("BACKGROUND_COLOUR")
+    private val nowPlayingLayoutConfigKey = intPreferencesKey("NOW_PLAYING_LAYOUT")
 
     val state = altPreferences.data.map { preferences ->
         AltPreferencesState(
@@ -38,7 +39,10 @@ class AltifyPreferencesDataSource(
                 ?: MusicInfoAlignmentConfig.CENTER,
             backgroundColour = BackgroundColourConfig.values()
                 .find { it.code == preferences[backgroundColourConfigKey] }
-                ?: BackgroundColourConfig.VIBRANT
+                ?: BackgroundColourConfig.VIBRANT,
+            layoutConfig = NowPlayingLayoutConfig.values()
+                .find { it.code == preferences[nowPlayingLayoutConfigKey] }
+                ?: NowPlayingLayoutConfig.SPACED
         )
     }
         .stateIn(CoroutineScope(IO), SharingStarted.Eagerly, AltPreferencesState())
@@ -61,6 +65,10 @@ class AltifyPreferencesDataSource(
 
     suspend fun setBackgroundColourConfig(config: BackgroundColourConfig) {
         altPreferences.edit { it[backgroundColourConfigKey] = config.code }
+    }
+
+    suspend fun setNowPlayingLayoutConfig(config: NowPlayingLayoutConfig) {
+        altPreferences.edit { it[nowPlayingLayoutConfigKey] = config.code }
     }
 
 }

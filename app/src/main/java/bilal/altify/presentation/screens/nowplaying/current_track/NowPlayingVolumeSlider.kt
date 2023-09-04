@@ -1,6 +1,9 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
@@ -12,15 +15,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
-import bilal.altify.presentation.Command
-import bilal.altify.presentation.VolumeCommand
 import bilal.altify.presentation.screens.nowplaying.complementColor
+import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.util.AltSlider
 
 @Composable
 fun NowPlayingVolumeSlider(
     volume: Float,
-    executeCommand: (Command) -> Unit
+    setVolume: (Float) -> Unit
 ) {
 
     SliderDefaults.colors(
@@ -31,7 +33,8 @@ fun NowPlayingVolumeSlider(
 
     Row(
         modifier = Modifier
-            .width(LocalConfiguration.current.screenWidthDp.dp),
+            .width(LocalConfiguration.current.screenWidthDp.dp)
+            .padding(nowPlayingItemsPadding),
         horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -39,7 +42,7 @@ fun NowPlayingVolumeSlider(
         AltSlider(
             progress = volume,
             duration = 1f
-        ) { executeCommand(VolumeCommand.SetVolume(it)) }
+        ) { setVolume(it) }
     }
 
 }

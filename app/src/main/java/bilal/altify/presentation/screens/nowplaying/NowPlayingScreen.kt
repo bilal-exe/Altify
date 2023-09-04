@@ -56,7 +56,9 @@ import bilal.altify.presentation.Command
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.ImagesCommand
 import bilal.altify.presentation.PlaybackCommand
+import bilal.altify.presentation.VolumeCommand
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.prefrences.NowPlayingLayoutConfig
 import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingArtwork
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingBackground
@@ -69,6 +71,8 @@ import kotlinx.coroutines.launch
 
 var complementColor by mutableStateOf(Color.Black)
     private set
+
+val nowPlayingItemsPadding = PaddingValues(bottom = 8.dp)
 
 @Composable
 fun NowPlayingScreen(
@@ -98,7 +102,7 @@ fun NowPlayingScreen(
 
     val scrollState = rememberScrollState()
 
-    Scaffold (
+    Scaffold(
         floatingActionButton = { ScrollToTopButton(scrollState) }
     ) { pv ->
         Column(
@@ -130,8 +134,8 @@ const val BROWSER_FAB_HEIGHT = 65
 fun ScrollToTopButton(scrollState: ScrollState) {
     val scope = rememberCoroutineScope()
     val screenHeightPx =
-        with(LocalDensity.current) { LocalConfiguration.current.screenHeightDp.dp.toPx()}
-    if (scrollState.value > screenHeightPx) {
+        with(LocalDensity.current) { LocalConfiguration.current.screenHeightDp.dp.toPx() }
+    AnimatedVisibility(visible = scrollState.value > screenHeightPx) {
         FloatingActionButton(
             onClick = { scope.launch { scrollState.animateScrollTo(0) } },
             modifier = Modifier
@@ -219,6 +223,14 @@ private fun NowPlayingPortraitContent(
             .animateContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        val spacing: @Composable () -> Unit = when (uiState.preferences.layoutConfig) {
+            NowPlayingLayoutConfig.SPACED -> {
+                { Spacer(modifier = Modifier.weight(0.5f)) }
+            }
+            NowPlayingLayoutConfig.CONDENSED -> {{}}
+        }
+
         Spacer(modifier = Modifier.weight(1f))
         NowPlayingArtwork(
             bitmap = uiState.artwork,
@@ -232,7 +244,7 @@ private fun NowPlayingPortraitContent(
             track = uiState.track,
             config = uiState.preferences.musicInfoAlignment
         )
-        Spacer(modifier = Modifier.weight(1f))
+        spacing()
         AnimatedVisibility(
             visible = showControls,
             enter = expandVertically(),
@@ -241,21 +253,20 @@ private fun NowPlayingPortraitContent(
             Column {
                 NowPlayingProgressBar(
                     progress = uiState.playbackPosition,
-                    duration = uiState.track?.duration ?: 0
-                ) { executeCommand(PlaybackCommand.Seek(it)) }
-                Spacer(modifier = Modifier.height(16.dp))
+                    duration = uiState.track?.duration ?: 0,
+                    onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
+                )
                 NowPlayingMusicControls(
                     executeCommand = executeCommand,
                     isPaused = uiState.isPaused
                 )
-                Spacer(modifier = Modifier.height(16.dp))
                 NowPlayingVolumeSlider(
                     volume = uiState.volume,
-                    executeCommand = executeCommand
+                    setVolume = { executeCommand(VolumeCommand.SetVolume(it)) }
                 )
             }
         }
-        if (showControls) Spacer(modifier = Modifier.weight(1f))
+        if (showControls) spacing()
     }
 }
 
@@ -310,7 +321,7 @@ private fun NowPlayingLandscapeContent(
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingVolumeSlider(
                         volume = uiState.volume,
-                        executeCommand = executeCommand
+                        setVolume = { executeCommand(VolumeCommand.SetVolume(it)) }
                     )
                 }
             }

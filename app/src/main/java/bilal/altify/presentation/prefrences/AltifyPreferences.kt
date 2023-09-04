@@ -27,10 +27,16 @@ enum class BackgroundColourConfig(override val code: Int, override val title: St
     MUTED(1, "Muted"),
 }
 
+enum class NowPlayingLayoutConfig(override val code: Int, override val title: String) : AltPreference {
+    SPACED(0, "Spaced"),
+    CONDENSED(1, "Condensed")
+}
+
 data class AltPreferencesState(
     val darkTheme: DarkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
     val backgroundStyle: BackgroundStyleConfig = BackgroundStyleConfig.SOLID,
     val artworkDisplay: ArtworkDisplayConfig = ArtworkDisplayConfig.NORMAL,
     val musicInfoAlignment: MusicInfoAlignmentConfig = MusicInfoAlignmentConfig.CENTER,
-    val backgroundColour: BackgroundColourConfig = BackgroundColourConfig.VIBRANT
+    val backgroundColour: BackgroundColourConfig = BackgroundColourConfig.VIBRANT,
+    val layoutConfig: NowPlayingLayoutConfig = NowPlayingLayoutConfig.SPACED
 )

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,13 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
+import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.util.AltText
 
 @Composable
 fun NowPlayingMusicInfo(track: AltTrack?, config: MusicInfoAlignmentConfig) {
     Crossfade(
         targetState = track,
-        animationSpec = tween(durationMillis = 1000)
+        animationSpec = tween(durationMillis = 1000), label = ""
     ) {
         if (it != null) {
             NowPlayingMusicInfo(
@@ -45,7 +47,9 @@ fun NowPlayingMusicInfo(
             MusicInfoAlignmentConfig.CENTER -> Alignment.CenterHorizontally
             MusicInfoAlignmentConfig.LEFT -> Alignment.Start
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(nowPlayingItemsPadding)
     ) {
         AltText(
             text = name,

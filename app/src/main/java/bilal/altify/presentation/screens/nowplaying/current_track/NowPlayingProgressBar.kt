@@ -6,6 +6,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.util.toMinsSecs
 import bilal.altify.presentation.util.AltSlider
 import bilal.altify.presentation.util.AltText
@@ -18,7 +19,8 @@ fun NowPlayingProgressBar(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(nowPlayingItemsPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top)
     ) {
@@ -27,7 +29,9 @@ fun NowPlayingProgressBar(
             duration = duration,
             onSliderMoved = onSliderMoved
         )
-        Row {
+        Row (
+            Modifier.padding(horizontal = 8.dp)
+        ) {
             AltText(text = progress.toMinsSecs())
             Spacer(modifier = Modifier.weight(1f))
             AltText(text = duration.toMinsSecs())

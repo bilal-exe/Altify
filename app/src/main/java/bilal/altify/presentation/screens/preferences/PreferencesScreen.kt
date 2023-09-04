@@ -46,6 +46,7 @@ import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
+import bilal.altify.presentation.prefrences.NowPlayingLayoutConfig
 import bilal.altify.presentation.util.SetStatusBarColor
 
 private var backgroundColor by mutableStateOf(Color.Black)
@@ -59,30 +60,27 @@ fun PreferencesScreen(
 ) {
     val prefState by viewModel.state.collectAsState(initial = AltPreferencesState())
 
-    val setDarkThemeConfig = viewModel::setDarkThemeConfig
-    val setBackgroundStyleConfig = viewModel::setBackgroundStyleConfig
-    val setArtworkDisplayConfig = viewModel::setArtworkDisplayConfig
-    val setMusicInfoAlignmentConfig = viewModel::setMusicInfoAlignmentConfig
-    val setBackgroundColourConfig = viewModel::setBackgroundColourConfig
-
     when (prefState.darkTheme) {
         DarkThemeConfig.FOLLOW_SYSTEM ->
             if (isSystemInDarkTheme()) setDarkModeColors() else setLightModeColors()
+
         DarkThemeConfig.LIGHT ->
             setLightModeColors()
+
         DarkThemeConfig.DARK ->
             setDarkModeColors()
     }
-    
+
     SetStatusBarColor(color = backgroundColor)
 
     PreferencesScreen(
         prefState = prefState,
-        setDarkThemeConfig = setDarkThemeConfig,
-        setBackgroundStyleConfig = setBackgroundStyleConfig,
-        setArtworkDisplayConfig = setArtworkDisplayConfig,
-        setMusicInfoAlignmentConfig = setMusicInfoAlignmentConfig,
-        setBackgroundColourConfig = setBackgroundColourConfig,
+        setDarkThemeConfig = viewModel::setDarkThemeConfig,
+        setBackgroundStyleConfig = viewModel::setBackgroundStyleConfig,
+        setArtworkDisplayConfig = viewModel::setArtworkDisplayConfig,
+        setMusicInfoAlignmentConfig = viewModel::setMusicInfoAlignmentConfig,
+        setBackgroundColourConfig = viewModel::setBackgroundColourConfig,
+        setNowPlayingLayoutConfig = viewModel::setNowPlayingLayoutConfig,
         navToNowPlaying = navToNowPlaying
     )
 }
@@ -96,6 +94,7 @@ private fun PreferencesScreen(
     setArtworkDisplayConfig: (ArtworkDisplayConfig) -> Unit,
     setMusicInfoAlignmentConfig: (MusicInfoAlignmentConfig) -> Unit,
     setBackgroundColourConfig: (BackgroundColourConfig) -> Unit,
+    setNowPlayingLayoutConfig: (NowPlayingLayoutConfig) -> Unit,
     navToNowPlaying: () -> Unit
 ) {
     Column(
@@ -140,6 +139,12 @@ private fun PreferencesScreen(
             selected = prefState.backgroundColour,
             onClick = setBackgroundColourConfig as (AltPreference) -> Unit,
             values = BackgroundColourConfig.values() as Array<AltPreference>
+        )
+        SettingSection(
+            title = "Now Playing Layout",
+            selected = prefState.layoutConfig,
+            onClick = setNowPlayingLayoutConfig as (AltPreference) -> Unit,
+            values = NowPlayingLayoutConfig.values() as Array<AltPreference>
         )
     }
 }
@@ -251,6 +256,7 @@ fun PreferencesScreenPreview() {
         setArtworkDisplayConfig = {},
         setMusicInfoAlignmentConfig = {},
         setBackgroundColourConfig = {},
+        setNowPlayingLayoutConfig = {},
         navToNowPlaying = {},
     )
 }
