@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,12 +24,15 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import bilal.altify.R
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.PlaybackCommand
-import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
+import bilal.altify.presentation.screens.nowplaying.titleColor
+import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.getComplementaryColor
+import java.text.DecimalFormat
 import kotlin.math.sqrt
 
 @Composable
@@ -42,25 +50,26 @@ fun NowPlayingMusicControls(
         MusicControlButton(
             onClick = { executeCommand(PlaybackCommand.SkipPrevious) },
             painter = painterResource(id = R.drawable.skip_previous),
-            modifier = Modifier
-                .dragToSeekRelative { executeCommand(PlaybackCommand.SeekRelative(-it)) }
+            dragToSeekRelative = { executeCommand(PlaybackCommand.SeekRelative(-it)) },
+            modifier = Modifier.weight(1f)
         )
         Crossfade(
             targetState = isPaused, animationSpec = tween(durationMillis = 1000),
-            label = ""
+            label = "",
         ) { isPaused ->
             MusicControlButton(
                 onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
                 painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
                 color = titleColor,
-                iconColor = getComplementaryColor(titleColor),
+                iconColor = bottomColor,
+                modifier = Modifier.weight(1f)
             )
         }
         MusicControlButton(
             onClick = { executeCommand(PlaybackCommand.SkipNext) },
             painter = painterResource(id = R.drawable.skip_next),
-            modifier = Modifier
-                .dragToSeekRelative { executeCommand(PlaybackCommand.SeekRelative(it)) }
+            dragToSeekRelative = { executeCommand(PlaybackCommand.SeekRelative(it)) },
+            modifier = Modifier.weight(1f)
         )
     }
 }
@@ -71,24 +80,39 @@ private fun MusicControlButton(
     modifier: Modifier = Modifier,
     painter: Painter,
     color: Color = Color.Transparent,
-    iconColor: Color = titleColor
+    iconColor: Color = titleColor,
+    dragToSeekRelative: ((Long) -> Unit)? = null
 ) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = color),
-        modifier = modifier
+    var timeInSecs by remember { mutableFloatStateOf(0f) }
+    val setTime: (Float) -> Unit = { timeInSecs = it }
+    Box(
+        modifier = if (dragToSeekRelative == null) modifier else modifier
+            .dragToSeekRelative(dragToSeekRelative, setTime),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painter,
-            contentDescription = "",
-            tint = iconColor
-        )
+        if (timeInSecs == 0f) {
+            Button(
+                onClick = onClick,
+                colors = ButtonDefaults.buttonColors(containerColor = color),
+            ) {
+                Icon(
+                    painter = painter,
+                    contentDescription = "",
+                    tint = iconColor
+                )
+            }
+        } else {
+            AltText(
+                text = DecimalFormat("#.#").format(timeInSecs),
+                fontSize = 30.sp
+            )
+        }
     }
 }
 
-private const val DISTANCE_MOVED_COEFFICIENT = 15
+private const val DISTANCE_MOVED_COEFFICIENT = 20
 
-private fun Modifier.dragToSeekRelative(seekRelative: (Long) -> Unit) =
+private fun Modifier.dragToSeekRelative(seekRelative: (Long) -> Unit, setTime: (Float) -> Unit) =
     this.pointerInput(Unit) {
         var xDistance = 0f
         var yDistance = 0f
@@ -100,11 +124,12 @@ private fun Modifier.dragToSeekRelative(seekRelative: (Long) -> Unit) =
                 Log.d("Drag", "END " + DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance) * 0.001f)
                 xDistance = 0f
                 yDistance = 0f
+                setTime(0f)
             }
         ) { _, dragAmount ->
             xDistance += dragAmount.x
             yDistance += dragAmount.y
-            Log.d("Drag", (DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance) * 0.001f).toString())
+            setTime(DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance) * 0.001f)
         }
     }
 
