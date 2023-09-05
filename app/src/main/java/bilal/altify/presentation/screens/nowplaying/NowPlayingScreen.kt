@@ -254,7 +254,8 @@ private fun NowPlayingPortraitContent(
             track = uiState.track,
             config = uiState.preferences.musicInfoAlignment,
             libraryState = uiState.currentTrackLibraryState,
-            executeCommand = executeCommand
+            executeCommand = executeCommand,
+            showControls = showControls
         )
         Spacer(modifier = Modifier.height(8.dp))
         AnimatedVisibility(
@@ -317,7 +318,8 @@ private fun NowPlayingLandscapeContent(
                 track = uiState.track,
                 config = uiState.preferences.musicInfoAlignment,
                 libraryState = uiState.currentTrackLibraryState,
-                executeCommand = executeCommand
+                executeCommand = executeCommand,
+                showControls = showControls
             )
             AnimatedVisibility(
                 visible = showControls,

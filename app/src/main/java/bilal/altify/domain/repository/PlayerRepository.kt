@@ -17,6 +17,8 @@ interface PlayerRepository {
 
     fun seek(position: Long)
 
+    fun seekRelative(position: Long)
+
     fun addToQueue(uri: String)
 
     fun skipToTrack(uri: String, index: Int)

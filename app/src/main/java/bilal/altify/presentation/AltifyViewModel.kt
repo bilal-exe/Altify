@@ -1,6 +1,7 @@
 package bilal.altify.presentation
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.data.spotify.mappers.toOriginal
@@ -116,7 +117,10 @@ class AltifyViewModel @Inject constructor(
 
     fun executeCommand(command: Command) {
 
-        if (repositories == null) throw Exception()
+        if (repositories == null) {
+            Log.d("Error", "$command")
+            throw Exception()
+        }
 
         when (command) {
 
@@ -136,6 +140,11 @@ class AltifyViewModel @Inject constructor(
             is PlaybackCommand.Seek -> {
                 repositories?.player?.seek(command.position)
             }
+
+            is PlaybackCommand.SeekRelative -> {
+                repositories?.player?.seekRelative(command.position)
+            }
+
             is PlaybackCommand.AddToQueue -> {
                 repositories?.player?.addToQueue(command.uri)
             }

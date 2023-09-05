@@ -16,6 +16,8 @@ sealed interface PlaybackCommand : Command {
 
     data class Seek(val position: Long) : PlaybackCommand
 
+    data class SeekRelative(val position: Long) : PlaybackCommand
+
     data class AddToQueue(val uri: String) : PlaybackCommand
 
     data class SkipToTrack(val uri: String, val index: Int) : PlaybackCommand

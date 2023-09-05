@@ -1,6 +1,7 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +44,8 @@ fun NowPlayingMusicInfo(
     track: AltTrack?,
     config: MusicInfoAlignmentConfig,
     libraryState: AltLibraryState?,
-    executeCommand: (Command) -> Unit
+    executeCommand: (Command) -> Unit,
+    showControls: Boolean
 ) {
 
     val getLibraryState: (String) -> Unit = {
@@ -73,7 +75,8 @@ fun NowPlayingMusicInfo(
                 config = config,
                 libraryState = libraryState,
                 addToLibrary = addToLibrary,
-                removeFromLibrary = removeFromLibrary
+                removeFromLibrary = removeFromLibrary,
+                showControls = showControls
             )
         }
     }
@@ -88,7 +91,8 @@ private fun NowPlayingMusicInfo(
     config: MusicInfoAlignmentConfig,
     libraryState: AltLibraryState?,
     addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit
+    removeFromLibrary: (String) -> Unit,
+    showControls: Boolean
 ) {
     Log.d("libstate", libraryState.toString())
     Row(
@@ -103,7 +107,9 @@ private fun NowPlayingMusicInfo(
             horizontalAlignment = when (config) {
                 MusicInfoAlignmentConfig.CENTER -> Alignment.CenterHorizontally
                 MusicInfoAlignmentConfig.LEFT -> Alignment.Start
-            }
+            },
+            modifier = Modifier
+                .weight(1f)
         ) {
             AltText(
                 text = name,
@@ -128,12 +134,14 @@ private fun NowPlayingMusicInfo(
                 .height(IntrinsicSize.Max),
             contentAlignment = Alignment.CenterEnd,
         ) {
-            AddOrRemoveFromLibraryButton(
-                uri = uri,
-                libraryState = libraryState,
-                addToLibrary = addToLibrary,
-                removeFromLibrary = removeFromLibrary,
-            )
+            this@Row.AnimatedVisibility (showControls) {
+                AddOrRemoveFromLibraryButton(
+                    uri = uri,
+                    libraryState = libraryState,
+                    addToLibrary = addToLibrary,
+                    removeFromLibrary = removeFromLibrary,
+                )
+            }
         }
     }
 }
@@ -179,7 +187,8 @@ private fun NowPlayingMusicInfoPreview() {
         config = MusicInfoAlignmentConfig.CENTER,
         libraryState = AltLibraryState(""),
         addToLibrary = {},
-        removeFromLibrary = {}
+        removeFromLibrary = {},
+        showControls = true
     )
 }
 
@@ -194,6 +203,7 @@ private fun NowPlayingMusicInfoLeftPreview() {
         config = MusicInfoAlignmentConfig.LEFT,
         libraryState = AltLibraryState(""),
         addToLibrary = {},
-        removeFromLibrary = {}
+        removeFromLibrary = {},
+        showControls = true
     )
 }

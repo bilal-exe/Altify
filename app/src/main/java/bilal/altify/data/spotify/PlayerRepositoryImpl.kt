@@ -72,6 +72,10 @@ class PlayerRepositoryImpl(
         playerApi.seekTo(position)
     }
 
+    override fun seekRelative(position: Long) {
+        playerApi.seekToRelativePosition(position)
+    }
+
     override fun skipNext() {
         playerApi.skipNext()
     }

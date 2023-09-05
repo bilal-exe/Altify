@@ -1,7 +1,9 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
+import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import bilal.altify.R
@@ -22,6 +25,7 @@ import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.util.getComplementaryColor
+import kotlin.math.sqrt
 
 @Composable
 fun NowPlayingMusicControls(
@@ -37,9 +41,12 @@ fun NowPlayingMusicControls(
     ) {
         MusicControlButton(
             onClick = { executeCommand(PlaybackCommand.SkipPrevious) },
-            painter = painterResource(id = R.drawable.skip_previous)
+            painter = painterResource(id = R.drawable.skip_previous),
+            modifier = Modifier
+                .dragToSeekRelative { executeCommand(PlaybackCommand.SeekRelative(-it)) }
         )
-        Crossfade(targetState = isPaused, animationSpec = tween(durationMillis = 1000),
+        Crossfade(
+            targetState = isPaused, animationSpec = tween(durationMillis = 1000),
             label = ""
         ) { isPaused ->
             MusicControlButton(
@@ -51,7 +58,9 @@ fun NowPlayingMusicControls(
         }
         MusicControlButton(
             onClick = { executeCommand(PlaybackCommand.SkipNext) },
-            painter = painterResource(id = R.drawable.skip_next)
+            painter = painterResource(id = R.drawable.skip_next),
+            modifier = Modifier
+                .dragToSeekRelative { executeCommand(PlaybackCommand.SeekRelative(it)) }
         )
     }
 }
@@ -59,13 +68,15 @@ fun NowPlayingMusicControls(
 @Composable
 private fun MusicControlButton(
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     painter: Painter,
     color: Color = Color.Transparent,
     iconColor: Color = titleColor
 ) {
     Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = color)
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        modifier = modifier
     ) {
         Icon(
             painter = painter,
@@ -74,6 +85,31 @@ private fun MusicControlButton(
         )
     }
 }
+
+private const val DISTANCE_MOVED_COEFFICIENT = 15
+
+private fun Modifier.dragToSeekRelative(seekRelative: (Long) -> Unit) =
+    this.pointerInput(Unit) {
+        var xDistance = 0f
+        var yDistance = 0f
+        this.detectDragGestures(
+            onDragEnd = {
+                seekRelative(
+                    DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance).toLong()
+                )
+                Log.d("Drag", "END " + DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance) * 0.001f)
+                xDistance = 0f
+                yDistance = 0f
+            }
+        ) { _, dragAmount ->
+            xDistance += dragAmount.x
+            yDistance += dragAmount.y
+            Log.d("Drag", (DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance) * 0.001f).toString())
+        }
+    }
+
+private fun pythagoras(x: Float, y: Float) =
+    sqrt((x * x) + (y * y))
 
 @Preview
 @Composable
