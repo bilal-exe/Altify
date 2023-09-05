@@ -31,8 +31,7 @@ import bilal.altify.presentation.PlaybackCommand
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.AltText
-import bilal.altify.presentation.util.getComplementaryColor
-import java.text.DecimalFormat
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @Composable
@@ -103,7 +102,7 @@ private fun MusicControlButton(
             }
         } else {
             AltText(
-                text = DecimalFormat("#.#").format(timeInSecs),
+                text = timeInSecs.roundToInt().toString(),
                 fontSize = 30.sp
             )
         }

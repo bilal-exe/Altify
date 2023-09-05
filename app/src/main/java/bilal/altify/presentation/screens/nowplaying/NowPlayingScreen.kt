@@ -130,6 +130,7 @@ fun NowPlayingScreen(
                 track = uiState.track,
                 listItems = uiState.listItems,
                 thumbnailMap = uiState.thumbnailMap,
+                libraryState = uiState.browserLibraryState,
                 executeCommand = viewModel::executeCommand
             )
         }

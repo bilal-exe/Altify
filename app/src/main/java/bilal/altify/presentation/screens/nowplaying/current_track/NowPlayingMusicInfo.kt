@@ -3,6 +3,7 @@ package bilal.altify.presentation.screens.nowplaying.current_track
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,8 +23,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +43,8 @@ import bilal.altify.presentation.screens.nowplaying.bodyColor
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.AltText
+import bilal.altify.presentation.util.UpdateEffect
+import bilal.altify.presentation.util.shakeShrinkAnimation
 
 @Composable
 fun NowPlayingMusicInfo(
@@ -134,7 +141,7 @@ private fun NowPlayingMusicInfo(
                 .height(IntrinsicSize.Max),
             contentAlignment = Alignment.CenterEnd,
         ) {
-            this@Row.AnimatedVisibility (showControls) {
+            this@Row.AnimatedVisibility(showControls) {
                 AddOrRemoveFromLibraryButton(
                     uri = uri,
                     libraryState = libraryState,
@@ -146,7 +153,6 @@ private fun NowPlayingMusicInfo(
     }
 }
 
-// TODO: add a nice animation 😊
 @Composable
 fun AddOrRemoveFromLibraryButton(
     uri: String,
@@ -155,8 +161,16 @@ fun AddOrRemoveFromLibraryButton(
     removeFromLibrary: (String) -> Unit,
 ) {
     if (libraryState != null) {
+        val scale = remember { Animatable(1f) }
+        val rotation = remember { Animatable(1f) }
+        val coroutineScope = rememberCoroutineScope()
+
+        UpdateEffect(libraryState.isAdded) {
+            shakeShrinkAnimation(scale =  scale, rotation = rotation, scope = coroutineScope)
+        }
+
         IconButton(
-            onClick = {
+            onClick =  {
                 when (libraryState.isAdded) {
                     true -> removeFromLibrary(uri)
                     false -> if (libraryState.canAdd) addToLibrary(uri)
@@ -169,7 +183,10 @@ fun AddOrRemoveFromLibraryButton(
                     false -> Icons.Outlined.FavoriteBorder
                 },
                 contentDescription = "",
-                modifier = Modifier.size(30.dp),
+                modifier = Modifier
+                    .size(30.dp)
+                    .scale(scale = scale.value)
+                    .rotate(rotation.value),
                 tint = titleColor
             )
         }
@@ -185,7 +202,7 @@ private fun NowPlayingMusicInfoPreview() {
         album = "album",
         uri = "",
         config = MusicInfoAlignmentConfig.CENTER,
-        libraryState = AltLibraryState(""),
+        libraryState = AltLibraryState("", false, canAdd = false),
         addToLibrary = {},
         removeFromLibrary = {},
         showControls = true
@@ -201,7 +218,7 @@ private fun NowPlayingMusicInfoLeftPreview() {
         album = "album",
         uri = "",
         config = MusicInfoAlignmentConfig.LEFT,
-        libraryState = AltLibraryState(""),
+        libraryState = AltLibraryState("", false, false),
         addToLibrary = {},
         removeFromLibrary = {},
         showControls = true

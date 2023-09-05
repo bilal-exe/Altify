@@ -26,22 +26,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
+import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.Command
 import bilal.altify.presentation.ContentCommand
 import bilal.altify.presentation.ImagesCommand
+import bilal.altify.presentation.UserCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
 import bilal.altify.presentation.util.AltText
 
+// TODO: Add swipe to add to queue
 @Composable
 fun Browser(
     preferences: AltPreferencesState,
     track: AltTrack?,
     listItems: List<AltListItem>,
     thumbnailMap: Map<String, Bitmap>,
+    libraryState: Map<String, AltLibraryState>,
     executeCommand: (Command) -> Unit
 ) {
 
@@ -57,6 +61,12 @@ fun Browser(
     val getThumbnail: (String) -> Unit = {
         executeCommand(ImagesCommand.GetThumbnail(it))
     }
+    val addToLibrary: (String) -> Unit = {
+        executeCommand(UserCommand.AddToLibrary(it))
+    }
+    val removeFromLibrary: (String) -> Unit = {
+        executeCommand(UserCommand.RemoveFromLibrary(it))
+    }
 
     LaunchedEffect(key1 = listItems) {
         if (listItems.isNotEmpty()) {
@@ -64,6 +74,7 @@ fun Browser(
             listItems.forEach { item ->
                 if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
             }
+            executeCommand(UserCommand.UpdateBrowserLibraryState(listItems.map { it.uri }))
         }
     }
 
@@ -81,6 +92,9 @@ fun Browser(
                         playItem = playItem,
                         getChildrenOfItem = getChildrenOfItem,
                         thumbnailMap = thumbnailMap,
+                        libraryState = libraryState,
+                        addToLibrary = addToLibrary,
+                        removeFromLibrary = removeFromLibrary
                     )
             }
         }
@@ -146,8 +160,10 @@ private fun EmptyPreview() {
         preferences = AltPreferencesState(),
         track = null,
         listItems = emptyList(),
-        thumbnailMap = emptyMap()
-    ) {}
+        thumbnailMap = emptyMap(),
+        libraryState = emptyMap(),
+        executeCommand = {}
+    )
 }
 
 @Preview
@@ -170,6 +186,8 @@ fun BrowserPreview() {
         preferences = AltPreferencesState(),
         track = null,
         listItems = items,
-        thumbnailMap = emptyMap()
-    ) {}
+        thumbnailMap = emptyMap(),
+        libraryState = emptyMap(),
+        executeCommand = {}
+    )
 }

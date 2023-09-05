@@ -2,13 +2,21 @@ package bilal.altify.presentation.util
 
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.core.app.ActivityCompat
 import androidx.palette.graphics.Palette
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 
@@ -39,4 +47,32 @@ fun Color.complement(): Color {
         green = sumOfHighestLowest - g,
         alpha = this.alpha
     )
+}
+
+/**
+ * The same as [LaunchedEffect] but skips the first invocation
+ */
+@Composable
+fun UpdateEffect(key: Any, block: suspend CoroutineScope.() -> Unit) {
+    var isTriggered by remember { mutableStateOf(false) }
+    LaunchedEffect(key) {
+        if (isTriggered) block() else isTriggered = true
+    }
+}
+
+fun shakeShrinkAnimation(
+    scale: Animatable<Float, AnimationVector1D>,
+    rotation: Animatable<Float, AnimationVector1D>,
+    scope: CoroutineScope
+) {
+    scope.launch {
+        scale.animateTo(0.2f)
+        scale.animateTo(1f)
+    }
+    scope.launch {
+        rotation.animateTo(35f)
+        rotation.animateTo(-35f)
+        rotation.animateTo(35f)
+        rotation.animateTo(0f)
+    }
 }
