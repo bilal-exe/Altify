@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.data.spotify.mappers.toOriginal
 import bilal.altify.domain.controller.AltifyRepositories
+import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltPlayerStateAndContext
 import bilal.altify.domain.repository.SpotifyConnector
@@ -68,7 +69,9 @@ class AltifyViewModel @Inject constructor(
                             repositories!!.volume.getVolume(),
                             repositories!!.content.getListItemsFlow(),
                             repositories!!.images.getArtworkFlow(),
-                            repositories!!.images.getThumbnailFlow()
+                            repositories!!.images.getThumbnailFlow(),
+                            repositories!!.user.currentTrackLibraryState,
+                            repositories!!.user.browserLibraryState,
                         ) { arr ->
                             _uiState.update {
                                 it.copy(
@@ -81,7 +84,9 @@ class AltifyViewModel @Inject constructor(
                                     volume = arr[2] as Float,
                                     listItems = arr[3] as List<AltListItem>,
                                     artwork = arr[4] as Bitmap?,
-                                    thumbnailMap = arr[5] as Map<String, Bitmap>
+                                    thumbnailMap = arr[5] as Map<String, Bitmap>,
+                                    currentTrackLibraryState = arr[6] as AltLibraryState?,
+                                    browserLibraryState = arr[7] as Map<String, AltLibraryState>
                                 )
                             }
                         }.launchIn(
@@ -169,6 +174,19 @@ class AltifyViewModel @Inject constructor(
 
             is ImagesCommand.GetArtwork ->
                 repositories?.images?.getArtwork(command.uri)
+
+            // user
+            is UserCommand.UpdateCurrentTrackState ->
+                repositories?.user?.updateCurrentTrackState(command.uri)
+
+            is UserCommand.UpdateBrowserLibraryState ->
+                repositories?.user?.updateBrowserLibraryState(command.uris)
+
+            is UserCommand.AddToLibrary ->
+                repositories?.user?.addToLibrary(command.uri)
+
+            is UserCommand.RemoveFromLibrary ->
+                repositories?.user?.removeFromLibrary(command.uri)
         }
 
     }

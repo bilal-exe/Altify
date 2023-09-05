@@ -1,10 +1,12 @@
 package bilal.altify.data.spotify.mappers
 
+import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltPlayerStateAndContext
 import bilal.altify.domain.model.AltTrack
 import com.spotify.protocol.types.ImageUri
+import com.spotify.protocol.types.LibraryState
 import com.spotify.protocol.types.ListItem
 import com.spotify.protocol.types.PlayerContext
 import com.spotify.protocol.types.PlayerState
@@ -44,6 +46,13 @@ fun ListItem.toAlt() =
         subtitle = this.subtitle,
         playable = this.playable,
         hasChildren = this.hasChildren,
+    )
+
+fun LibraryState.toAlt() =
+    AltLibraryState(
+        uri = this.uri,
+        isAdded = this.isAdded,
+        canAdd = this.canAdd
     )
 
 fun AltListItem.toOriginal() =

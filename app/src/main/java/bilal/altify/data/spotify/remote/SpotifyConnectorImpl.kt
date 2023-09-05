@@ -5,6 +5,7 @@ import android.util.Log
 import bilal.altify.data.spotify.ContentRepositoryImpl
 import bilal.altify.data.spotify.ImagesRepositoryImpl
 import bilal.altify.data.spotify.PlayerRepositoryImpl
+import bilal.altify.data.spotify.UserRepositoryImpl
 import bilal.altify.data.spotify.VolumeRepositoryImpl
 import bilal.altify.domain.controller.AltifyRepositories
 import bilal.altify.domain.repository.SpotifyConnector
@@ -40,7 +41,8 @@ class SpotifyConnectorImpl(
                             player = PlayerRepositoryImpl(sar.playerApi),
                             content = ContentRepositoryImpl(sar.contentApi),
                             images = ImagesRepositoryImpl(sar.imagesApi),
-                            volume = VolumeRepositoryImpl(sar.connectApi)
+                            volume = VolumeRepositoryImpl(sar.connectApi),
+                            user = UserRepositoryImpl(sar.userApi)
                         )
                     )
                 )

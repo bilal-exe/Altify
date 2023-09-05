@@ -51,3 +51,15 @@ sealed interface ImagesCommand : Command {
     object ClearThumbnails : ImagesCommand
 
 }
+
+sealed interface UserCommand : Command {
+
+    data class UpdateCurrentTrackState(val uri: String) : UserCommand
+
+    data class UpdateBrowserLibraryState(val uris: List<String>) : UserCommand
+
+    data class AddToLibrary(val uri: String) : UserCommand
+
+    data class RemoveFromLibrary(val uri: String) : UserCommand
+
+}

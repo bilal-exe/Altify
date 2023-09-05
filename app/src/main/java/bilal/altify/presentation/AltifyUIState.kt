@@ -1,6 +1,7 @@
 package bilal.altify.presentation
 
 import android.graphics.Bitmap
+import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltTrack
@@ -27,5 +28,7 @@ data class AltifyUIState(
     val volume: Float = 0f,
     val listItems: List<AltListItem> = emptyList(),
     val artwork: Bitmap? = null,
-    val thumbnailMap: Map<String, Bitmap> = emptyMap()
+    val thumbnailMap: Map<String, Bitmap> = emptyMap(),
+    val currentTrackLibraryState: AltLibraryState? = null,
+    val browserLibraryState: Map<String, AltLibraryState> = emptyMap()
 )
