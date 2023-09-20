@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
 
-    fun getPlayerStateAndContext(): Flow<AltPlayerStateAndContext>
+    val playerStateAndContext: Flow<AltPlayerStateAndContext>
 
     fun pauseResume(isPaused: Boolean)
 

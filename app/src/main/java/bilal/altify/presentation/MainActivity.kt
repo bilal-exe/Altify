@@ -87,6 +87,22 @@ enum class DarkThemeConfig(override val code: Int, override val title: String) :
 @Composable
 fun DefaultPreview() {
     AltifyTheme {
-
+        AltifyApp()
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingPreview() {
+    LoadingScreen("Connecting to Spotify...")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DisconnectedPreview() {
+    ErrorScreen(
+        message = "Couldn't connect to Spotify",
+        buttonText = "Tap to retry",
+        buttonFunc = {}
+    )
 }

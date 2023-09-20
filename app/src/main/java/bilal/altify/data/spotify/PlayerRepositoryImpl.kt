@@ -40,7 +40,7 @@ class PlayerRepositoryImpl(
 
     }
 
-    override fun getPlayerStateAndContext() =
+    override val playerStateAndContext =
         combine(
             playerState(),
             playerContext()

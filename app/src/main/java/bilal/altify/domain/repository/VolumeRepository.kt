@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface VolumeRepository {
 
-    fun getVolume(): Flow<Float>
+    val volume: Flow<Float>
 
     fun increaseVolume()
 

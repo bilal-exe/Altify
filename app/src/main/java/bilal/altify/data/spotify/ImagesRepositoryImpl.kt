@@ -6,7 +6,6 @@ import bilal.altify.domain.repository.ImagesRepository
 import com.spotify.android.appremote.api.ImagesApi
 import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ImageUri
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,12 +15,11 @@ class ImagesRepositoryImpl(
 ) : ImagesRepository {
 
     private val _artworkFlow = MutableStateFlow<Bitmap?>(null)
-    private val artworkFlow = _artworkFlow.asStateFlow()
+    override val artworkFlow = _artworkFlow.asStateFlow()
     private fun artworkCallback(bmp: Bitmap?) { _artworkFlow.value = bmp }
-    override fun getArtworkFlow(): Flow<Bitmap?> = artworkFlow
 
     private val _thumbnailFlow = MutableStateFlow<Map<String, Bitmap>>(emptyMap())
-    private val thumbnailFlow = _thumbnailFlow.asStateFlow()
+    override val thumbnailFlow = _thumbnailFlow.asStateFlow()
     private fun thumbnailCallback(bmp: Bitmap, uri: String) {
         _thumbnailFlow.update {
             val map = thumbnailFlow.value.toMutableMap()
@@ -29,7 +27,6 @@ class ImagesRepositoryImpl(
             map.toMap()
         }
     }
-    override fun getThumbnailFlow(): Flow<Map<String, Bitmap>> = thumbnailFlow
 
     override fun getArtwork(uri: String) {
         imagesApi.getImage(ImageUri(uri), Image.Dimension.LARGE)

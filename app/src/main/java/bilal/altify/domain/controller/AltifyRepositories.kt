@@ -6,7 +6,7 @@ import bilal.altify.domain.repository.PlayerRepository
 import bilal.altify.domain.repository.UserRepository
 import bilal.altify.domain.repository.VolumeRepository
 
-class AltifyRepositories(
+data class AltifyRepositories(
     val player: PlayerRepository,
     val content: ContentRepository,
     val images: ImagesRepository,

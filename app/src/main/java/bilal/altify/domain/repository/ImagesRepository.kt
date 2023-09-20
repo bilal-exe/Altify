@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface ImagesRepository {
 
-    fun getArtworkFlow(): Flow<Bitmap?>
+    val artworkFlow: Flow<Bitmap?>
 
     fun getArtwork(uri: String)
 
-    fun getThumbnailFlow(): Flow<Map<String, Bitmap>>
+    val thumbnailFlow: Flow<Map<String, Bitmap>>
 
     fun getThumbnail(uri: String)
 

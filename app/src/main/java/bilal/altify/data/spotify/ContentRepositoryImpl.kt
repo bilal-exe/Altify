@@ -19,10 +19,7 @@ class ContentRepositoryImpl(
     }
 
     private val _listItemsFlow = MutableStateFlow<List<AltListItem>>(emptyList())
-    private val listItemsFlow = _listItemsFlow.asStateFlow()
-
-    override fun getListItemsFlow() =
-        listItemsFlow
+    override val listItemsFlow = _listItemsFlow.asStateFlow()
 
     override fun getRecommended() {
         contentApi

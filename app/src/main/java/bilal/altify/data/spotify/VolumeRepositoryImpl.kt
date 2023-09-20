@@ -10,7 +10,7 @@ class VolumeRepositoryImpl(
     private val connectApi: ConnectApi
 ) : VolumeRepository {
 
-    override fun getVolume(): Flow<Float> = callbackFlow {
+    override val volume: Flow<Float> = callbackFlow {
 
         trySend(0f)
 
