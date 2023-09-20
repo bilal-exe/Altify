@@ -1,6 +1,5 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
@@ -101,7 +100,6 @@ private fun NowPlayingMusicInfo(
     removeFromLibrary: (String) -> Unit,
     showControls: Boolean
 ) {
-    Log.d("libstate", libraryState.toString())
     Row(
         modifier = Modifier
             .fillMaxWidth()

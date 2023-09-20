@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         )
 
                     is AltifyConnectionState.Success ->
-                        AltifyApp()
+                        AltifyApp(viewModel = viewModel)
 
                 }
 
@@ -87,7 +87,6 @@ enum class DarkThemeConfig(override val code: Int, override val title: String) :
 @Composable
 fun DefaultPreview() {
     AltifyTheme {
-        AltifyApp()
     }
 }
 

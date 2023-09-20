@@ -54,7 +54,9 @@ class AltifyViewModel @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     fun connect() {
-        _uiState.update { it.copy(connectionState = AltifyConnectionState.Connecting) }
+        _uiState.update {
+            it.copy(connectionState = AltifyConnectionState.Connecting)
+        }
         viewModelScope.launch {
             spotifyConnector.connect().collectLatest { response ->
 
@@ -66,11 +68,11 @@ class AltifyViewModel @Inject constructor(
 
                         combine(
                             preferences.state,
-                            repositories!!.player.getPlayerStateAndContext(),
-                            repositories!!.volume.getVolume(),
-                            repositories!!.content.getListItemsFlow(),
-                            repositories!!.images.getArtworkFlow(),
-                            repositories!!.images.getThumbnailFlow(),
+                            repositories!!.player.playerStateAndContext,
+                            repositories!!.volume.volume,
+                            repositories!!.content.listItemsFlow,
+                            repositories!!.images.artworkFlow,
+                            repositories!!.images.thumbnailFlow,
                             repositories!!.user.currentTrackLibraryState,
                             repositories!!.user.browserLibraryState,
                         ) { arr ->

@@ -1,6 +1,5 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
-import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -120,7 +119,6 @@ private fun Modifier.dragToSeekRelative(seekRelative: (Long) -> Unit, setTime: (
                 seekRelative(
                     DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance).toLong()
                 )
-                Log.d("Drag", "END " + DISTANCE_MOVED_COEFFICIENT * pythagoras(xDistance, yDistance) * 0.001f)
                 xDistance = 0f
                 yDistance = 0f
                 setTime(0f)

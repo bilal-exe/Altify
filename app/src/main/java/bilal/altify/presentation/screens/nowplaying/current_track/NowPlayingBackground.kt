@@ -1,6 +1,5 @@
 package bilal.altify.presentation.screens.nowplaying.current_track
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -35,13 +34,12 @@ fun NowPlayingBackground(
 ) {
 
     if (palette == null) {
-        Log.d("UI", "Null palette")
         NowPlayingSolidBackground(
             backgroundColor = if (darkTheme) Color.Black else Color.White,
             content = content
         )
         return
-    } else Log.d("UI", "Non Null palette")
+    }
 
     val surfaceColor = MaterialTheme.colorScheme.surface
 

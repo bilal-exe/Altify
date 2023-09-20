@@ -46,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
 import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltTrack
@@ -79,7 +78,7 @@ val nowPlayingItemsPadding = PaddingValues(bottom = 8.dp)
 @Composable
 fun NowPlayingScreen(
     navToSettings: () -> Unit,
-    viewModel: AltifyViewModel = hiltViewModel()
+    viewModel: AltifyViewModel
 ) {
 
     val uiState by viewModel.uiState.collectAsState()

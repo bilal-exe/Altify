@@ -10,12 +10,14 @@ import bilal.altify.data.spotify.VolumeRepositoryImpl
 import bilal.altify.domain.controller.AltifyRepositories
 import bilal.altify.domain.repository.SpotifyConnector
 import bilal.altify.domain.repository.SpotifyConnectorResponse
+import bilal.altify.presentation.screens.LoadingScreen
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.error.SpotifyAppRemoteException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.onEach
 
 class SpotifyConnectorImpl(
     private val context: Context

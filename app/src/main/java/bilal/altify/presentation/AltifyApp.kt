@@ -17,7 +17,7 @@ import bilal.altify.presentation.navigation.AltifyNavHost
 import bilal.altify.presentation.navigation.destinations
 
 @Composable
-fun AltifyApp() {
+fun AltifyApp(viewModel: AltifyViewModel) {
 
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
@@ -33,6 +33,7 @@ fun AltifyApp() {
         AltifyNavHost(
             modifier = Modifier.padding(padding),
             navController = navController,
+            viewModel = viewModel
         )
     }
 
