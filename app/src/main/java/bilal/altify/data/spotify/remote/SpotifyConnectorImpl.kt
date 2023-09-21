@@ -2,22 +2,20 @@ package bilal.altify.data.spotify.remote
 
 import android.content.Context
 import android.util.Log
-import bilal.altify.data.spotify.ContentRepositoryImpl
-import bilal.altify.data.spotify.ImagesRepositoryImpl
-import bilal.altify.data.spotify.PlayerRepositoryImpl
-import bilal.altify.data.spotify.UserRepositoryImpl
-import bilal.altify.data.spotify.VolumeRepositoryImpl
-import bilal.altify.domain.controller.AltifyRepositories
-import bilal.altify.domain.repository.SpotifyConnector
-import bilal.altify.domain.repository.SpotifyConnectorResponse
-import bilal.altify.presentation.screens.LoadingScreen
+import bilal.altify.data.spotify.ContentSourceImpl
+import bilal.altify.data.spotify.ImagesSourceImpl
+import bilal.altify.data.spotify.PlayerSourceImpl
+import bilal.altify.data.spotify.UserSourceImpl
+import bilal.altify.data.spotify.VolumeSourceImpl
+import bilal.altify.domain.controller.AltifySources
+import bilal.altify.domain.sources.SpotifyConnector
+import bilal.altify.domain.sources.SpotifyConnectorResponse
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.error.SpotifyAppRemoteException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.onEach
 
 class SpotifyConnectorImpl(
     private val context: Context
@@ -39,12 +37,12 @@ class SpotifyConnectorImpl(
                 Log.d("SpotifyAppRemote", "Connected")
                 trySend(
                     SpotifyConnectorResponse.Connected(
-                        AltifyRepositories(
-                            player = PlayerRepositoryImpl(sar.playerApi),
-                            content = ContentRepositoryImpl(sar.contentApi),
-                            images = ImagesRepositoryImpl(sar.imagesApi),
-                            volume = VolumeRepositoryImpl(sar.connectApi),
-                            user = UserRepositoryImpl(sar.userApi)
+                        AltifySources(
+                            player = PlayerSourceImpl(sar.playerApi),
+                            content = ContentSourceImpl(sar.contentApi),
+                            images = ImagesSourceImpl(sar.imagesApi),
+                            volume = VolumeSourceImpl(sar.connectApi),
+                            user = UserSourceImpl(sar.userApi)
                         )
                     )
                 )

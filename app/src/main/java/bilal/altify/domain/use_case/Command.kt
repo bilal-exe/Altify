@@ -1,4 +1,4 @@
-package bilal.altify.presentation
+package bilal.altify.domain.use_case
 
 import bilal.altify.domain.model.AltListItem
 

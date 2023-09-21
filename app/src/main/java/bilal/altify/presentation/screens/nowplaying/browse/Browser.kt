@@ -29,10 +29,10 @@ import bilal.altify.R
 import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
-import bilal.altify.presentation.Command
-import bilal.altify.presentation.ContentCommand
-import bilal.altify.presentation.ImagesCommand
-import bilal.altify.presentation.UserCommand
+import bilal.altify.domain.use_case.Command
+import bilal.altify.domain.use_case.ContentCommand
+import bilal.altify.domain.use_case.ImagesCommand
+import bilal.altify.domain.use_case.UserCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor

@@ -1,8 +1,8 @@
-package bilal.altify.domain.repository
+package bilal.altify.domain.sources
 
 import kotlinx.coroutines.flow.Flow
 
-interface VolumeRepository {
+interface VolumeSource {
 
     val volume: Flow<Float>
 

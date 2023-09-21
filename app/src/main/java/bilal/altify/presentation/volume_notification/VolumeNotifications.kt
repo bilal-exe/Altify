@@ -30,16 +30,19 @@ class VolumeNotifications @Inject constructor(private val context: Context) {
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-
     @SuppressLint("MissingPermission")
     fun show(scope: CoroutineScope, volume: Flow<Float>) {
         with(NotificationManagerCompat.from(context)) {
+            var previousVolume = 0f
             scope.launch {
                 volume.collectLatest { vol ->
-                    builder.setProgress(MAX_PROGRESS, (vol * 100).toInt(), false)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                        if (context.quickCheckPerms(Manifest.permission.POST_NOTIFICATIONS))
-                            notify(notificationId, builder.build())
+                    if (vol != previousVolume) {
+                        previousVolume = vol
+                        builder.setProgress(MAX_PROGRESS, (vol * 100).toInt(), false)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                            if (context.quickCheckPerms(Manifest.permission.POST_NOTIFICATIONS))
+                                notify(notificationId, builder.build())
+                    }
                 }
             }.invokeOnCompletion {
                 notificationManager.cancel(notificationId)

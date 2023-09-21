@@ -1,14 +1,14 @@
 package bilal.altify.data.spotify
 
-import bilal.altify.domain.repository.VolumeRepository
+import bilal.altify.domain.sources.VolumeSource
 import com.spotify.android.appremote.api.ConnectApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class VolumeRepositoryImpl(
+class VolumeSourceImpl(
     private val connectApi: ConnectApi
-) : VolumeRepository {
+) : VolumeSource {
 
     override val volume: Flow<Float> = callbackFlow {
 

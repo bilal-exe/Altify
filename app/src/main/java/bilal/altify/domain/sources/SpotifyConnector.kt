@@ -1,6 +1,6 @@
-package bilal.altify.domain.repository
+package bilal.altify.domain.sources
 
-import bilal.altify.domain.controller.AltifyRepositories
+import bilal.altify.domain.controller.AltifySources
 import kotlinx.coroutines.flow.Flow
 import java.lang.Exception
 
@@ -12,7 +12,7 @@ interface SpotifyConnector {
 
 sealed interface SpotifyConnectorResponse {
 
-    data class Connected(val repositories: AltifyRepositories): SpotifyConnectorResponse
+    data class Connected(val repositories: AltifySources): SpotifyConnectorResponse
 
     data class ConnectionFailed(val exception: Exception): SpotifyConnectorResponse
 

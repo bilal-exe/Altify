@@ -3,15 +3,15 @@ package bilal.altify.data.spotify
 import android.util.Log
 import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.domain.model.AltLibraryState
-import bilal.altify.domain.repository.UserRepository
+import bilal.altify.domain.sources.UserSource
 import com.spotify.android.appremote.api.UserApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class UserRepositoryImpl(
+class UserSourceImpl(
     private val userApi: UserApi
-) : UserRepository {
+) : UserSource {
 
     private val _currentTrackLibraryState = MutableStateFlow<AltLibraryState?>(null)
     override val currentTrackLibraryState = _currentTrackLibraryState.asStateFlow()

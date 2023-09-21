@@ -1,10 +1,10 @@
-package bilal.altify.domain.repository
+package bilal.altify.domain.sources
 
 import bilal.altify.domain.model.AltListItem
 import com.spotify.protocol.types.ListItem
 import kotlinx.coroutines.flow.Flow
 
-interface ContentRepository {
+interface ContentSource {
 
     val listItemsFlow: Flow<List<AltListItem>>
 

@@ -3,16 +3,16 @@ package bilal.altify.data.spotify
 import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.data.spotify.mappers.toOriginal
 import bilal.altify.domain.model.AltListItem
-import bilal.altify.domain.repository.ContentRepository
+import bilal.altify.domain.sources.ContentSource
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.protocol.types.ListItem
 import com.spotify.protocol.types.ListItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ContentRepositoryImpl(
+class ContentSourceImpl(
     private val contentApi: ContentApi
-) : ContentRepository {
+) : ContentSource {
 
     private fun listItemsCallback(lis: ListItems) {
         _listItemsFlow.value = lis.items.map { it.toAlt() }

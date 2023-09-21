@@ -2,7 +2,7 @@ package bilal.altify.data.spotify
 
 import android.graphics.Bitmap
 import android.util.Log
-import bilal.altify.domain.repository.ImagesRepository
+import bilal.altify.domain.sources.ImagesSource
 import com.spotify.android.appremote.api.ImagesApi
 import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ImageUri
@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ImagesRepositoryImpl(
+class ImagesSourceImpl(
     private val imagesApi: ImagesApi
-) : ImagesRepository {
+) : ImagesSource {
 
     private val _artworkFlow = MutableStateFlow<Bitmap?>(null)
     override val artworkFlow = _artworkFlow.asStateFlow()

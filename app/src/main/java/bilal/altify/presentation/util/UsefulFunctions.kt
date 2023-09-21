@@ -16,12 +16,18 @@ import androidx.core.app.ActivityCompat
 import androidx.palette.graphics.Palette
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 
 fun Context.quickCheckPerms(permission: String) =
     ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+
+fun <T> Flow<T>.collectLatestOn(scope: CoroutineScope, action: suspend (value: T) -> Unit) {
+    scope.launch { this@collectLatestOn.collectLatest(action) }
+}
 
 fun Palette.Swatch.getColor() = Color(rgb)
 

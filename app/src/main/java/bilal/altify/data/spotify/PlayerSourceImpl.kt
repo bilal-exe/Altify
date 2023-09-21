@@ -2,15 +2,15 @@ package bilal.altify.data.spotify
 
 import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.domain.model.AltPlayerStateAndContext
-import bilal.altify.domain.repository.PlayerRepository
+import bilal.altify.domain.sources.PlayerSource
 import com.spotify.android.appremote.api.PlayerApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 
-class PlayerRepositoryImpl(
+class PlayerSourceImpl(
     private val playerApi: PlayerApi,
-) : PlayerRepository {
+) : PlayerSource {
 
     private fun playerState() = callbackFlow {
         val subscription = playerApi.subscribeToPlayerState()

@@ -1,9 +1,9 @@
-package bilal.altify.domain.repository
+package bilal.altify.domain.sources
 
 import bilal.altify.domain.model.AltLibraryState
 import kotlinx.coroutines.flow.Flow
 
-interface UserRepository {
+interface UserSource {
 
     val currentTrackLibraryState: Flow<AltLibraryState?>
 

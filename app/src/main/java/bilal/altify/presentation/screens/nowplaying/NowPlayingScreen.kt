@@ -51,11 +51,12 @@ import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.AltifyViewModel
-import bilal.altify.presentation.Command
+import bilal.altify.domain.use_case.Command
 import bilal.altify.presentation.DarkThemeConfig
-import bilal.altify.presentation.ImagesCommand
-import bilal.altify.presentation.PlaybackCommand
-import bilal.altify.presentation.VolumeCommand
+import bilal.altify.domain.use_case.ImagesCommand
+import bilal.altify.domain.use_case.PlaybackCommand
+import bilal.altify.domain.use_case.VolumeCommand
+import bilal.altify.presentation.CurrentTrackState
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.screens.nowplaying.browse.Browser
@@ -83,7 +84,7 @@ fun NowPlayingScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    val palette = uiState.artwork?.let {
+    val palette = uiState.currentTrackState.artwork?.let {
         if (uiState.preferences.backgroundStyle != BackgroundStyleConfig.PLAIN)
             Palette.from(it).generate()
         else null
@@ -103,8 +104,8 @@ fun NowPlayingScreen(
         bodyColor = Color.DarkGray
     }
 
-    LaunchedEffect(key1 = uiState.track?.imageUri) {
-        uiState.track?.imageUri?.let { viewModel.executeCommand(ImagesCommand.GetArtwork(it)) }
+    LaunchedEffect(key1 = uiState.currentTrackState.track?.imageUri) {
+        uiState.currentTrackState.track?.imageUri?.let { viewModel.executeCommand(ImagesCommand.GetArtwork(it)) }
     }
 
     val scrollState = rememberScrollState()
@@ -126,10 +127,10 @@ fun NowPlayingScreen(
             )
             Browser(
                 preferences = uiState.preferences,
-                track = uiState.track,
-                listItems = uiState.listItems,
-                thumbnailMap = uiState.thumbnailMap,
-                libraryState = uiState.browserLibraryState,
+                track = uiState.currentTrackState.track,
+                listItems = uiState.browserState.listItems,
+                thumbnailMap = uiState.browserState.thumbnailMap,
+                libraryState = uiState.browserState.libraryState,
                 executeCommand = viewModel::executeCommand
             )
         }
@@ -183,8 +184,8 @@ private fun NowPlayingScreen(
                     enter = expandVertically(),
                     exit = shrinkVertically()
                 ) {
-                    if (uiState.playerContext != null) NowPlayingTopBar(
-                        player = uiState.playerContext,
+                    if (uiState.currentTrackState.playerContext != null) NowPlayingTopBar(
+                        player = uiState.currentTrackState.playerContext,
                         rightButtonIcon = Icons.Default.Settings,
                         onRightButtonClick = navToSettings
                     )
@@ -243,17 +244,17 @@ private fun NowPlayingPortraitContent(
 
         Spacer(modifier = Modifier.weight(1f))
         NowPlayingArtwork(
-            bitmap = uiState.artwork,
+            bitmap = uiState.currentTrackState.artwork,
             toggleControls = toggleControls,
             config = uiState.preferences.artworkDisplay,
-            isPaused = uiState.isPaused,
+            isPaused = uiState.currentTrackState.isPaused,
             executeCommand = executeCommand
         )
         Spacer(modifier = Modifier.weight(1f))
         NowPlayingMusicInfo(
-            track = uiState.track,
+            track = uiState.currentTrackState.track,
             config = uiState.preferences.musicInfoAlignment,
-            libraryState = uiState.currentTrackLibraryState,
+            libraryState = uiState.currentTrackState.libraryState,
             executeCommand = executeCommand,
             showControls = showControls
         )
@@ -265,18 +266,18 @@ private fun NowPlayingPortraitContent(
         ) {
             Column {
                 NowPlayingProgressBar(
-                    progress = uiState.playbackPosition,
-                    duration = uiState.track?.duration ?: 0,
+                    progress = uiState.currentTrackState.playbackPosition,
+                    duration = uiState.currentTrackState.track?.duration ?: 0,
                     onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingMusicControls(
                     executeCommand = executeCommand,
-                    isPaused = uiState.isPaused
+                    isPaused = uiState.currentTrackState.isPaused
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingVolumeSlider(
-                    volume = uiState.volume,
+                    volume = uiState.currentTrackState.volume,
                     setVolume = { executeCommand(VolumeCommand.SetVolume(it)) }
                 )
             }
@@ -302,10 +303,10 @@ private fun NowPlayingLandscapeContent(
         verticalAlignment = Alignment.CenterVertically
     ) {
         NowPlayingArtwork(
-            bitmap = uiState.artwork,
+            bitmap = uiState.currentTrackState.artwork,
             toggleControls = toggleControls,
             config = uiState.preferences.artworkDisplay,
-            isPaused = uiState.isPaused,
+            isPaused = uiState.currentTrackState.isPaused,
             executeCommand = executeCommand
         )
         Spacer(modifier = Modifier.width(24.dp))
@@ -315,9 +316,9 @@ private fun NowPlayingLandscapeContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             NowPlayingMusicInfo(
-                track = uiState.track,
+                track = uiState.currentTrackState.track,
                 config = uiState.preferences.musicInfoAlignment,
-                libraryState = uiState.currentTrackLibraryState,
+                libraryState = uiState.currentTrackState.libraryState,
                 executeCommand = executeCommand,
                 showControls = showControls
             )
@@ -328,17 +329,17 @@ private fun NowPlayingLandscapeContent(
             ) {
                 Column {
                     NowPlayingProgressBar(
-                        progress = uiState.playbackPosition,
-                        duration = uiState.track?.duration ?: 0
+                        progress = uiState.currentTrackState.playbackPosition,
+                        duration = uiState.currentTrackState.track?.duration ?: 0
                     ) { executeCommand(PlaybackCommand.Seek(it)) }
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingMusicControls(
-                        isPaused = uiState.isPaused,
+                        isPaused = uiState.currentTrackState.isPaused,
                         executeCommand = executeCommand
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingVolumeSlider(
-                        volume = uiState.volume,
+                        volume = uiState.currentTrackState.volume,
                         setVolume = { executeCommand(VolumeCommand.SetVolume(it)) }
                     )
                 }
@@ -352,9 +353,11 @@ private fun NowPlayingLandscapeContent(
 private fun NowPlayingPreview() {
     NowPlayingScreen(
         uiState = AltifyUIState(
-            playerContext = AltPlayerContext.example,
-            track = AltTrack.example,
-            playbackPosition = 5000
+            currentTrackState = CurrentTrackState(
+                playerContext = AltPlayerContext.example,
+                track = AltTrack.example,
+                playbackPosition = 5000
+            )
         ),
         navToSettings = {},
         executeCommand = {},
@@ -368,9 +371,11 @@ private fun NowPlayingToggledPreview() {
     NowPlayingPortraitContent(
         paddingValues = PaddingValues(),
         uiState = AltifyUIState(
-            playerContext = AltPlayerContext.example,
-            track = AltTrack.example,
-            playbackPosition = 5000
+            currentTrackState = CurrentTrackState(
+                playerContext = AltPlayerContext.example,
+                track = AltTrack.example,
+                playbackPosition = 5000
+            )
         ),
         executeCommand = {},
         showControls = false
@@ -383,9 +388,11 @@ private fun NowPlayingLandscapePreview() {
     NowPlayingLandscapeContent(
         paddingValues = PaddingValues(),
         uiState = AltifyUIState(
-            playerContext = AltPlayerContext.example,
-            track = AltTrack.example,
-            playbackPosition = 5000
+            currentTrackState = CurrentTrackState(
+                playerContext = AltPlayerContext.example,
+                track = AltTrack.example,
+                playbackPosition = 5000
+            )
         ),
         executeCommand = {},
         showControls = true

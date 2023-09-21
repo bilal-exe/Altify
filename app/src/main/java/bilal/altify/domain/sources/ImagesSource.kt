@@ -1,9 +1,9 @@
-package bilal.altify.domain.repository
+package bilal.altify.domain.sources
 
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
 
-interface ImagesRepository {
+interface ImagesSource {
 
     val artworkFlow: Flow<Bitmap?>
 

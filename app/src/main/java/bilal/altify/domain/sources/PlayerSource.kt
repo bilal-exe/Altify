@@ -1,9 +1,9 @@
-package bilal.altify.domain.repository
+package bilal.altify.domain.sources
 
 import bilal.altify.domain.model.AltPlayerStateAndContext
 import kotlinx.coroutines.flow.Flow
 
-interface PlayerRepository {
+interface PlayerSource {
 
     val playerStateAndContext: Flow<AltPlayerStateAndContext>
 
