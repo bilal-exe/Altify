@@ -40,20 +40,15 @@ class AltifyViewModel @Inject constructor(
             while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.currentTrackState.isPaused) {
                 delay(INTERPOLATION_FREQUENCY_MS)
                 _uiState.update {
-                    uiState.value.increasePlaybackPosition(
-                        INTERPOLATION_FREQUENCY_MS
+                    uiState.value.copy(
+                        currentTrackState = uiState.value.currentTrackState.copy(
+                            playbackPosition = uiState.value.currentTrackState.playbackPosition + INTERPOLATION_FREQUENCY_MS
+                        )
                     )
                 }
             }
         }
     }
-
-    private fun AltifyUIState.increasePlaybackPosition(ms: Long) =
-        this.copy(
-            currentTrackState = this.currentTrackState.copy(
-                playbackPosition = this.currentTrackState.playbackPosition + ms
-            )
-        )
 
     fun connect() {
         _uiState.update {
@@ -81,8 +76,9 @@ class AltifyViewModel @Inject constructor(
                         }
                     }.launchIn(viewModelScope)
                     volumeNotifications.show(
-                        viewModelScope,
-                        uiState.map { it.currentTrackState.volume })
+                        scope = viewModelScope,
+                        volume = uiState.map { it.currentTrackState.volume }
+                    )
                 }
 
                 is SpotifyConnectorResponse.ConnectionFailed -> {

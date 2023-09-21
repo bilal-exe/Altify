@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -100,13 +98,11 @@ private fun NowPlayingMusicInfo(
     removeFromLibrary: (String) -> Unit,
     showControls: Boolean
 ) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(nowPlayingItemsPadding),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        if (config == MusicInfoAlignmentConfig.CENTER) Spacer(modifier = Modifier.weight(1f))
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = when (config) {
@@ -114,19 +110,25 @@ private fun NowPlayingMusicInfo(
                 MusicInfoAlignmentConfig.LEFT -> Alignment.Start
             },
             modifier = Modifier
-                .weight(1f)
+                .align(
+                    when (config) {
+                        MusicInfoAlignmentConfig.CENTER -> Alignment.Center
+                        MusicInfoAlignmentConfig.LEFT -> Alignment.CenterStart
+                    }
+                )
         ) {
             AltText(
                 text = name,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
-                maxLines = 1
+                maxLines = 1,
             )
             Text(
                 text = "by ${artist}\n$album",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = bodyColor,
+                maxLines = 1,
                 textAlign = when (config) {
                     MusicInfoAlignmentConfig.CENTER -> TextAlign.Center
                     MusicInfoAlignmentConfig.LEFT -> TextAlign.Left
@@ -135,11 +137,11 @@ private fun NowPlayingMusicInfo(
         }
         Box(
             modifier = Modifier
-                .weight(1f)
+                .align(Alignment.CenterEnd)
                 .height(IntrinsicSize.Max),
             contentAlignment = Alignment.CenterEnd,
         ) {
-            this@Row.AnimatedVisibility(showControls) {
+            AnimatedVisibility(showControls) {
                 AddOrRemoveFromLibraryButton(
                     uri = uri,
                     libraryState = libraryState,
