@@ -5,11 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import bilal.altify.presentation.DarkThemeConfig
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 
 class AltifyPreferencesDataSource(
@@ -45,7 +41,6 @@ class AltifyPreferencesDataSource(
                 ?: FullScreenMusicInfoAlignment.MIDDLE
         )
     }
-        .stateIn(CoroutineScope(IO), SharingStarted.Eagerly, AltPreferencesState())
 
     suspend fun setDarkThemeConfig(config: DarkThemeConfig) {
         altPreferences.edit { it[darkThemeConfigKey] = config.code }

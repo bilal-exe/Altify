@@ -3,6 +3,7 @@ package bilal.altify.presentation.screens.preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.presentation.DarkThemeConfig
+import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
@@ -10,6 +11,8 @@ import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +22,11 @@ class PreferencesViewModel @Inject constructor(
 ): ViewModel() {
 
     val state = preferences.state
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = AltPreferencesState(),
+        )
 
     fun setDarkThemeConfig(config: DarkThemeConfig) {
         viewModelScope.launch {
