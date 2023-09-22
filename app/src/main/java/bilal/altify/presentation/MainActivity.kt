@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
         }
         return true
     }
-
 }
 
 enum class DarkThemeConfig(override val code: Int, override val title: String) : AltPreference {

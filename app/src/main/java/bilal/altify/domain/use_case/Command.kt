@@ -30,6 +30,8 @@ sealed interface ContentCommand : Command {
 
     data class GetChildrenOfItem(val listItem: AltListItem) : ContentCommand
 
+    object GetPrevious : ContentCommand
+
     data class Play(val listItem: AltListItem) : ContentCommand
 
 }

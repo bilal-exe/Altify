@@ -1,5 +1,7 @@
 package bilal.altify.presentation.screens.nowplaying
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
+import bilal.altify.domain.use_case.ContentCommand
 import bilal.altify.domain.use_case.ImagesCommand
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.DarkThemeConfig

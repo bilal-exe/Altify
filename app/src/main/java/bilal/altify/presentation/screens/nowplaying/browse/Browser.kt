@@ -1,6 +1,8 @@
 package bilal.altify.presentation.screens.nowplaying.browse
 
 import android.graphics.Bitmap
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +50,10 @@ fun Browser(
     libraryState: Map<String, AltLibraryState>,
     executeCommand: (Command) -> Unit
 ) {
+
+    BackHandler {
+        executeCommand(ContentCommand.GetPrevious)
+    }
 
     val getRecommended: () -> Unit = {
         executeCommand(ContentCommand.GetRecommended)

@@ -47,6 +47,9 @@ class ExecuteCommandUseCase {
             is ContentCommand.GetChildrenOfItem -> {
                 repositories.content.getChildrenOfItem(command.listItem)
             }
+            ContentCommand.GetPrevious -> {
+                repositories.content.getPrevious()
+            }
             is ContentCommand.Play -> {
                 repositories.content.play(command.listItem.toOriginal())
             }
