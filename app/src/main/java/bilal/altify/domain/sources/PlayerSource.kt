@@ -23,4 +23,6 @@ interface PlayerSource {
 
     fun skipToTrack(uri: String, index: Int)
 
+    class PlayerSourceException(override val message: String?): Exception(message)
+
 }

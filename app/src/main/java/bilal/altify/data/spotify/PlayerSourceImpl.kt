@@ -18,7 +18,7 @@ class PlayerSourceImpl(
                 trySend(it)
             }
             .setErrorCallback {
-                throw Exception("Error callback")
+                throw PlayerSource.PlayerSourceException(it.localizedMessage)
             }
         awaitClose {
             subscription.cancel()
@@ -33,7 +33,7 @@ class PlayerSourceImpl(
                 trySend(it)
             }
             .setErrorCallback {
-                throw Exception("Error callback")
+                throw PlayerSource.PlayerSourceException(it.localizedMessage)
             }
 
         awaitClose { subscription.cancel() }

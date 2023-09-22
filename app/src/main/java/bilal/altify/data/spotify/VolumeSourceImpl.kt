@@ -19,7 +19,7 @@ class VolumeSourceImpl(
                 trySend(it.mVolume)
             }
             .setErrorCallback {
-                throw Exception("Error callback")
+                throw VolumeSource.VolumeSourceException(it.localizedMessage)
             }
 
         awaitClose { subscription.cancel() }

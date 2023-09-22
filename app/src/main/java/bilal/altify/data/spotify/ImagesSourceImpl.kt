@@ -34,7 +34,7 @@ class ImagesSourceImpl(
                 artworkCallback(it)
             }
             .setErrorCallback {
-                Log.d("Error", it.localizedMessage ?: "")
+                throw ImagesSource.ImagesSourceException(it.localizedMessage)
             }
     }
 
@@ -44,7 +44,7 @@ class ImagesSourceImpl(
                 thumbnailCallback(it, uri)
             }
             .setErrorCallback {
-                Log.d("Error", it.localizedMessage ?: "")
+                throw ImagesSource.ImagesSourceException(it.localizedMessage)
             }
     }
 

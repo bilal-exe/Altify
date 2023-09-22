@@ -55,10 +55,7 @@ class AltifyViewModel @Inject constructor(
         spotifyConnector.connect().collectLatestOn(viewModelScope) { response ->
             when (response) {
                 is SpotifyConnectorResponse.Connected -> {
-                    useCases.commands(
-                        command = ContentCommand.GetRecommended,
-                        repositories = response.repositories
-                    )
+
                     combine(
                         preferences.state,
                         useCases.currentTrack(response.repositories),
@@ -72,7 +69,11 @@ class AltifyViewModel @Inject constructor(
                                 browserState = browser,
                             )
                         }
-                    }.launchIn(viewModelScope)
+                    }.launchIn(
+                        viewModelScope
+                    )
+
+                    executeCommand(ContentCommand.GetRecommended,)
                     volumeNotifications.show(
                         scope = viewModelScope,
                         volume = uiState.map { it.trackState.volume }

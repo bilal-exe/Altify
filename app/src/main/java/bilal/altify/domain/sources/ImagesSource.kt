@@ -15,4 +15,6 @@ interface ImagesSource {
 
     fun clearThumbnails()
 
+    class ImagesSourceException(override val message: String?): Exception(message)
+
 }

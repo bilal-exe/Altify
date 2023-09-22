@@ -25,14 +25,14 @@ class ContentSourceImpl(
         contentApi
             .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
             .setResultCallback(::listItemsCallback)
-            .setErrorCallback { throw Exception("Error callback") }
+            .setErrorCallback { throw ContentSource.ContentSourceException(it.localizedMessage) }
     }
 
     override fun getChildrenOfItem(listItem: AltListItem) {
         contentApi
             .getChildrenOfItem(listItem.toOriginal(), 25, 0)
             .setResultCallback(::listItemsCallback)
-            .setErrorCallback { throw Exception("Error callback") }
+            .setErrorCallback { throw ContentSource.ContentSourceException(it.localizedMessage) }
     }
 
     override fun play(listItem: ListItem) {

@@ -17,4 +17,6 @@ interface UserSource {
 
     fun removeFromLibrary(uri: String)
 
+    class UserSourceException(override val message: String?): Exception(message)
+
 }

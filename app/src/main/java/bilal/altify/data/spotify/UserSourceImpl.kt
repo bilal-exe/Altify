@@ -22,7 +22,7 @@ class UserSourceImpl(
                 _currentTrackLibraryState.value = it.toAlt()
             }
             .setErrorCallback {
-                Log.d("Error", it.localizedMessage ?: "")
+                throw UserSource.UserSourceException(it.localizedMessage)
             }
     }
 
@@ -41,7 +41,7 @@ class UserSourceImpl(
                     _browserLibraryState.update { newLibraryStates }
                 }
                 .setErrorCallback {
-                    Log.d("Error", it.localizedMessage ?: "")
+                    throw UserSource.UserSourceException(it.localizedMessage)
                 }
         }
     }
@@ -52,7 +52,7 @@ class UserSourceImpl(
                 updateStates(uri = uri)
             }
             .setErrorCallback {
-                Log.d("Error", it.localizedMessage ?: "")
+                throw UserSource.UserSourceException(it.localizedMessage)
             }
     }
 
@@ -62,7 +62,7 @@ class UserSourceImpl(
                 updateStates(uri = uri)
             }
             .setErrorCallback {
-                Log.d("Error", it.localizedMessage ?: "")
+                throw UserSource.UserSourceException(it.localizedMessage)
             }
     }
 
@@ -81,7 +81,7 @@ class UserSourceImpl(
                         }
                     }
                     .setErrorCallback {
-                        Log.d("Error", it.localizedMessage ?: "")
+                        throw UserSource.UserSourceException(it.localizedMessage)
                     }
             }
         }

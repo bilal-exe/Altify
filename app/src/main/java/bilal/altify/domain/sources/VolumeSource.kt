@@ -12,4 +12,6 @@ interface VolumeSource {
 
     fun setVolume(volume: Float)
 
+    class VolumeSourceException(override val message: String?): Exception(message)
+
 }

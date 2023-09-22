@@ -14,4 +14,6 @@ interface ContentSource {
 
     fun play(listItem: ListItem)
 
+    class ContentSourceException(override val message: String?): Exception(message)
+
 }
