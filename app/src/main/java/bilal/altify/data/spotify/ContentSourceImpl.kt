@@ -51,8 +51,8 @@ class ContentSourceImpl(
             .setErrorCallback { throw ContentSource.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun play(listItem: ListItem) {
-        contentApi.playContentItem(listItem)
+    override fun play(listItem: AltListItem) {
+        contentApi.playContentItem(listItem.toOriginal())
     }
 
 }
