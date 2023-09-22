@@ -14,12 +14,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,12 +35,12 @@ class AltifyViewModel @Inject constructor(
         connect()
         // interpolates playback position between Spotify callbacks
         uiState.collectLatestOn(viewModelScope) {
-            while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.currentTrackState.isPaused) {
+            while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.trackState.isPaused) {
                 delay(INTERPOLATION_FREQUENCY_MS)
                 _uiState.update {
                     uiState.value.copy(
-                        currentTrackState = uiState.value.currentTrackState.copy(
-                            playbackPosition = uiState.value.currentTrackState.playbackPosition + INTERPOLATION_FREQUENCY_MS
+                        trackState = uiState.value.trackState.copy(
+                            playbackPosition = uiState.value.trackState.playbackPosition + INTERPOLATION_FREQUENCY_MS
                         )
                     )
                 }
@@ -70,14 +68,14 @@ class AltifyViewModel @Inject constructor(
                             it.copy(
                                 connectionState = AltifyConnectionState.Success(response.repositories),
                                 preferences = pref,
-                                currentTrackState = track,
+                                trackState = track,
                                 browserState = browser,
                             )
                         }
                     }.launchIn(viewModelScope)
                     volumeNotifications.show(
                         scope = viewModelScope,
-                        volume = uiState.map { it.currentTrackState.volume }
+                        volume = uiState.map { it.trackState.volume }
                     )
                 }
 
@@ -99,7 +97,7 @@ class AltifyViewModel @Inject constructor(
         if (uiState.value.connectionState !is AltifyConnectionState.Success) return
         useCases.commands(
             command = command,
-            repositories = (uiState.value.connectionState as AltifyConnectionState.Success).repositories
+            repositories = (uiState.value.connectionState as AltifyConnectionState.Success).sources
         )
     }
 

@@ -11,13 +11,13 @@ import bilal.altify.presentation.prefrences.AltPreferencesState
 sealed interface AltifyConnectionState {
     data class Disconnected(val message: String? = null): AltifyConnectionState
     object Connecting: AltifyConnectionState
-    data class Success(val repositories: AltifySources): AltifyConnectionState
+    data class Success(val sources: AltifySources): AltifyConnectionState
 }
 
 data class AltifyUIState(
     val connectionState: AltifyConnectionState = AltifyConnectionState.Connecting,
     val preferences: AltPreferencesState = AltPreferencesState(),
-    val currentTrackState: CurrentTrackState = CurrentTrackState(),
+    val trackState: CurrentTrackState = CurrentTrackState(),
     val browserState: BrowserState = BrowserState()
 )
 
