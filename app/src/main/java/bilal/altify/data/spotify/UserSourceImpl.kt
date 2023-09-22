@@ -1,6 +1,5 @@
 package bilal.altify.data.spotify
 
-import android.util.Log
 import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.sources.UserSource

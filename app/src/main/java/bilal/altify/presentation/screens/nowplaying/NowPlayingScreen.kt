@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -19,14 +20,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
+import bilal.altify.domain.use_case.ContentCommand
 import bilal.altify.domain.use_case.ImagesCommand
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.DarkThemeConfig
@@ -78,13 +82,22 @@ fun NowPlayingScreen(
 
     val scrollState = rememberScrollState()
 
+    var newListLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = uiState.browserState.listItems) {
+        newListLoading = false
+    }
+
     val screenBufferBeforeLoad = with(LocalDensity.current) {
         LocalConfiguration.current.screenHeightDp.dp.toPx()
     } * 0.15
 
     LaunchedEffect(key1 = scrollState.value) {
-        if (scrollState.value >= (scrollState.maxValue - screenBufferBeforeLoad))
-            TODO()
+        if (scrollState.value < (scrollState.maxValue - screenBufferBeforeLoad) || newListLoading) return@LaunchedEffect
+        viewModel.executeCommand(
+            ContentCommand.LoadMoreChildrenOfItem(uiState.browserState.listItems)
+        )
+        newListLoading = true
     }
 
     Scaffold(
@@ -105,10 +118,16 @@ fun NowPlayingScreen(
             Browser(
                 preferences = uiState.preferences,
                 track = uiState.trackState.track,
-                listItems = uiState.browserState.listItems,
+                listItems = uiState.browserState.listItems(),
                 thumbnailMap = uiState.browserState.thumbnailMap,
                 libraryState = uiState.browserState.libraryState,
                 executeCommand = viewModel::executeCommand
+            )
+            if (newListLoading) CircularProgressIndicator(
+                color = bodyColor,
+                modifier = Modifier
+                    .padding(vertical = 24.dp)
+                    .align(Alignment.CenterHorizontally)
             )
         }
     }

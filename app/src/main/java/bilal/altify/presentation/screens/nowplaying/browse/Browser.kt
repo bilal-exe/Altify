@@ -177,7 +177,6 @@ fun BrowserPreview() {
     val items = mutableListOf<AltListItem>()
     repeat(5) {
         val ali = AltListItem(
-            id = it.toString(),
             uri = "",
             imageUri = "",
             title = "Title",

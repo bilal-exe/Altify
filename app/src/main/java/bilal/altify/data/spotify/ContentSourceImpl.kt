@@ -3,23 +3,24 @@ package bilal.altify.data.spotify
 import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.data.spotify.mappers.toOriginal
 import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltListItems
 import bilal.altify.domain.sources.ContentSource
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.protocol.types.ListItem
 import com.spotify.protocol.types.ListItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.Stack
+import kotlinx.coroutines.flow.update
 
 class ContentSourceImpl(
     private val contentApi: ContentApi
 ) : ContentSource {
 
     private fun listItemsCallback(lis: ListItems) {
-        _listItemsFlow.value = lis.items.map { it.toAlt() }
+        _listItemsFlow.value = lis.toAlt()
     }
 
-    private val _listItemsFlow = MutableStateFlow<List<AltListItem>>(emptyList())
+    private val _listItemsFlow = MutableStateFlow(AltListItems())
     override val listItemsFlow = _listItemsFlow.asStateFlow()
 
     override fun getRecommended() {
@@ -29,10 +30,24 @@ class ContentSourceImpl(
             .setErrorCallback { throw ContentSource.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun getChildrenOfItem(listItem: AltListItem) {
+    override fun getChildrenOfItem(listItem: AltListItem, count: Int) {
         contentApi
-            .getChildrenOfItem(listItem.toOriginal(), 25, 0)
+            .getChildrenOfItem(listItem.toOriginal(), count, 0)
             .setResultCallback(::listItemsCallback)
+            .setErrorCallback { throw ContentSource.ContentSourceException(it.localizedMessage) }
+    }
+
+    override fun loadMoreChildrenOfItem(listItem: AltListItem, offset: Int, count: Int) {
+        contentApi
+            .getChildrenOfItem(listItem.toOriginal(), count, offset)
+            .setResultCallback { res ->
+                _listItemsFlow.update {
+                    it.copy(
+                        items = it.items + res.toAlt().items,
+                        total = res.total
+                    )
+                }
+            }
             .setErrorCallback { throw ContentSource.ContentSourceException(it.localizedMessage) }
     }
 

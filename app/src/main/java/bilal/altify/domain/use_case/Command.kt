@@ -1,6 +1,7 @@
 package bilal.altify.domain.use_case
 
 import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltListItems
 
 sealed interface Command
 
@@ -29,6 +30,8 @@ sealed interface ContentCommand : Command {
     object GetRecommended : ContentCommand
 
     data class GetChildrenOfItem(val listItem: AltListItem) : ContentCommand
+
+    data class LoadMoreChildrenOfItem(val listItems: AltListItems) : ContentCommand
 
     object GetPrevious : ContentCommand
 

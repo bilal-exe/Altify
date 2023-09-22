@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import bilal.altify.domain.controller.AltifySources
 import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltListItems
 import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.prefrences.AltPreferencesState
@@ -33,7 +34,7 @@ data class CurrentTrackState(
 )
 
 data class BrowserState(
-    val listItems: List<AltListItem> = emptyList(),
+    val listItems: AltListItems = AltListItems(),
     val libraryState: Map<String, AltLibraryState> = emptyMap(),
     val thumbnailMap: Map<String, Bitmap> = emptyMap(),
     val uriHistory: Stack<String> = Stack()

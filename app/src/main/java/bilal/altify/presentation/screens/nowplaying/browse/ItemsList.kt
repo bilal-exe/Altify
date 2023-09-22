@@ -269,7 +269,6 @@ fun PlaceholderThumbnail(modifier: Modifier) {
 private fun ListItemRowPreview() {
     ListItemRow(
         item = AltListItem(
-            id = "",
             uri = "",
             imageUri = "",
             title = "Title",
@@ -294,7 +293,6 @@ fun ItemsListPreview() {
     repeat(5) {
         val alter = it % 2 == 0
         val ali = AltListItem(
-            id = it.toString(),
             uri = if (alter) "" else "a",
             imageUri = "",
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
