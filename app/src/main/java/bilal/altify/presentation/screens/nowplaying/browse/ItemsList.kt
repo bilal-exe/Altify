@@ -139,7 +139,11 @@ fun ListItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp)
-            .height((144 / LocalDensity.current.density).dp),
+            .height((144 / LocalDensity.current.density).dp)
+            .background(
+                color = if (selected) Color.LightGray.copy(alpha = 0.25f) else bottomColor,
+                shape = RoundedCornerShape(8.dp)
+            ),
         directions = setOf(DismissDirection.StartToEnd),
         background = {
             dismissState.dismissDirection ?: return@SwipeToDismiss
@@ -149,7 +153,11 @@ fun ListItemRow(
 
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(
+                        color = bottomColor,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
@@ -165,13 +173,7 @@ fun ListItemRow(
         dismissContent = {
             Box(
                 modifier = Modifier
-                    .background(
-                        color = if (selected) Color.LightGray.copy(alpha = 0.25f) else bottomColor,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .width(
-                        (LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp
-                    )
+                    .width((LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp)
             ) {
                 Row(
                     modifier = Modifier
