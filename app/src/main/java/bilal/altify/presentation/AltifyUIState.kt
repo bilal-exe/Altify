@@ -7,6 +7,7 @@ import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltPlayerContext
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.prefrences.AltPreferencesState
+import java.util.Stack
 
 sealed interface AltifyConnectionState {
     data class Disconnected(val message: String? = null): AltifyConnectionState
@@ -35,4 +36,5 @@ data class BrowserState(
     val listItems: List<AltListItem> = emptyList(),
     val libraryState: Map<String, AltLibraryState> = emptyMap(),
     val thumbnailMap: Map<String, Bitmap> = emptyMap(),
+    val uriHistory: Stack<String> = Stack()
 )

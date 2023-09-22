@@ -98,7 +98,7 @@ class AltifyViewModel @Inject constructor(
         if (uiState.value.connectionState !is AltifyConnectionState.Success) return
         useCases.commands(
             command = command,
-            repositories = (uiState.value.connectionState as AltifyConnectionState.Success).sources
+            repositories = (uiState.value.connectionState as AltifyConnectionState.Success).sources,
         )
     }
 
