@@ -2,6 +2,7 @@ package bilal.altify.presentation.screens.nowplaying.browse
 
 import android.graphics.Bitmap
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,10 +23,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -48,6 +56,7 @@ import bilal.altify.domain.model.AltListItem
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.screens.nowplaying.BROWSER_FAB_HEIGHT
 import bilal.altify.presentation.screens.nowplaying.bodyColor
+import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.AltText
 import bilal.altify.presentation.util.UpdateEffect
@@ -66,7 +75,8 @@ fun ItemsList(
     thumbnailMap: Map<String, Bitmap>,
     libraryState: Map<String, AltLibraryState>,
     addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit
+    removeFromLibrary: (String) -> Unit,
+    addToQueue: (String) -> Unit
 ) {
     LazyColumn(
 //         calculates the height of the list by the thumbnail height plus padding for each list item
@@ -90,12 +100,14 @@ fun ItemsList(
                 getChildrenOfItem = { getChildrenOfItem(item) },
                 libraryState = libraryState[item.uri],
                 addToLibrary = addToLibrary,
-                removeFromLibrary = removeFromLibrary
+                removeFromLibrary = removeFromLibrary,
+                addToQueue = addToQueue
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListItemRow(
     item: AltListItem,
@@ -106,6 +118,7 @@ fun ListItemRow(
     libraryState: AltLibraryState?,
     addToLibrary: (String) -> Unit,
     removeFromLibrary: (String) -> Unit,
+    addToQueue: (String) -> Unit,
 ) {
     val rowHeight = with(LocalDensity.current) { Dimension.THUMBNAIL.value.toDp() }
     val listItemModifier = Modifier
@@ -113,50 +126,82 @@ fun ListItemRow(
         .clip(RoundedCornerShape(6.dp))
         .background(Color.Gray)
         .aspectRatio(1f)
-    Row(
+
+    val dismissState = rememberDismissState(
+        confirmValueChange = {
+            if (it == DismissValue.DismissedToEnd) addToQueue(item.uri)
+            it != DismissValue.DismissedToEnd
+        }
+    )
+
+    SwipeToDismiss(
+        state = dismissState,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp)
-            .background(
-                color = if (selected) Color.LightGray.copy(alpha = 0.25f) else Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
-            )
             .height((144 / LocalDensity.current.density).dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier.width(
-                (LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp
+        directions = setOf(DismissDirection.StartToEnd),
+        background = {
+            dismissState.dismissDirection ?: return@SwipeToDismiss
+            val scale by animateFloatAsState(
+                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f, label = ""
             )
-        ) {
-            Row(
+
+            Box(
                 modifier = Modifier
-                    .clickable { getChildrenOfItem() },
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize(),
+                contentAlignment = Alignment.CenterStart
             ) {
-                if (thumbnail != null) ItemThumbnail(thumbnail, listItemModifier)
-                else PlaceholderThumbnail(listItemModifier)
-                Spacer(modifier = Modifier.width(16.dp))
-                ListItemInfo(
-                    title = item.title,
-                    subtitle = item.subtitle,
+                Text(
+                    text = "Add to queue...",
                     modifier = Modifier
+                        .padding(start = 16.dp)
+                        .scale(scale),
+                    color = titleColor,
+                    fontSize = 25.sp
                 )
             }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        if (libraryState != null) AddRemoveLibraryIcon(
-            libraryState = libraryState,
-            addToLibrary = addToLibrary,
-            removeFromLibrary = removeFromLibrary,
-            modifier = Modifier.size(rowHeight, rowHeight)
-        )
-        PlayButton(
-            playItem = playItem,
-            playable = item.playable,
-            modifier = Modifier.size(rowHeight, rowHeight)
-        )
-    }
+        },
+        dismissContent = {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = if (selected) Color.LightGray.copy(alpha = 0.25f) else bottomColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .width(
+                        (LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp
+                    )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clickable { getChildrenOfItem() },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (thumbnail != null) ItemThumbnail(thumbnail, listItemModifier)
+                    else PlaceholderThumbnail(listItemModifier)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    ListItemInfo(
+                        title = item.title,
+                        subtitle = item.subtitle,
+                        modifier = Modifier
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            if (libraryState != null) AddRemoveLibraryIcon(
+                libraryState = libraryState,
+                addToLibrary = addToLibrary,
+                removeFromLibrary = removeFromLibrary,
+                modifier = Modifier.size(rowHeight, rowHeight)
+            )
+            PlayButton(
+                playItem = playItem,
+                playable = item.playable,
+                modifier = Modifier.size(rowHeight, rowHeight)
+            )
+        },
+    )
 }
 
 @Composable
@@ -284,7 +329,8 @@ private fun ListItemRowPreview() {
         getChildrenOfItem = {},
         libraryState = AltLibraryState(uri = "", isAdded = true, canAdd = true),
         addToLibrary = {},
-        removeFromLibrary = {}
+        removeFromLibrary = {},
+        addToQueue = {}
     )
 }
 
@@ -312,6 +358,7 @@ fun ItemsListPreview() {
         thumbnailMap = emptyMap(),
         libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
         addToLibrary = {},
-        removeFromLibrary = {}
+        removeFromLibrary = {},
+        addToQueue = {}
     )
 }

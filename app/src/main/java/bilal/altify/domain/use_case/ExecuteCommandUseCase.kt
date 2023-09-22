@@ -1,6 +1,5 @@
 package bilal.altify.domain.use_case
 
-import bilal.altify.data.spotify.mappers.toOriginal
 import bilal.altify.domain.controller.AltifySources
 import bilal.altify.domain.model.AltListItem
 import java.util.Stack
@@ -98,7 +97,7 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.Play -> {
-                repositories.content.play(command.listItem.toOriginal())
+                repositories.content.play(command.listItem)
             }
 
             //volume

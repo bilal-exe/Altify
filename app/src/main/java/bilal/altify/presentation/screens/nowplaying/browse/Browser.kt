@@ -33,6 +33,7 @@ import bilal.altify.domain.model.AltTrack
 import bilal.altify.domain.use_case.Command
 import bilal.altify.domain.use_case.ContentCommand
 import bilal.altify.domain.use_case.ImagesCommand
+import bilal.altify.domain.use_case.PlaybackCommand
 import bilal.altify.domain.use_case.UserCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
@@ -72,6 +73,9 @@ fun Browser(
     val removeFromLibrary: (String) -> Unit = {
         executeCommand(UserCommand.RemoveFromLibrary(it))
     }
+    val addToQueue: (String) -> Unit = {
+        executeCommand(PlaybackCommand.AddToQueue(it))
+    }
 
     LaunchedEffect(key1 = listItems) {
         if (listItems.isNotEmpty()) {
@@ -99,7 +103,8 @@ fun Browser(
                         thumbnailMap = thumbnailMap,
                         libraryState = libraryState,
                         addToLibrary = addToLibrary,
-                        removeFromLibrary = removeFromLibrary
+                        removeFromLibrary = removeFromLibrary,
+                        addToQueue = addToQueue
                     )
             }
         }
