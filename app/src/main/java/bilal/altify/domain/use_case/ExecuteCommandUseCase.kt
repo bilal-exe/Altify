@@ -2,8 +2,12 @@ package bilal.altify.domain.use_case
 
 import bilal.altify.data.spotify.mappers.toOriginal
 import bilal.altify.domain.controller.AltifySources
+import bilal.altify.domain.model.AltListItem
+import java.util.Stack
 
 class ExecuteCommandUseCase {
+
+    private val browserVisitedHistory: Stack<AltListItem> = Stack()
     
     operator fun invoke(
         command: Command,
@@ -45,10 +49,22 @@ class ExecuteCommandUseCase {
                 repositories.content.getRecommended()
             }
             is ContentCommand.GetChildrenOfItem -> {
+                browserVisitedHistory.add(command.listItem)
                 repositories.content.getChildrenOfItem(command.listItem)
             }
             ContentCommand.GetPrevious -> {
-                repositories.content.getPrevious()
+                when (browserVisitedHistory.size) {
+                    0 ->
+                        repositories.content.getRecommended()
+                    1 -> {
+                        browserVisitedHistory.pop()
+                        repositories.content.getRecommended()
+                    }
+                    else -> {
+                        browserVisitedHistory.pop()
+                        repositories.content.getChildrenOfItem(browserVisitedHistory.pop())
+                    }
+                }
             }
             is ContentCommand.Play -> {
                 repositories.content.play(command.listItem.toOriginal())

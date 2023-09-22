@@ -73,7 +73,10 @@ class AltifyViewModel @Inject constructor(
                         viewModelScope
                     )
 
-                    executeCommand(ContentCommand.GetRecommended,)
+                    useCases.commands(
+                        command = ContentCommand.GetRecommended,
+                        repositories = response.repositories
+                    )
                     volumeNotifications.show(
                         scope = viewModelScope,
                         volume = uiState.map { it.trackState.volume }

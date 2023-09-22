@@ -12,8 +12,6 @@ interface ContentSource {
 
     fun getChildrenOfItem(listItem: AltListItem)
 
-    fun getPrevious()
-
     fun play(listItem: ListItem)
 
     class ContentSourceException(override val message: String?): Exception(message)

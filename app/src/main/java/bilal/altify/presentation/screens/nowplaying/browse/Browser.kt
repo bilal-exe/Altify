@@ -1,7 +1,6 @@
 package bilal.altify.presentation.screens.nowplaying.browse
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,8 +35,8 @@ import bilal.altify.domain.use_case.ContentCommand
 import bilal.altify.domain.use_case.ImagesCommand
 import bilal.altify.domain.use_case.UserCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
+import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.AltText
 
 // TODO: Add swipe to add to queue

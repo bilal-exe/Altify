@@ -1,7 +1,5 @@
 package bilal.altify.presentation.screens.nowplaying
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -25,9 +23,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
-import bilal.altify.domain.use_case.ContentCommand
 import bilal.altify.domain.use_case.ImagesCommand
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.DarkThemeConfig
@@ -78,6 +77,15 @@ fun NowPlayingScreen(
     }
 
     val scrollState = rememberScrollState()
+
+    val screenBufferBeforeLoad = with(LocalDensity.current) {
+        LocalConfiguration.current.screenHeightDp.dp.toPx()
+    } * 0.15
+
+    LaunchedEffect(key1 = scrollState.value) {
+        if (scrollState.value >= (scrollState.maxValue - screenBufferBeforeLoad))
+            TODO()
+    }
 
     Scaffold(
         floatingActionButton = { ScrollToTopButton(scrollState) }
