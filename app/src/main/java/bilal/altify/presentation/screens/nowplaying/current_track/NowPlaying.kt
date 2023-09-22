@@ -45,6 +45,7 @@ import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.CurrentTrackState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 
+const val NOW_PLAYING_HORIZONTAL_PADDING = 24
 
 @Composable
 fun NowPlaying(
@@ -117,7 +118,7 @@ private fun NowPlayingPortraitContent(
     Column(
         modifier = Modifier
             .padding(paddingValues)
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = NOW_PLAYING_HORIZONTAL_PADDING.dp)
             .fillMaxWidth()
             .height(LocalConfiguration.current.screenHeightDp.dp - paddingValues.calculateTopPadding())
             .animateContentSize(),
@@ -187,7 +188,7 @@ private fun NowPlayingLandscapeContent(
     Row(
         modifier = Modifier
             .padding(paddingValues)
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .padding(horizontal = NOW_PLAYING_HORIZONTAL_PADDING.dp, vertical = 12.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically

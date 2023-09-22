@@ -113,7 +113,6 @@ fun ListItemRow(
         .clip(RoundedCornerShape(6.dp))
         .background(Color.Gray)
         .aspectRatio(1f)
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +120,8 @@ fun ListItemRow(
             .background(
                 color = if (selected) Color.LightGray.copy(alpha = 0.25f) else Color.Transparent,
                 shape = RoundedCornerShape(8.dp)
-            ),
+            )
+            .height((144 / LocalDensity.current.density).dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -231,14 +231,16 @@ fun ListItemInfo(
             text = title,
             fontSize = 22.sp,
             fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
         if (subtitle.isNotBlank())
             Text(
                 text = subtitle.clipLen(40),
                 fontStyle = MaterialTheme.typography.labelMedium.fontStyle,
                 fontSize = 18.sp,
-                color = bodyColor
+                color = bodyColor,
+                maxLines = 1
             )
     }
 }

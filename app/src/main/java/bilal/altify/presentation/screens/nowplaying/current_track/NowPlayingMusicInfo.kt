@@ -211,6 +211,22 @@ private fun NowPlayingMusicInfoPreview() {
 
 @Preview
 @Composable
+private fun NowPlayingLongMusicInfoPreview() {
+    NowPlayingMusicInfo(
+        name = "namenamenamenamenamenamenamename",
+        artist = "artist",
+        album = "album",
+        uri = "",
+        config = MusicInfoAlignmentConfig.CENTER,
+        libraryState = AltLibraryState("", false, canAdd = false),
+        addToLibrary = {},
+        removeFromLibrary = {},
+        showControls = true
+    )
+}
+
+@Preview
+@Composable
 private fun NowPlayingMusicInfoLeftPreview() {
     NowPlayingMusicInfo(
         name = "name",

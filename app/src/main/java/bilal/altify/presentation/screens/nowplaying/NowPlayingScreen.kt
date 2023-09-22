@@ -94,6 +94,7 @@ fun NowPlayingScreen(
 
     LaunchedEffect(key1 = scrollState.value) {
         if (scrollState.value < (scrollState.maxValue - screenBufferBeforeLoad) || newListLoading) return@LaunchedEffect
+        if (uiState.browserState.listItems().size >= uiState.browserState.listItems.total) return@LaunchedEffect
         viewModel.executeCommand(
             ContentCommand.LoadMoreChildrenOfItem(uiState.browserState.listItems)
         )
