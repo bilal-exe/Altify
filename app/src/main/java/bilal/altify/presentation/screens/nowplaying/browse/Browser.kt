@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import bilal.altify.R
 import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltListItems
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.domain.use_case.Command
 import bilal.altify.domain.use_case.ContentCommand
@@ -45,7 +46,7 @@ import bilal.altify.presentation.util.AltText
 fun Browser(
     preferences: AltPreferencesState,
     track: AltTrack?,
-    listItems: List<AltListItem>,
+    listItems: AltListItems,
     thumbnailMap: Map<String, Bitmap>,
     libraryState: Map<String, AltLibraryState>,
     executeCommand: (Command) -> Unit
@@ -78,12 +79,12 @@ fun Browser(
     }
 
     LaunchedEffect(key1 = listItems) {
-        if (listItems.isNotEmpty()) {
+        if (listItems().isNotEmpty()) {
             executeCommand(ImagesCommand.ClearThumbnails)
-            listItems.forEach { item ->
+            listItems().forEach { item ->
                 if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
             }
-            executeCommand(UserCommand.UpdateBrowserLibraryState(listItems.map { it.uri }))
+            executeCommand(UserCommand.UpdateBrowserLibraryState(listItems().map { it.uri }))
         }
     }
 
@@ -91,7 +92,7 @@ fun Browser(
         Column {
             GetRecommendedButton(getRecommended)
             when {
-                listItems.isEmpty() ->
+                listItems().isEmpty() ->
                     EmptyListItems()
 
                 else ->
@@ -169,7 +170,7 @@ private fun EmptyPreview() {
     Browser(
         preferences = AltPreferencesState(),
         track = null,
-        listItems = emptyList(),
+        listItems = AltListItems(),
         thumbnailMap = emptyMap(),
         libraryState = emptyMap(),
         executeCommand = {}
@@ -194,7 +195,7 @@ fun BrowserPreview() {
     Browser(
         preferences = AltPreferencesState(),
         track = null,
-        listItems = items,
+        listItems = AltListItems(items = items),
         thumbnailMap = emptyMap(),
         libraryState = emptyMap(),
         executeCommand = {}

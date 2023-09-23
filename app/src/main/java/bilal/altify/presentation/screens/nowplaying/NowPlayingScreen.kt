@@ -39,6 +39,7 @@ import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlaying
 import kotlinx.coroutines.launch
 
+// makes contrasting colors public so other composables can use them
 var titleColor by mutableStateOf(Color.Black)
     private set
 var bodyColor by mutableStateOf(Color.DarkGray)
@@ -74,6 +75,7 @@ fun NowPlayingScreen(
         bodyColor = Color.DarkGray
     }
 
+    // gets new artwork for each new track
     LaunchedEffect(key1 = uiState.trackState.track?.imageUri) {
         uiState.trackState.track?.imageUri?.let {
             viewModel.executeCommand(ImagesCommand.GetArtwork(it))
@@ -83,7 +85,6 @@ fun NowPlayingScreen(
     val scrollState = rememberScrollState()
 
     var newListLoading by remember { mutableStateOf(false) }
-
     LaunchedEffect(key1 = uiState.browserState.listItems) {
         newListLoading = false
     }
@@ -119,18 +120,13 @@ fun NowPlayingScreen(
             Browser(
                 preferences = uiState.preferences,
                 track = uiState.trackState.track,
-                listItems = uiState.browserState.listItems(),
+                listItems = uiState.browserState.listItems,
                 thumbnailMap = uiState.browserState.thumbnailMap,
                 libraryState = uiState.browserState.libraryState,
                 executeCommand = viewModel::executeCommand
             )
-            if (newListLoading) CircularProgressIndicator(
-                color = bodyColor,
-                modifier = Modifier
-                    .padding(vertical = 24.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
         }
+
     }
 }
 

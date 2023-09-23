@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import bilal.altify.R
 import bilal.altify.domain.model.AltLibraryState
 import bilal.altify.domain.model.AltListItem
+import bilal.altify.domain.model.AltListItems
 import bilal.altify.domain.model.AltTrack
 import bilal.altify.presentation.screens.nowplaying.BROWSER_FAB_HEIGHT
 import bilal.altify.presentation.screens.nowplaying.bodyColor
@@ -68,7 +70,7 @@ import kotlin.math.ceil
 
 @Composable
 fun ItemsList(
-    listItems: List<AltListItem>,
+    listItems: AltListItems,
     track: AltTrack?,
     playItem: (AltListItem) -> Unit,
     getChildrenOfItem: (AltListItem) -> Unit,
@@ -78,20 +80,20 @@ fun ItemsList(
     removeFromLibrary: (String) -> Unit,
     addToQueue: (String) -> Unit
 ) {
+    // progress indicator for when there more list to load
+    val progressIndicatorHeight = LocalConfiguration.current.screenHeightDp / 4
+    val showProgressIndicator = listItems().size < listItems.total
+//    calculates the height of the list by the thumbnail height plus padding for each list item
+//    allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
+    val columnHeight =
+        (listItems().size * ceil((144 / LocalDensity.current.density) + 16)) + 16 + // extra room
+                BROWSER_FAB_HEIGHT +// so floating action button doesn't overlap
+                if (showProgressIndicator) progressIndicatorHeight else 0
+
     LazyColumn(
-//         calculates the height of the list by the thumbnail height plus padding for each list item
-//         allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
-        modifier = Modifier.height(
-            (listItems.size * ceil((144 / LocalDensity.current.density) + 16)).dp
-                    + 16.dp // extra room
-                    + BROWSER_FAB_HEIGHT.dp // so floating action button doesn't overlap
-        ),
-        userScrollEnabled = false
+        modifier = Modifier.height(columnHeight.dp), userScrollEnabled = false
     ) {
-        items(
-            items = listItems,
-            key = { it.id }
-        ) { item ->
+        items(items = listItems(), key = { it.id }) { item ->
             ListItemRow(
                 item = item,
                 selected = track?.uri == item.uri,
@@ -103,6 +105,21 @@ fun ItemsList(
                 removeFromLibrary = removeFromLibrary,
                 addToQueue = addToQueue
             )
+        }
+        if (showProgressIndicator) item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(progressIndicatorHeight.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .height((progressIndicatorHeight * 0.75).dp)
+                        .fillMaxWidth(),
+                    color = titleColor,
+                )
+            }
         }
     }
 }
@@ -127,12 +144,10 @@ fun ListItemRow(
         .background(Color.Gray)
         .aspectRatio(1f)
 
-    val dismissState = rememberDismissState(
-        confirmValueChange = {
-            if (it == DismissValue.DismissedToEnd) addToQueue(item.uri)
-            it != DismissValue.DismissedToEnd
-        }
-    )
+    val dismissState = rememberDismissState(confirmValueChange = {
+        if (it == DismissValue.DismissedToEnd) addToQueue(item.uri)
+        it != DismissValue.DismissedToEnd
+    })
 
     SwipeToDismiss(
         state = dismissState,
@@ -155,10 +170,8 @@ fun ListItemRow(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = bottomColor,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                contentAlignment = Alignment.CenterStart
+                        color = bottomColor, shape = RoundedCornerShape(8.dp)
+                    ), contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     text = "Add to queue...",
@@ -172,21 +185,17 @@ fun ListItemRow(
         },
         dismissContent = {
             Box(
-                modifier = Modifier
-                    .width((LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp)
+                modifier = Modifier.width((LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .clickable { getChildrenOfItem() },
+                    modifier = Modifier.clickable { getChildrenOfItem() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (thumbnail != null) ItemThumbnail(thumbnail, listItemModifier)
                     else PlaceholderThumbnail(listItemModifier)
                     Spacer(modifier = Modifier.width(16.dp))
                     ListItemInfo(
-                        title = item.title,
-                        subtitle = item.subtitle,
-                        modifier = Modifier
+                        title = item.title, subtitle = item.subtitle, modifier = Modifier
                     )
                 }
             }
@@ -218,8 +227,7 @@ fun AddRemoveLibraryIcon(
         false -> Icons.Outlined.FavoriteBorder
     }
     Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+        modifier = modifier, contentAlignment = Alignment.Center
     ) {
         if (libraryState.canAdd) {
             val scale = remember { Animatable(1f) }
@@ -230,18 +238,15 @@ fun AddRemoveLibraryIcon(
                 shakeShrinkAnimation(scale = scale, rotation = rotation, scope = coroutineScope)
             }
 
-            Icon(
-                imageVector = icon,
-                contentDescription = "",
-                modifier = Modifier
-                    .clickable {
-                        when (libraryState.isAdded) {
-                            true -> removeFromLibrary(libraryState.uri)
-                            false -> addToLibrary(libraryState.uri)
-                        }
+            Icon(imageVector = icon, contentDescription = "", modifier = Modifier
+                .clickable {
+                    when (libraryState.isAdded) {
+                        true -> removeFromLibrary(libraryState.uri)
+                        false -> addToLibrary(libraryState.uri)
                     }
-                    .scale(scale = scale.value)
-                    .rotate(rotation.value)
+                }
+                .scale(scale = scale.value)
+                .rotate(rotation.value)
 
             )
         }
@@ -250,13 +255,10 @@ fun AddRemoveLibraryIcon(
 
 @Composable
 fun PlayButton(
-    playItem: () -> Unit,
-    modifier: Modifier = Modifier,
-    playable: Boolean
+    playItem: () -> Unit, modifier: Modifier = Modifier, playable: Boolean
 ) {
     Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+        modifier = modifier, contentAlignment = Alignment.Center
     ) {
         if (playable) Icon(
             painter = painterResource(id = R.drawable.play),
@@ -269,9 +271,7 @@ fun PlayButton(
 
 @Composable
 fun ListItemInfo(
-    title: String,
-    subtitle: String,
-    modifier: Modifier = Modifier
+    title: String, subtitle: String, modifier: Modifier = Modifier
 ) {
     Column(modifier = Modifier) {
         AltText(
@@ -281,14 +281,13 @@ fun ListItemInfo(
             fontWeight = FontWeight.Bold,
             maxLines = 1
         )
-        if (subtitle.isNotBlank())
-            Text(
-                text = subtitle.clipLen(40),
-                fontStyle = MaterialTheme.typography.labelMedium.fontStyle,
-                fontSize = 18.sp,
-                color = bodyColor,
-                maxLines = 1
-            )
+        if (subtitle.isNotBlank()) Text(
+            text = subtitle.clipLen(40),
+            fontStyle = MaterialTheme.typography.labelMedium.fontStyle,
+            fontSize = 18.sp,
+            color = bodyColor,
+            maxLines = 1
+        )
     }
 }
 
@@ -316,15 +315,14 @@ fun PlaceholderThumbnail(modifier: Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun ListItemRowPreview() {
-    ListItemRow(
-        item = AltListItem(
-            uri = "",
-            imageUri = "",
-            title = "Title",
-            subtitle = "Subtitle",
-            playable = true,
-            hasChildren = true
-        ),
+    ListItemRow(item = AltListItem(
+        uri = "",
+        imageUri = "",
+        title = "Title",
+        subtitle = "Subtitle",
+        playable = true,
+        hasChildren = true
+    ),
         selected = false,
         thumbnail = null,
         playItem = {},
@@ -332,8 +330,7 @@ private fun ListItemRowPreview() {
         libraryState = AltLibraryState(uri = "", isAdded = true, canAdd = true),
         addToLibrary = {},
         removeFromLibrary = {},
-        addToQueue = {}
-    )
+        addToQueue = {})
 }
 
 @Preview(showBackground = true)
@@ -352,15 +349,38 @@ fun ItemsListPreview() {
         )
         items.add(ali)
     }
-    ItemsList(
-        listItems = items,
+    ItemsList(listItems = AltListItems(items),
         track = null,
         playItem = {},
         getChildrenOfItem = {},
         thumbnailMap = emptyMap(),
         libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
         addToLibrary = {},
-        removeFromLibrary = {},
-        addToQueue = {}
-    )
+        removeFromLibrary = {}) {}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemsListPreview2() {
+    val items = mutableListOf<AltListItem>()
+    repeat(5) {
+        val alter = it % 2 == 0
+        val ali = AltListItem(
+            uri = if (alter) "" else "a",
+            imageUri = "",
+            title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
+            subtitle = "Subtitle",
+            playable = alter,
+            hasChildren = alter
+        )
+        items.add(ali)
+    }
+    ItemsList(listItems = AltListItems(items = items, total = items.size + 10),
+        track = null,
+        playItem = {},
+        getChildrenOfItem = {},
+        thumbnailMap = emptyMap(),
+        libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
+        addToLibrary = {},
+        removeFromLibrary = {}) {}
 }
