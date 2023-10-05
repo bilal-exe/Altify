@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -23,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -37,6 +35,8 @@ import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlaying
+import bilal.altify.presentation.screens.nowplaying.overlays.Overlay
+import bilal.altify.presentation.screens.nowplaying.overlays.OverlayType
 import kotlinx.coroutines.launch
 
 // makes contrasting colors public so other composables can use them
@@ -102,6 +102,11 @@ fun NowPlayingScreen(
         newListLoading = true
     }
 
+    var overlay: OverlayType? = null
+    LaunchedEffect(key1 = uiState.trackState.volume) {
+        overlay = OverlayType.Volume(uiState.trackState.volume)
+    }
+
     Scaffold(
         floatingActionButton = { ScrollToTopButton(scrollState) }
     ) { pv ->
@@ -126,7 +131,7 @@ fun NowPlayingScreen(
                 executeCommand = viewModel::executeCommand
             )
         }
-
+        Overlay(overlayType = overlay)
     }
 }
 
