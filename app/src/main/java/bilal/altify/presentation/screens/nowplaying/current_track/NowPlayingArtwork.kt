@@ -50,8 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bilal.altify.R
-import bilal.altify.domain.use_case.Command
-import bilal.altify.domain.use_case.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import kotlin.math.roundToInt
 

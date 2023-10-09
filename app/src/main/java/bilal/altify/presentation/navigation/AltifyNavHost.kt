@@ -7,7 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import bilal.altify.presentation.AltifyViewModel
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.screens.nowplaying.NowPlayingScreen
 import bilal.altify.presentation.screens.preferences.PreferencesScreen
 
@@ -16,7 +17,7 @@ fun AltifyNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = AltifyDestination.NowPlaying.route,
-    viewModel: AltifyViewModel,
+    executeCommand: (Command) -> Unit,
 ) {
     val navToNowPlaying = { navController.navigateSingleTopTo(AltifyDestination.NowPlaying.route) }
     val navToSettings = { navController.navigateSingleTopTo(AltifyDestination.Settings.route) }
@@ -28,7 +29,9 @@ fun AltifyNavHost(
         composable(
             route = AltifyDestination.NowPlaying.route,
             deepLinks = listOf(navDeepLink { uriPattern = "altify://now_playing" })
-        ) { NowPlayingScreen(navToSettings = navToSettings, viewModel = viewModel) }
+        ) {
+            NowPlayingScreen(navToSettings = navToSettings,)
+        }
         composable(
             route = AltifyDestination.Settings.route
         ) { PreferencesScreen(navToNowPlaying = navToNowPlaying) }

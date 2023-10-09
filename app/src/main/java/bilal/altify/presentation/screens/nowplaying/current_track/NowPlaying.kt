@@ -36,11 +36,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
-import bilal.altify.domain.model.AltPlayerContext
-import bilal.altify.domain.model.AltTrack
-import bilal.altify.domain.use_case.Command
-import bilal.altify.domain.use_case.PlaybackCommand
-import bilal.altify.domain.use_case.VolumeCommand
+import bilal.altify.domain.spotify.model.AltPlayerContext
+import bilal.altify.domain.spotify.model.AltTrack
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.AltifyUIState
 import bilal.altify.presentation.CurrentTrackState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment

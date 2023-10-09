@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
+import bilal.altify.data.prefrences.DatastorePreferencesDataSource
+import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
-    private val preferences: AltifyPreferencesDataSource
+    private val preferences: PreferencesRepository,
 ): ViewModel() {
 
     val state = preferences.state

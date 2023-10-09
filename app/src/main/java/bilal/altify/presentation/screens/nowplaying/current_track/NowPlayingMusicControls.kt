@@ -25,8 +25,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.use_case.Command
-import bilal.altify.domain.use_case.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
 import bilal.altify.presentation.screens.nowplaying.titleColor
 import bilal.altify.presentation.util.AltText

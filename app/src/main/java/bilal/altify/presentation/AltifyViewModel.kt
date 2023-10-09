@@ -2,115 +2,65 @@ package bilal.altify.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bilal.altify.domain.sources.SpotifyConnector
-import bilal.altify.domain.sources.SpotifyConnectorResponse
-import bilal.altify.domain.use_case.AltifyUseCases
-import bilal.altify.domain.use_case.Command
-import bilal.altify.domain.use_case.ContentCommand
-import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
+import bilal.altify.domain.spotify.repositories.SpotifySource
+import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.use_case.AltifyUseCases
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.data.prefrences.DatastorePreferencesDataSource
+import bilal.altify.domain.prefrences.PreferencesRepository
+import bilal.altify.domain.spotify.repositories.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.SpotifyConnector
+import bilal.altify.domain.spotify.use_case.ContentCommand
 import bilal.altify.presentation.util.collectLatestOn
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class AltifyViewModel @Inject constructor(
     private val spotifyConnector: SpotifyConnector,
-    private val preferences: AltifyPreferencesDataSource,
-    private val volumeNotifications: VolumeNotifications,
+    private val preferences: PreferencesRepository,
     private val useCases: AltifyUseCases
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AltifyUIState())
-    val uiState = _uiState.asStateFlow()
-
-    init {
-        connect()
-        // interpolates playback position between Spotify callbacks
-        uiState.collectLatestOn(viewModelScope) {
-            while (uiState.value.connectionState is AltifyConnectionState.Success && !uiState.value.trackState.isPaused) {
-                delay(INTERPOLATION_FREQUENCY_MS)
-                _uiState.update {
-                    uiState.value.copy(
-                        trackState = uiState.value.trackState.copy(
-                            playbackPosition = uiState.value.trackState.playbackPosition + INTERPOLATION_FREQUENCY_MS
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    fun connect() {
-        _uiState.update {
-            it.copy(connectionState = AltifyConnectionState.Connecting)
-        }
-        spotifyConnector.connect().collectLatestOn(viewModelScope) { response ->
+    val uiState = spotifyConnector.data
+        .flatMapLatest { response ->
             when (response) {
-                is SpotifyConnectorResponse.Connected -> {
-
+                is SpotifyConnectorResponse.Connected ->
                     combine(
                         preferences.state,
-                        useCases.currentTrack(response.repositories),
-                        useCases.browser(response.repositories)
-                    ) { pref, track, browser ->
-                        _uiState.update {
-                            it.copy(
-                                connectionState = AltifyConnectionState.Success(response.repositories),
-                                preferences = pref,
-                                trackState = track,
-                                browserState = browser,
-                            )
-                        }
-                    }.launchIn(
-                        viewModelScope
+                        flowOf(response.repositories),
+                        AltifyUIState::Success
                     )
+                is SpotifyConnectorResponse.ConnectionFailed ->
+                    flowOf(AltifyUIState.Disconnected(response.exception.message))
 
-                    useCases.commands(
-                        command = ContentCommand.GetRecommended,
-                        repositories = response.repositories
-                    )
-                    volumeNotifications.show(
-                        scope = viewModelScope,
-                        volume = uiState.map { it.trackState.volume }
-                    )
-                }
-
-                is SpotifyConnectorResponse.ConnectionFailed -> {
-                    _uiState.update {
-                        it.copy(
-                            connectionState = AltifyConnectionState.Disconnected(
-                                response.exception.localizedMessage
-                            )
-                        )
-                    }
-                    volumeNotifications.delete()
-                }
             }
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AltifyUIState.Connecting
+        )
 
-    fun executeCommand(command: Command) {
-        if (uiState.value.connectionState !is AltifyConnectionState.Success) return
+    fun connect() =
+        spotifyConnector.connect()
+
+    fun executeCommand(command: Command, repositories: AltifyRepositories) =
         useCases.commands(
             command = command,
-            repositories = (uiState.value.connectionState as AltifyConnectionState.Success).sources,
+            repositories = repositories,
         )
-    }
-
-    override fun onCleared() {
-        volumeNotifications.delete()
-        super.onCleared()
-    }
-
-    companion object {
-        const val INTERPOLATION_FREQUENCY_MS = 500L
-    }
 }

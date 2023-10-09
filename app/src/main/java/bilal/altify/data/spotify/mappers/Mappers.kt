@@ -1,11 +1,11 @@
 package bilal.altify.data.spotify.mappers
 
-import bilal.altify.domain.model.AltLibraryState
-import bilal.altify.domain.model.AltListItem
-import bilal.altify.domain.model.AltListItems
-import bilal.altify.domain.model.AltPlayerContext
-import bilal.altify.domain.model.AltPlayerStateAndContext
-import bilal.altify.domain.model.AltTrack
+import bilal.altify.domain.spotify.model.AltLibraryState
+import bilal.altify.domain.spotify.model.AltListItem
+import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.AltPlayerContext
+import bilal.altify.domain.spotify.model.AltPlayerStateAndContext
+import bilal.altify.domain.spotify.model.AltTrack
 import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.LibraryState
 import com.spotify.protocol.types.ListItem

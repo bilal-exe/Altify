@@ -31,10 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import bilal.altify.domain.model.AltLibraryState
-import bilal.altify.domain.model.AltTrack
-import bilal.altify.domain.use_case.Command
-import bilal.altify.domain.use_case.UserCommand
+import bilal.altify.domain.spotify.model.AltLibraryState
+import bilal.altify.domain.spotify.model.AltTrack
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import bilal.altify.presentation.screens.nowplaying.bodyColor
 import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding

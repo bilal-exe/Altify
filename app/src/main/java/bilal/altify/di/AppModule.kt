@@ -3,13 +3,13 @@ package bilal.altify.di
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
-import bilal.altify.data.spotify.remote.SpotifyConnectorImpl
-import bilal.altify.domain.sources.SpotifyConnector
-import bilal.altify.domain.use_case.AltifyUseCases
-import bilal.altify.domain.use_case.ExecuteCommandUseCase
-import bilal.altify.domain.use_case.GetBrowserStateFlowUseCase
-import bilal.altify.domain.use_case.GetCurrentTrackFlowUseCase
-import bilal.altify.presentation.prefrences.AltifyPreferencesDataSource
+import bilal.altify.data.spotify.remote.SpotifySourceImpl
+import bilal.altify.domain.spotify.repositories.SpotifySource
+import bilal.altify.domain.spotify.use_case.AltifyUseCases
+import bilal.altify.domain.spotify.use_case.ExecuteCommandUseCase
+import bilal.altify.domain.spotify.use_case.GetBrowserStateFlowUseCase
+import bilal.altify.domain.spotify.use_case.GetCurrentTrackFlowUseCase
+import bilal.altify.data.prefrences.DatastorePreferencesDataSource
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.Module
 import dagger.Provides
@@ -24,13 +24,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesSpotifyConnector(@ApplicationContext context: Context): SpotifyConnector =
-        SpotifyConnectorImpl(context)
+    fun providesSpotifyConnector(@ApplicationContext context: Context): SpotifySource =
+        SpotifySourceImpl(context)
 
     @Provides
     @Singleton
-    fun providesAltifyPreferencesDataSource(@ApplicationContext context: Context): AltifyPreferencesDataSource =
-        AltifyPreferencesDataSource(
+    fun providesAltifyPreferencesDataSource(@ApplicationContext context: Context): DatastorePreferencesDataSource =
+        DatastorePreferencesDataSource(
             PreferenceDataStoreFactory.create(
                 produceFile = { context.preferencesDataStoreFile("Settings") }
             )

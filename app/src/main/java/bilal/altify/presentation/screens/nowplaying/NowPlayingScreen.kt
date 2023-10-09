@@ -27,14 +27,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
-import bilal.altify.domain.use_case.ContentCommand
-import bilal.altify.domain.use_case.ImagesCommand
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.ContentCommand
+import bilal.altify.domain.spotify.use_case.ImagesCommand
 import bilal.altify.presentation.AltifyViewModel
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
+import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.screens.nowplaying.browse.Browser
 import bilal.altify.presentation.screens.nowplaying.current_track.NowPlaying
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingUIState
+import bilal.altify.presentation.screens.nowplaying.current_track.NowPlayingViewModel
 import bilal.altify.presentation.screens.nowplaying.overlays.Overlay
 import bilal.altify.presentation.screens.nowplaying.overlays.OverlayType
 import kotlinx.coroutines.launch
@@ -50,10 +55,27 @@ val nowPlayingItemsPadding = PaddingValues(bottom = 8.dp)
 @Composable
 fun NowPlayingScreen(
     navToSettings: () -> Unit,
-    viewModel: AltifyViewModel
+    viewModel: NowPlayingViewModel = hiltViewModel()
 ) {
+    val state by viewModel.uiState.collectAsState()
+    when (val uiState = state) {
+        NowPlayingUIState.Loading ->
+            LoadingScreen()
+        is NowPlayingUIState.Success ->
+            NowPlayingScreen(
+                navToSettings = navToSettings,
+                executeCommand = { viewModel.executeCommand(it, uiState.) },
+                uiState = uiState
+            )
+    }
+}
 
-    val uiState by viewModel.uiState.collectAsState()
+@Composable
+private fun NowPlayingScreen(
+    navToSettings: () -> Unit,
+    executeCommand: (Command) -> Unit,
+    uiState: NowPlayingUIState.Success
+) {
 
     val palette = uiState.trackState.artwork?.let {
         if (uiState.preferences.backgroundStyle != BackgroundStyleConfig.PLAIN)
@@ -78,7 +100,7 @@ fun NowPlayingScreen(
     // gets new artwork for each new track
     LaunchedEffect(key1 = uiState.trackState.track?.imageUri) {
         uiState.trackState.track?.imageUri?.let {
-            viewModel.executeCommand(ImagesCommand.GetArtwork(it))
+            executeCommand(ImagesCommand.GetArtwork(it))
         }
     }
 

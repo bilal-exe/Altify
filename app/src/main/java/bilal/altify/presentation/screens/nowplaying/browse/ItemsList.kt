@@ -52,10 +52,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.model.AltLibraryState
-import bilal.altify.domain.model.AltListItem
-import bilal.altify.domain.model.AltListItems
-import bilal.altify.domain.model.AltTrack
+import bilal.altify.domain.spotify.model.AltLibraryState
+import bilal.altify.domain.spotify.model.AltListItem
+import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.AltTrack
 import bilal.altify.presentation.screens.nowplaying.BROWSER_FAB_HEIGHT
 import bilal.altify.presentation.screens.nowplaying.bodyColor
 import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor

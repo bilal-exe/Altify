@@ -12,12 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.navigation.AltifyDestination
 import bilal.altify.presentation.navigation.AltifyNavHost
 import bilal.altify.presentation.navigation.destinations
+import bilal.altify.presentation.prefrences.AltPreferencesState
 
 @Composable
-fun AltifyApp(viewModel: AltifyViewModel) {
+fun AltifyApp(
+    preferences: AltPreferencesState,
+    executeCommand: (Command) -> Unit
+) {
 
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
@@ -33,7 +38,7 @@ fun AltifyApp(viewModel: AltifyViewModel) {
         AltifyNavHost(
             modifier = Modifier.padding(padding),
             navController = navController,
-            viewModel = viewModel
+            executeCommand = executeCommand
         )
     }
 
