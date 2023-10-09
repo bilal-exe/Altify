@@ -1,8 +1,10 @@
 package bilal.altify.presentation.screens
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,13 +43,15 @@ fun LoadingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(10.dp)
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Icon(
             painter = painterResource(id = R.drawable.refresh),
             contentDescription = "",
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(80.dp)
                 .graphicsLayer {
@@ -58,7 +62,8 @@ fun LoadingScreen(
         Text(
             text = text,
             fontSize = 20.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

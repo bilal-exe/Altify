@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,7 +58,9 @@ fun NowPlayingMusicControls(
             MusicControlButton(
                 onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
                 painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                containerColor = MaterialTheme.colorScheme.onBackground,
+                iconColor = MaterialTheme.colorScheme.background
             )
         }
         MusicControlButton(
@@ -74,7 +77,8 @@ private fun MusicControlButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     painter: Painter,
-    color: Color = Color.Transparent,
+    containerColor: Color = Color.Transparent,
+    iconColor: Color = MaterialTheme.colorScheme.onBackground,
     dragToSeekRelative: ((Long) -> Unit)? = null
 ) {
     var timeInSecs by remember { mutableFloatStateOf(0f) }
@@ -87,11 +91,12 @@ private fun MusicControlButton(
         if (timeInSecs == 0f) {
             Button(
                 onClick = onClick,
-                colors = ButtonDefaults.buttonColors(containerColor = color),
+                colors = ButtonDefaults.buttonColors(containerColor = containerColor),
             ) {
                 Icon(
                     painter = painter,
                     contentDescription = "",
+                    tint = iconColor
                 )
             }
         } else {
@@ -128,7 +133,7 @@ private fun Modifier.dragToSeekRelative(seekRelative: (Long) -> Unit, setTime: (
 private fun pythagoras(x: Float, y: Float) =
     sqrt((x * x) + (y * y))
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun NowPlayingMusicControlsPreview() {
     NowPlayingMusicControls({}, true)

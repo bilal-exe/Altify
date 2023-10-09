@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,7 +37,11 @@ fun NowPlayingVolumeSlider(
         horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(painterResource(id = R.drawable.volume_mute), "")
+        Icon(
+            painterResource(id = R.drawable.volume_mute),
+            "",
+            tint = MaterialTheme.colorScheme.onBackground,
+        )
         AltSlider(
             progress = volume,
             duration = 1f

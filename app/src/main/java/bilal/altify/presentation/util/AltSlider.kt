@@ -10,8 +10,17 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+
+@Composable
+private fun sliderColors() =
+    SliderDefaults.colors(
+        thumbColor = MaterialTheme.colorScheme.onBackground,
+        activeTrackColor = MaterialTheme.colorScheme.onBackground,
+        inactiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f),
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,15 +30,13 @@ fun AltSlider(
     duration: Long = 0,
     onSliderMoved: (Long) -> Unit,
 ) {
-    val sliderColors = SliderDefaults.colors(
-    )
-    val color = MaterialTheme.colorScheme.primary
+    val color = MaterialTheme.colorScheme.onBackground
     Slider(
         modifier = modifier.height(20.dp),
         value = progress.toFloat(),
         onValueChange = { onSliderMoved(it.toLong()) },
         valueRange = 0f..duration.toFloat(),
-        colors = sliderColors,
+        colors = sliderColors(),
         thumb = {
             Canvas(
                 modifier = Modifier.size(DpSize(20.dp, 20.dp)),
@@ -52,15 +59,13 @@ fun AltSlider(
     duration: Float,
     onSliderMoved: (Float) -> Unit
 ) {
-    val sliderColors = SliderDefaults.colors(
-    )
-    val color = MaterialTheme.colorScheme.primary
+    val color = MaterialTheme.colorScheme.onBackground
     Slider(
         modifier = modifier.height(20.dp),
         value = progress,
         onValueChange = { onSliderMoved(it) },
         valueRange = 0f..duration,
-        colors = sliderColors,
+        colors = sliderColors(),
         thumb = {
             Canvas(
                 modifier = Modifier.size(DpSize(20.dp, 20.dp)),
@@ -72,5 +77,15 @@ fun AltSlider(
                 )
             }
         }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SliderPreview() {
+    AltSlider(
+        progress = 1000f,
+        onSliderMoved = {},
+        duration = 2000f
     )
 }

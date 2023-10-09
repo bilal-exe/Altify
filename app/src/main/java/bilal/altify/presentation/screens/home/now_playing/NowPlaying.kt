@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,8 +63,9 @@ fun NowPlaying(
 
     // gets new artwork for each new track
     LaunchedEffect(key1 = uiState.trackState.track?.uri) {
-        uiState.trackState.track?.imageUri?.let {
-            executeCommand(ImagesCommand.GetArtwork(it))
+        val uri = uiState.trackState.track?.imageUri
+        if (!uri.isNullOrEmpty()) {
+            executeCommand(ImagesCommand.GetArtwork(uri))
         }
     }
 
@@ -265,6 +267,25 @@ private fun NowPlayingPreview() {
         navToSettings = {},
         executeCommand = {},
     )
+}
+
+@Preview(name = "NowPlaying")
+@Composable
+private fun NowPlayingDarkPreview() {
+    MaterialTheme (colorScheme = darkColorScheme()) {
+        NowPlaying(
+            uiState = NowPlayingUIState.Success(
+                trackState = CurrentTrackState(
+                    playerContext = AltPlayerContext.example,
+                    track = AltTrack.example,
+                    playbackPosition = 5000
+                ),
+                preferences = AltPreferencesState(),
+            ),
+            navToSettings = {},
+            executeCommand = {},
+        )
+    }
 }
 
 @Preview(name = "NowPlaying", showBackground = true)

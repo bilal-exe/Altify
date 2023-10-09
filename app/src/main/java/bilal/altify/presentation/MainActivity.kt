@@ -8,6 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -104,6 +106,14 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
     LoadingScreen("Connecting to Spotify...")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingDarkPreview() {
+    MaterialTheme(colorScheme = darkColorScheme()) {
+        LoadingScreen("Connecting to Spotify...")
+    }
 }
 
 @Preview(showBackground = true)

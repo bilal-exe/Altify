@@ -22,11 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
+import bilal.altify.domain.spotify.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.DarkThemeConfig
+import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.screens.LoadingScreen
@@ -149,4 +152,17 @@ private fun getBackgroundColor(
             if (darkTheme) palette?.darkMutedSwatch else palette?.lightMutedSwatch
     }
         ?.getColor() ?: MaterialTheme.colorScheme.background
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        navToSettings = { /*TODO*/ },
+        executeCommand = {},
+        uiState = NowPlayingUIState.Success(
+            trackState = CurrentTrackState(),
+            preferences = AltPreferencesState()
+        )
+    )
 }

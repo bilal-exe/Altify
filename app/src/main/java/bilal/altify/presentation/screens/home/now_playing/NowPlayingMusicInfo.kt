@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -119,12 +120,14 @@ private fun NowPlayingMusicInfo(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = "by ${artist}\n$album",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = when (config) {
                     MusicInfoAlignmentConfig.CENTER -> TextAlign.Center
                     MusicInfoAlignmentConfig.LEFT -> TextAlign.Left
