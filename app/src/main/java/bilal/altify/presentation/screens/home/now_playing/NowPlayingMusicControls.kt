@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying.current_track
+package bilal.altify.presentation.screens.home.now_playing
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -27,9 +28,7 @@ import androidx.compose.ui.unit.sp
 import bilal.altify.R
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.PlaybackCommand
-import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
-import bilal.altify.presentation.screens.nowplaying.titleColor
-import bilal.altify.presentation.util.AltText
+import bilal.altify.presentation.screens.home.nowPlayingItemsPadding
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -58,8 +57,6 @@ fun NowPlayingMusicControls(
             MusicControlButton(
                 onClick = { executeCommand(PlaybackCommand.PauseResume(isPaused)) },
                 painter = painterResource(id = if (isPaused) R.drawable.play else R.drawable.pause),
-                color = titleColor,
-                iconColor = bottomColor,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -78,7 +75,6 @@ private fun MusicControlButton(
     modifier: Modifier = Modifier,
     painter: Painter,
     color: Color = Color.Transparent,
-    iconColor: Color = titleColor,
     dragToSeekRelative: ((Long) -> Unit)? = null
 ) {
     var timeInSecs by remember { mutableFloatStateOf(0f) }
@@ -96,11 +92,10 @@ private fun MusicControlButton(
                 Icon(
                     painter = painter,
                     contentDescription = "",
-                    tint = iconColor
                 )
             }
         } else {
-            AltText(
+            Text(
                 text = timeInSecs.roundToInt().toString(),
                 fontSize = 30.sp
             )

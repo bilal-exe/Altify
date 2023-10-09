@@ -8,8 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import bilal.altify.domain.spotify.use_case.Command
-import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.presentation.screens.nowplaying.NowPlayingScreen
+import bilal.altify.presentation.screens.home.HomeScreen
 import bilal.altify.presentation.screens.preferences.PreferencesScreen
 
 @Composable
@@ -30,11 +29,11 @@ fun AltifyNavHost(
             route = AltifyDestination.NowPlaying.route,
             deepLinks = listOf(navDeepLink { uriPattern = "altify://now_playing" })
         ) {
-            NowPlayingScreen(navToSettings = navToSettings,)
+            HomeScreen(navToSettings = navToSettings, executeCommand = executeCommand)
         }
-        composable(
-            route = AltifyDestination.Settings.route
-        ) { PreferencesScreen(navToNowPlaying = navToNowPlaying) }
+        composable(route = AltifyDestination.Settings.route) {
+            PreferencesScreen(navToNowPlaying = navToNowPlaying)
+        }
     }
 }
 

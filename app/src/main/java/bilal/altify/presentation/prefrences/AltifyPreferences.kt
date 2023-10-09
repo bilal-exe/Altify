@@ -13,7 +13,6 @@ enum class ArtworkDisplayConfig(override val code: Int, override val title: Stri
 
 enum class BackgroundStyleConfig(override val code: Int, override val title: String) : AltPreference {
     SOLID(0, "Solid Colour"),
-    DIAGONAL_GRADIENT(1, "Diagonal Gradient"),
     VERTICAL_GRADIENT(2, "Vertical Gradient"),
     PLAIN(3, "Plain")
 }

@@ -15,24 +15,5 @@ sealed interface AltifyUIState {
     data class Success(
         val preferences: AltPreferencesState = AltPreferencesState(),
         val repositories: AltifyRepositories,
-//        val trackState: CurrentTrackState = CurrentTrackState(),
-//        val browserState: BrowserState = BrowserState()
     ): AltifyUIState
 }
-
-//data class CurrentTrackState(
-//    val track: AltTrack? = null,
-//    val isPaused: Boolean = true,
-//    val playbackPosition: Long = 0L,
-//    val playerContext: AltPlayerContext? = null,
-//    val volume: Float = 0f,
-//    val artwork: Bitmap? = null,
-//    val libraryState: AltLibraryState? = null,
-//)
-
-//data class BrowserState(
-//    val listItems: AltListItems = AltListItems(),
-//    val libraryState: Map<String, AltLibraryState> = emptyMap(),
-//    val thumbnailMap: Map<String, Bitmap> = emptyMap(),
-//    val uriHistory: Stack<String> = Stack()
-//)

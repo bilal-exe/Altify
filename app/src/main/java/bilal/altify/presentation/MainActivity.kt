@@ -66,9 +66,7 @@ class MainActivity : ComponentActivity() {
                             buttonFunc = viewModel::connect
                         )
                     is AltifyUIState.Success ->
-                        AltifyApp(state.preferences) {
-                            viewModel.executeCommand(it, state.repositories)
-                        }
+                        AltifyApp(state) { viewModel.executeCommand(it, state.repositories) }
                 }
 
             }

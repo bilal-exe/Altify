@@ -1,12 +1,12 @@
-package bilal.altify.presentation.screens.nowplaying.current_track
+package bilal.altify.presentation.screens.home.now_playing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.model.CurrentTrackState
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
-import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.repositories.SpotifySource
+import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.remote.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.prefrences.AltPreferencesState
@@ -40,7 +40,6 @@ class NowPlayingViewModel @Inject constructor(
                         combine(
                             useCases.currentTrack(it.repositories),
                             preferences.state,
-                            flowOf(it.repositories),
                             NowPlayingUIState::Success
                         )
                 is SpotifyConnectorResponse.ConnectionFailed ->
@@ -63,12 +62,6 @@ class NowPlayingViewModel @Inject constructor(
         )
     }
 
-    fun executeCommand(command: Command, repositories: AltifyRepositories) =
-        useCases.commands(
-            command = command,
-            repositories = repositories,
-        )
-
     override fun onCleared() {
         volumeNotifications.delete()
         super.onCleared()
@@ -80,6 +73,5 @@ sealed interface NowPlayingUIState {
     data class Success(
         val trackState: CurrentTrackState,
         val preferences: AltPreferencesState,
-        val repositories: AltifyRepositories
     ) : NowPlayingUIState
 }

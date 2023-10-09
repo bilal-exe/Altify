@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying.overlays
+package bilal.altify.presentation.screens.home.overlays
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -32,8 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.presentation.screens.nowplaying.bodyColor
-import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
+import bilal.altify.presentation.screens.home.now_playing.bottomColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -84,7 +83,6 @@ private fun VolumeOverlay(volume: Float) {
         Spacer(modifier = Modifier.height(16.dp))
         LinearProgressIndicator(
             progress = volume,
-            color = bodyColor,
             trackColor = bottomColor
         )
     }
@@ -106,7 +104,6 @@ private fun OverlayTemplate(
 ) {
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = bodyColor,
         tonalElevation = 20.dp,
         shadowElevation = 20.dp,
         modifier = Modifier

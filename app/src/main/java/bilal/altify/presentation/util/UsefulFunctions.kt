@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.core.app.ActivityCompat
 import androidx.palette.graphics.Palette
+import bilal.altify.presentation.DarkThemeConfig
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +40,17 @@ fun SetStatusBarColor(color: Color) {
         systemUiController.setStatusBarColor(color = color)
     }
 }
+
+@Composable
+fun shouldUseDarkTheme(
+    darkThemeConfig: DarkThemeConfig?
+): Boolean =
+    when (darkThemeConfig) {
+        DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
+        DarkThemeConfig.LIGHT -> false
+        DarkThemeConfig.DARK -> true
+        null -> isSystemInDarkTheme()
+    }
 
 fun Color.complement(): Color {
     val rgb = this.convert(ColorSpaces.Srgb)

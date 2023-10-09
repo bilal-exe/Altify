@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying.current_track
+package bilal.altify.presentation.screens.home.now_playing
 
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedContent
@@ -197,14 +197,14 @@ private fun NowPlayingRotatingArtwork(bitmap: Bitmap?, isPaused: Boolean) {
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingStaticArtworkPreview() {
-    NowPlayingBackground(content = {
+    NowPlayingBackground {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
             NowPlayingStaticArtwork(null, isPaused = false)
         }
-    })
+    }
 }
 
 @Preview(showBackground = true)

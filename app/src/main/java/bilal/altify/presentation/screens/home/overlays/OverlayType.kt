@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying.overlays
+package bilal.altify.presentation.screens.home.overlays
 
 sealed interface OverlayType {
     data class Volume(val volume: Float) : OverlayType

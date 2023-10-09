@@ -2,7 +2,6 @@ package bilal.altify.domain.spotify.use_case
 
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import bilal.altify.domain.spotify.model.AltListItem
-import bilal.altify.domain.spotify.repositories.SpotifySource
 import java.util.Stack
 
 class ExecuteCommandUseCase {
@@ -81,12 +80,10 @@ class ExecuteCommandUseCase {
                 when (browserVisitedHistory.size) {
                     0 ->
                         repositories.content.getRecommended()
-
                     1 -> {
                         browserVisitedHistory.pop()
                         repositories.content.getRecommended()
                     }
-
                     else -> {
                         browserVisitedHistory.pop()
                         repositories.content.getChildrenOfItem(

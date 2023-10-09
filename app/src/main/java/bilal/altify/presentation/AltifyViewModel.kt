@@ -2,29 +2,19 @@ package bilal.altify.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bilal.altify.domain.spotify.repositories.SpotifySource
-import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.Command
-import bilal.altify.data.prefrences.DatastorePreferencesDataSource
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
-import bilal.altify.domain.spotify.repositories.SpotifyConnector
-import bilal.altify.domain.spotify.use_case.ContentCommand
-import bilal.altify.presentation.util.collectLatestOn
-import bilal.altify.presentation.volume_notification.VolumeNotifications
+import bilal.altify.domain.spotify.remote.SpotifyConnector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel

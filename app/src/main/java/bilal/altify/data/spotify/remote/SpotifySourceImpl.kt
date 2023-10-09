@@ -8,9 +8,9 @@ import bilal.altify.data.spotify.repositories.PlayerRepositoryImpl
 import bilal.altify.data.spotify.repositories.UserRepositoryImpl
 import bilal.altify.data.spotify.repositories.VolumeRepositoryImpl
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
-import bilal.altify.domain.spotify.repositories.SpotifyConnector
-import bilal.altify.domain.spotify.repositories.SpotifySource
-import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.remote.SpotifyConnector
+import bilal.altify.domain.spotify.remote.SpotifySource
+import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote

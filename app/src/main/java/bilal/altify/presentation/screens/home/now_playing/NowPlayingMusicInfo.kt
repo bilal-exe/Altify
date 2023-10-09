@@ -1,4 +1,4 @@
-package bilal.altify.presentation.screens.nowplaying.current_track
+package bilal.altify.presentation.screens.home.now_playing
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -36,10 +36,7 @@ import bilal.altify.domain.spotify.model.AltTrack
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
-import bilal.altify.presentation.screens.nowplaying.bodyColor
-import bilal.altify.presentation.screens.nowplaying.nowPlayingItemsPadding
-import bilal.altify.presentation.screens.nowplaying.titleColor
-import bilal.altify.presentation.util.AltText
+import bilal.altify.presentation.screens.home.nowPlayingItemsPadding
 import bilal.altify.presentation.util.UpdateEffect
 import bilal.altify.presentation.util.shakeShrinkAnimation
 
@@ -117,7 +114,7 @@ private fun NowPlayingMusicInfo(
                     }
                 )
         ) {
-            AltText(
+            Text(
                 text = name,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -127,7 +124,6 @@ private fun NowPlayingMusicInfo(
                 text = "by ${artist}\n$album",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = bodyColor,
                 maxLines = 1,
                 textAlign = when (config) {
                     MusicInfoAlignmentConfig.CENTER -> TextAlign.Center
@@ -187,7 +183,6 @@ fun AddOrRemoveFromLibraryButton(
                     .size(30.dp)
                     .scale(scale = scale.value)
                     .rotate(rotation.value),
-                tint = titleColor
             )
         }
     }

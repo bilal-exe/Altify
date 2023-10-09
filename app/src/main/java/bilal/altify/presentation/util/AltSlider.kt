@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
@@ -11,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import bilal.altify.presentation.screens.nowplaying.bodyColor
-import bilal.altify.presentation.screens.nowplaying.titleColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,9 +22,8 @@ fun AltSlider(
     onSliderMoved: (Long) -> Unit,
 ) {
     val sliderColors = SliderDefaults.colors(
-        activeTrackColor = titleColor,
-        inactiveTrackColor = bodyColor
     )
+    val color = MaterialTheme.colorScheme.primary
     Slider(
         modifier = modifier.height(20.dp),
         value = progress.toFloat(),
@@ -37,7 +35,7 @@ fun AltSlider(
                 modifier = Modifier.size(DpSize(20.dp, 20.dp)),
             ) {
                 drawCircle(
-                    color = titleColor,
+                    color = color,
                     center = Offset(x = size.width / 2, y = size.height / 2),
                     radius = 10f
                 )
@@ -55,9 +53,8 @@ fun AltSlider(
     onSliderMoved: (Float) -> Unit
 ) {
     val sliderColors = SliderDefaults.colors(
-        activeTrackColor = titleColor,
-        inactiveTrackColor = bodyColor
     )
+    val color = MaterialTheme.colorScheme.primary
     Slider(
         modifier = modifier.height(20.dp),
         value = progress,
@@ -69,7 +66,7 @@ fun AltSlider(
                 modifier = Modifier.size(DpSize(20.dp, 20.dp)),
             ) {
                 drawCircle(
-                    color = titleColor,
+                    color = color,
                     center = Offset(x = size.width / 2, y = size.height / 2),
                     radius = 10f
                 )

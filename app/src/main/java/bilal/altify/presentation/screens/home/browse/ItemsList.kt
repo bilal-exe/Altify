@@ -1,6 +1,7 @@
-package bilal.altify.presentation.screens.nowplaying.browse
+package bilal.altify.presentation.screens.home.browse
 
 import android.graphics.Bitmap
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -19,23 +20,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,11 +63,13 @@ import bilal.altify.domain.spotify.model.AltLibraryState
 import bilal.altify.domain.spotify.model.AltListItem
 import bilal.altify.domain.spotify.model.AltListItems
 import bilal.altify.domain.spotify.model.AltTrack
-import bilal.altify.presentation.screens.nowplaying.BROWSER_FAB_HEIGHT
-import bilal.altify.presentation.screens.nowplaying.bodyColor
-import bilal.altify.presentation.screens.nowplaying.current_track.bottomColor
-import bilal.altify.presentation.screens.nowplaying.titleColor
-import bilal.altify.presentation.util.AltText
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.ContentCommand
+import bilal.altify.domain.spotify.use_case.ImagesCommand
+import bilal.altify.domain.spotify.use_case.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.UserCommand
+import bilal.altify.presentation.screens.home.BROWSER_FAB_HEIGHT
+import bilal.altify.presentation.screens.home.now_playing.bottomColor
 import bilal.altify.presentation.util.UpdateEffect
 import bilal.altify.presentation.util.clipLen
 import bilal.altify.presentation.util.shakeShrinkAnimation
@@ -71,20 +80,70 @@ import kotlin.math.ceil
 @Composable
 fun ItemsList(
     listItems: AltListItems,
-    track: AltTrack?,
-    playItem: (AltListItem) -> Unit,
-    getChildrenOfItem: (AltListItem) -> Unit,
+    track: String?,
     thumbnailMap: Map<String, Bitmap>,
     libraryState: Map<String, AltLibraryState>,
-    addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit,
-    addToQueue: (String) -> Unit
+    executeCommand: (Command) -> Unit
 ) {
+
+    BackHandler {
+        executeCommand(ContentCommand.GetPrevious)
+    }
+
+    val getRecommended: () -> Unit = {
+        executeCommand(ContentCommand.GetRecommended)
+    }
+    val playItem: (AltListItem) -> Unit = {
+        executeCommand(ContentCommand.Play(it))
+    }
+    val getChildrenOfItem: (AltListItem) -> Unit = {
+        executeCommand(ContentCommand.GetChildrenOfItem(it))
+    }
+    val getThumbnail: (String) -> Unit = {
+        executeCommand(ImagesCommand.GetThumbnail(it))
+    }
+    val addToLibrary: (String) -> Unit = {
+        executeCommand(UserCommand.AddToLibrary(it))
+    }
+    val removeFromLibrary: (String) -> Unit = {
+        executeCommand(UserCommand.RemoveFromLibrary(it))
+    }
+    val addToQueue: (String) -> Unit = {
+        executeCommand(PlaybackCommand.AddToQueue(it))
+    }
+
+    var newListLoading by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = listItems) {
+        newListLoading = false
+    }
+
+    LaunchedEffect(key1 = listItems) {
+        if (listItems().isNotEmpty()) {
+            executeCommand(ImagesCommand.ClearThumbnails)
+            listItems().forEach { item ->
+                if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
+            }
+            executeCommand(UserCommand.UpdateBrowserLibraryState(listItems().map { it.uri }))
+        }
+    }
+
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(key1 = lazyListState.canScrollForward) {
+        if (newListLoading) return@LaunchedEffect
+        if (listItems().size >= listItems.total) return@LaunchedEffect
+        executeCommand(
+            ContentCommand.LoadMoreChildrenOfItem(listItems)
+        )
+        newListLoading = true
+    }
+
     // progress indicator for when there more list to load
     val progressIndicatorHeight = LocalConfiguration.current.screenHeightDp / 4
     val showProgressIndicator = listItems().size < listItems.total
 //    calculates the height of the list by the thumbnail height plus padding for each list item
 //    allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
+
     val columnHeight =
         (listItems().size * ceil((144 / LocalDensity.current.density) + 16)) + 16 + // extra room
                 BROWSER_FAB_HEIGHT +// so floating action button doesn't overlap
@@ -93,10 +152,13 @@ fun ItemsList(
     LazyColumn(
         modifier = Modifier.height(columnHeight.dp), userScrollEnabled = false
     ) {
+        item {
+            GetRecommendedButton(getRecommended)
+        }
         items(items = listItems(), key = { it.id }) { item ->
             ListItemRow(
                 item = item,
-                selected = track?.uri == item.uri,
+                selected = track == item.uri,
                 thumbnail = thumbnailMap[item.imageUri],
                 playItem = { playItem(item) },
                 getChildrenOfItem = { getChildrenOfItem(item) },
@@ -117,10 +179,26 @@ fun ItemsList(
                     modifier = Modifier
                         .height((progressIndicatorHeight * 0.75).dp)
                         .fillMaxWidth(),
-                    color = titleColor,
                 )
             }
         }
+    }
+}
+
+@Composable
+fun GetRecommendedButton(getRecommended: () -> Unit) {
+    OutlinedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        onClick = { getRecommended() },
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Text(
+            text = "Get Recommended Items",
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
     }
 }
 
@@ -178,7 +256,6 @@ fun ListItemRow(
                     modifier = Modifier
                         .padding(start = 16.dp)
                         .scale(scale),
-                    color = titleColor,
                     fontSize = 25.sp
                 )
             }
@@ -264,7 +341,6 @@ fun PlayButton(
             painter = painterResource(id = R.drawable.play),
             contentDescription = "",
             modifier = Modifier.clickable { playItem() },
-            tint = titleColor
         ) else Spacer(modifier = modifier)
     }
 }
@@ -274,7 +350,7 @@ fun ListItemInfo(
     title: String, subtitle: String, modifier: Modifier = Modifier
 ) {
     Column(modifier = Modifier) {
-        AltText(
+        Text(
             text = title,
             fontSize = 22.sp,
             fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
@@ -285,7 +361,6 @@ fun ListItemInfo(
             text = subtitle.clipLen(40),
             fontStyle = MaterialTheme.typography.labelMedium.fontStyle,
             fontSize = 18.sp,
-            color = bodyColor,
             maxLines = 1
         )
     }
@@ -349,14 +424,13 @@ fun ItemsListPreview() {
         )
         items.add(ali)
     }
-    ItemsList(listItems = AltListItems(items),
+    ItemsList(
+        listItems = AltListItems(items),
         track = null,
-        playItem = {},
-        getChildrenOfItem = {},
         thumbnailMap = emptyMap(),
         libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
-        addToLibrary = {},
-        removeFromLibrary = {}) {}
+        executeCommand = { },
+    )
 }
 
 @Preview(showBackground = true)
@@ -377,10 +451,7 @@ fun ItemsListPreview2() {
     }
     ItemsList(listItems = AltListItems(items = items, total = items.size + 10),
         track = null,
-        playItem = {},
-        getChildrenOfItem = {},
         thumbnailMap = emptyMap(),
         libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
-        addToLibrary = {},
-        removeFromLibrary = {}) {}
-}
+        executeCommand = { }
+    )}

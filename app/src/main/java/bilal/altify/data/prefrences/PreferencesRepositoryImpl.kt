@@ -14,8 +14,7 @@ class PreferencesRepositoryImpl(
     private val source: DatastorePreferencesDataSource
 ) : PreferencesRepository {
 
-    override fun state(): Flow<AltPreferencesState> =
-        source.state
+    override val state get() = source.state
 
     override suspend fun setDarkThemeConfig(config: DarkThemeConfig) =
         source.setDarkThemeConfig(config = config)
