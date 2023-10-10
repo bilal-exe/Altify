@@ -1,6 +1,7 @@
 package bilal.altify.data.spotify.repositories
 
 import android.graphics.Bitmap
+import android.util.Log
 import bilal.altify.domain.spotify.repositories.ImagesRepository
 import com.spotify.android.appremote.api.ImagesApi
 import com.spotify.protocol.types.Image
@@ -29,9 +30,7 @@ class ImagesRepositoryImpl(
 
     override fun getArtwork(uri: String) {
         imagesApi.getImage(ImageUri(uri), Image.Dimension.LARGE)
-            .setResultCallback {
-                artworkCallback(it)
-            }
+            .setResultCallback(::artworkCallback)
             .setErrorCallback {
                 throw ImagesRepository.ImagesSourceException(it.localizedMessage)
             }

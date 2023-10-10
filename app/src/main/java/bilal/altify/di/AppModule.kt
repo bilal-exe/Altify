@@ -27,13 +27,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesSpotifySource(@ApplicationContext context: Context): SpotifySource =
+    fun providesSpotifyConnector(@ApplicationContext context: Context): SpotifyConnector =
         SpotifySourceImpl(context)
 
     @Provides
     @Singleton
-    fun providesSpotifyConnector(@ApplicationContext context: Context): SpotifyConnector =
-        SpotifySourceImpl(context)
+    fun providesSpotifySource(spotifyConnector: SpotifyConnector): SpotifySource =
+        spotifyConnector
 
 
     @Provides

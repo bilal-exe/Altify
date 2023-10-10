@@ -10,9 +10,9 @@ interface SpotifySource {
 
 }
 
-interface SpotifyConnector {
+interface SpotifyConnector: SpotifySource {
 
-    val data: Flow<SpotifyConnectorResponse>
+    override val data: Flow<SpotifyConnectorResponse>
 
     fun connect()
 

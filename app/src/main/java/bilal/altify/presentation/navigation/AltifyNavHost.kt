@@ -29,7 +29,10 @@ fun AltifyNavHost(
             route = AltifyDestination.NowPlaying.route,
             deepLinks = listOf(navDeepLink { uriPattern = "altify://now_playing" })
         ) {
-            HomeScreen(navToSettings = navToSettings, executeCommand = executeCommand)
+            HomeScreen(
+                navToSettings = navToSettings,
+                executeCommand = executeCommand
+            )
         }
         composable(route = AltifyDestination.Settings.route) {
             PreferencesScreen(navToNowPlaying = navToNowPlaying)

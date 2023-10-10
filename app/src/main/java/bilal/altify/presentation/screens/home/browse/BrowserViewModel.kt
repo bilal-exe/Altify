@@ -56,12 +56,6 @@ class BrowserViewModel @Inject constructor(
             initialValue = BrowserUIState.Loading
         )
 
-    fun executeCommand(command: Command, repositories: AltifyRepositories) =
-        useCases.commands(
-            command = command,
-            repositories = repositories,
-        )
-
 }
 
 sealed interface BrowserUIState {
