@@ -2,13 +2,11 @@ package bilal.altify.data.prefrences
 
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.presentation.DarkThemeConfig
-import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
-import kotlinx.coroutines.flow.Flow
 
 class PreferencesRepositoryImpl(
     private val source: DatastorePreferencesDataSource

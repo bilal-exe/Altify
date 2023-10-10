@@ -2,15 +2,14 @@ package bilal.altify.presentation.screens.preferences
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreferencesState
-import bilal.altify.data.prefrences.DatastorePreferencesDataSource
-import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.presentation.prefrences.ArtworkDisplayConfig
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
-import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
+import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

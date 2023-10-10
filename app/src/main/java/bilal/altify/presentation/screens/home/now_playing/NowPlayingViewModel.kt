@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.model.CurrentTrackState
-import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.remote.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
-import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import dagger.hilt.android.lifecycle.HiltViewModel

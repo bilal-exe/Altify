@@ -6,14 +6,11 @@ import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.model.BrowserState
 import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.remote.SpotifySource
-import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
-import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.ContentCommand
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map

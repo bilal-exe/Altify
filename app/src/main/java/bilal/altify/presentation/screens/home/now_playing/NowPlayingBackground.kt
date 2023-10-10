@@ -15,11 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.palette.graphics.Palette
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.util.SetStatusBarColor
-import bilal.altify.presentation.util.getColor
 
 var bottomColor by mutableStateOf(Color.Black)
     private set

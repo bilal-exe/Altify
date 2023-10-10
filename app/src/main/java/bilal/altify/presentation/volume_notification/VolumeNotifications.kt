@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -14,9 +13,7 @@ import bilal.altify.presentation.util.collectLatestOn
 import bilal.altify.presentation.util.quickCheckPerms
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class VolumeNotifications @Inject constructor(private val context: Context) {

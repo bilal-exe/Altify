@@ -62,7 +62,6 @@ import bilal.altify.R
 import bilal.altify.domain.spotify.model.AltLibraryState
 import bilal.altify.domain.spotify.model.AltListItem
 import bilal.altify.domain.spotify.model.AltListItems
-import bilal.altify.domain.spotify.model.AltTrack
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.ContentCommand
 import bilal.altify.domain.spotify.use_case.ImagesCommand
