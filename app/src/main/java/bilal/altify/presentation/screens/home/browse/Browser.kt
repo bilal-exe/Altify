@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,12 +43,21 @@ fun Browser(
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     executeCommand: (Command) -> Unit,
     viewModel: BrowserViewModel = hiltViewModel(),
+    lazyListState: LazyListState,
 ) {
     val state by viewModel.uiState.collectAsState()
     val uiState = state
+
+    val themeColor = MaterialTheme.colorScheme.background
+    val browserBackgroundColor = remember(backgroundColor, preferences.backgroundStyle) {
+        when (preferences.backgroundStyle) {
+            BackgroundStyleConfig.SOLID -> backgroundColor
+            BackgroundStyleConfig.VERTICAL_GRADIENT -> themeColor
+            BackgroundStyleConfig.PLAIN -> themeColor
+        }
+    }
     BrowserSolidBackground(
-        backgroundColor = backgroundColor,
-        backgroundStyle = preferences.backgroundStyle
+        backgroundColor = browserBackgroundColor,
     ) {
         Column {
             when (uiState) {
@@ -58,7 +68,9 @@ fun Browser(
                         preferences = preferences,
                         playingTrackUri = playingTrackUri,
                         browserState = uiState.browserState,
-                        executeCommand = executeCommand
+                        executeCommand = executeCommand,
+                        browserBackgroundColor = browserBackgroundColor,
+                        lazyListState = lazyListState
                     )
             }
         }
@@ -83,7 +95,9 @@ private fun Browser(
     preferences: AltPreferencesState,
     playingTrackUri: String?,
     browserState: BrowserState,
-    executeCommand: (Command) -> Unit
+    executeCommand: (Command) -> Unit,
+    browserBackgroundColor: Color,
+    lazyListState: LazyListState
 ) {
     when {
         browserState.listItems().isEmpty() ->
@@ -94,7 +108,9 @@ private fun Browser(
                 track = playingTrackUri,
                 thumbnailMap = browserState.thumbnailMap,
                 libraryState = browserState.libraryState,
-                executeCommand = executeCommand
+                executeCommand = executeCommand,
+                browserBackgroundColor = browserBackgroundColor,
+                lazyListState = lazyListState
             )
     }
 }
@@ -102,22 +118,13 @@ private fun Browser(
 @Composable
 private fun BrowserSolidBackground(
     backgroundColor: Color,
-    backgroundStyle: BackgroundStyleConfig,
     content: @Composable () -> Unit,
 ) {
-    val themeColor = MaterialTheme.colorScheme.background
-    val color = remember(backgroundColor, backgroundStyle) {
-        when (backgroundStyle) {
-            BackgroundStyleConfig.SOLID -> backgroundColor
-            BackgroundStyleConfig.VERTICAL_GRADIENT -> themeColor
-            BackgroundStyleConfig.PLAIN -> themeColor
-        }
-    }
     Box(
         modifier = Modifier
             .drawWithCache {
                 onDrawBehind {
-                    drawRect(color)
+                    drawRect(backgroundColor)
                 }
             }
     ) { content() }
@@ -152,8 +159,10 @@ private fun EmptyPreview() {
     Browser(
         preferences = AltPreferencesState(),
         playingTrackUri = null,
+        browserState = BrowserState(),
         executeCommand = { },
-        browserState = BrowserState()
+        browserBackgroundColor = MaterialTheme.colorScheme.background,
+        lazyListState = LazyListState()
     )
 }
 
@@ -175,9 +184,11 @@ fun BrowserPreview() {
     Browser(
         preferences = AltPreferencesState(),
         playingTrackUri = null,
-        executeCommand = { },
         browserState = BrowserState(
             listItems = AltListItems(items)
-        )
+        ),
+        executeCommand = { },
+        browserBackgroundColor = MaterialTheme.colorScheme.background,
+        lazyListState = LazyListState()
     )
 }

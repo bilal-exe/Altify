@@ -103,7 +103,8 @@ private fun HomeScreen(
                     preferences = uiState.preferences,
                     playingTrackUri = uiState.trackState.track?.uri,
                     backgroundColor = backgroundColor,
-                    executeCommand = executeCommand
+                    executeCommand = executeCommand,
+                    lazyListState = lazyListState
                 )
             }
         }
@@ -121,7 +122,7 @@ fun ScrollToTopButton(lazyListState: LazyListState) {
     }
     if (canScrollForward) {
         FloatingActionButton(
-            onClick = { scope.launch { lazyListState.scrollToItem(0) } },
+            onClick = { scope.launch { lazyListState.animateScrollToItem(0) } },
             modifier = Modifier
                 .height(BROWSER_FAB_HEIGHT.dp)
                 .aspectRatio(1f)

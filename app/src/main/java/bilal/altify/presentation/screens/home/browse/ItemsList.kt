@@ -1,6 +1,9 @@
 package bilal.altify.presentation.screens.home.browse
 
 import android.graphics.Bitmap
+import android.os.Build
+import android.util.Log
+import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,8 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -39,10 +42,8 @@ import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,9 +51,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,7 +72,6 @@ import bilal.altify.domain.spotify.use_case.ImagesCommand
 import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.screens.home.BROWSER_FAB_HEIGHT
-import bilal.altify.presentation.screens.home.now_playing.bottomColor
 import bilal.altify.presentation.util.UpdateEffect
 import bilal.altify.presentation.util.clipLen
 import bilal.altify.presentation.util.shakeShrinkAnimation
@@ -82,7 +85,9 @@ fun ItemsList(
     track: String?,
     thumbnailMap: Map<String, Bitmap>,
     libraryState: Map<String, AltLibraryState>,
-    executeCommand: (Command) -> Unit
+    executeCommand: (Command) -> Unit,
+    browserBackgroundColor: Color,
+    lazyListState: LazyListState
 ) {
 
     BackHandler {
@@ -111,11 +116,11 @@ fun ItemsList(
         executeCommand(PlaybackCommand.AddToQueue(it))
     }
 
-    var newListLoading by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = listItems) {
-        newListLoading = false
-    }
-
+//    var newListLoading by remember { mutableStateOf(false) }
+//    LaunchedEffect(key1 = listItems) {
+//        newListLoading = false
+//    }
+//
     LaunchedEffect(key1 = listItems) {
         if (listItems().isNotEmpty()) {
             executeCommand(ImagesCommand.ClearThumbnails)
@@ -126,59 +131,63 @@ fun ItemsList(
         }
     }
 
-    val lazyListState = rememberLazyListState()
-
     LaunchedEffect(key1 = lazyListState.canScrollForward) {
-        if (newListLoading) return@LaunchedEffect
-        if (listItems().size >= listItems.total) return@LaunchedEffect
-        executeCommand(
-            ContentCommand.LoadMoreChildrenOfItem(listItems)
-        )
-        newListLoading = true
+        if (!lazyListState.canScrollForward) {
+            Log.d("visibleItems", "called")
+            Log.d("visibleItems", "${listItems.items.size} ${listItems.total}")
+            executeCommand(ContentCommand.LoadMoreChildrenOfItem(listItems))
+        }
+    }
+
+
+    val showLoadingIndicator = remember(listItems.items) {
+        listItems.items.size < listItems.total
     }
 
     // progress indicator for when there more list to load
     val progressIndicatorHeight = LocalConfiguration.current.screenHeightDp / 4
-    val showProgressIndicator = listItems().size < listItems.total
 //    calculates the height of the list by the thumbnail height plus padding for each list item
 //    allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
 
-    val columnHeight =
-        (listItems().size * ceil((144 / LocalDensity.current.density) + 16)) + 16 + // extra room
+    val density = LocalDensity.current.density
+    val columnHeight = remember(listItems.items, density, showLoadingIndicator) {
+        (listItems().size * ceil((144 / density) + 16)) + // each listItem is 144 px, with 16 dp of padding
+                16 + // extra room
                 BROWSER_FAB_HEIGHT +// so floating action button doesn't overlap
-                if (showProgressIndicator) progressIndicatorHeight else 0
+                if (showLoadingIndicator) progressIndicatorHeight else 0 // make space for loading animation
+    }
 
-    LazyColumn(
-        modifier = Modifier.height(columnHeight.dp), userScrollEnabled = false
-    ) {
-        item {
-            GetRecommendedButton(getRecommended)
-        }
-        items(items = listItems(), key = { it.id }) { item ->
-            ListItemRow(
-                item = item,
-                selected = track == item.uri,
-                thumbnail = thumbnailMap[item.imageUri],
-                playItem = { playItem(item) },
-                getChildrenOfItem = { getChildrenOfItem(item) },
-                libraryState = libraryState[item.uri],
-                addToLibrary = addToLibrary,
-                removeFromLibrary = removeFromLibrary,
-                addToQueue = addToQueue
-            )
-        }
-        if (showProgressIndicator) item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(progressIndicatorHeight.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .height((progressIndicatorHeight * 0.75).dp)
-                        .fillMaxWidth(),
+    Column {
+        GetRecommendedButton(getRecommended)
+        LazyColumn(
+            modifier = Modifier.height(columnHeight.dp),
+        ) {
+            items(
+                items = listItems(),
+                key = { it.id }
+            ) { item ->
+                ListItemRow(
+                    item = item,
+                    selected = track == item.uri,
+                    thumbnail = thumbnailMap[item.imageUri],
+                    playItem = { playItem(item) },
+                    getChildrenOfItem = { getChildrenOfItem(item) },
+                    libraryState = libraryState[item.uri],
+                    addToLibrary = addToLibrary,
+                    removeFromLibrary = removeFromLibrary,
+                    addToQueue = addToQueue,
+                    backgroundColor = browserBackgroundColor
                 )
+            }
+            if (showLoadingIndicator) item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
@@ -213,62 +222,75 @@ fun ListItemRow(
     addToLibrary: (String) -> Unit,
     removeFromLibrary: (String) -> Unit,
     addToQueue: (String) -> Unit,
+    backgroundColor: Color,
 ) {
     val rowHeight = with(LocalDensity.current) { Dimension.THUMBNAIL.value.toDp() }
-    val listItemModifier = Modifier
-        .width(rowHeight)
+    val thumbnailModifier = Modifier
         .clip(RoundedCornerShape(6.dp))
-        .background(Color.Gray)
+        .width(rowHeight)
         .aspectRatio(1f)
 
-    val dismissState = rememberDismissState(confirmValueChange = {
-        if (it == DismissValue.DismissedToEnd) addToQueue(item.uri)
-        it != DismissValue.DismissedToEnd
-    })
+    val view = LocalView.current
+    val haptic = LocalHapticFeedback.current
+    val dismissState = rememberDismissState(
+        confirmValueChange = {
+            if (it == DismissValue.DismissedToEnd) {
+                addToQueue(item.uri)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                else
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+            it != DismissValue.DismissedToEnd
+        }
+    )
 
     SwipeToDismiss(
         state = dismissState,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp)
-            .height((144 / LocalDensity.current.density).dp)
-            .background(
-                color = if (selected) Color.LightGray.copy(alpha = 0.25f) else bottomColor,
-                shape = RoundedCornerShape(8.dp)
-            ),
+            .height((144 / LocalDensity.current.density).dp),
         directions = setOf(DismissDirection.StartToEnd),
         background = {
             dismissState.dismissDirection ?: return@SwipeToDismiss
             val scale by animateFloatAsState(
                 if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f, label = ""
             )
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = bottomColor, shape = RoundedCornerShape(8.dp)
-                    ), contentAlignment = Alignment.CenterStart
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     text = "Add to queue...",
                     modifier = Modifier
                         .padding(start = 16.dp)
                         .scale(scale),
-                    fontSize = 25.sp
+                    fontSize = 25.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         },
         dismissContent = {
             Box(
-                modifier = Modifier.width((LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp)
+                modifier = Modifier
+                    .width((LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp)
+                    .background(
+                        color = if (selected) backgroundColor.copy(alpha = 0.25f) else backgroundColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
             ) {
                 Row(
                     modifier = Modifier.clickable { getChildrenOfItem() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (thumbnail != null) ItemThumbnail(thumbnail, listItemModifier)
-                    else PlaceholderThumbnail(listItemModifier)
+                    if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
+                    else PlaceholderThumbnail(thumbnailModifier)
                     Spacer(modifier = Modifier.width(16.dp))
                     ListItemInfo(
                         title = item.title, subtitle = item.subtitle, modifier = Modifier
@@ -389,14 +411,15 @@ fun PlaceholderThumbnail(modifier: Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun ListItemRowPreview() {
-    ListItemRow(item = AltListItem(
-        uri = "",
-        imageUri = "",
-        title = "Title",
-        subtitle = "Subtitle",
-        playable = true,
-        hasChildren = true
-    ),
+    ListItemRow(
+        item = AltListItem(
+            uri = "",
+            imageUri = "",
+            title = "Title",
+            subtitle = "Subtitle",
+            playable = true,
+            hasChildren = true
+        ),
         selected = false,
         thumbnail = null,
         playItem = {},
@@ -404,7 +427,9 @@ private fun ListItemRowPreview() {
         libraryState = AltLibraryState(uri = "", isAdded = true, canAdd = true),
         addToLibrary = {},
         removeFromLibrary = {},
-        addToQueue = {})
+        addToQueue = {},
+        backgroundColor = MaterialTheme.colorScheme.background
+    )
 }
 
 @Preview(showBackground = true)
@@ -429,6 +454,8 @@ fun ItemsListPreview() {
         thumbnailMap = emptyMap(),
         libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
         executeCommand = { },
+        browserBackgroundColor = MaterialTheme.colorScheme.background,
+        lazyListState = LazyListState(),
     )
 }
 
@@ -448,9 +475,13 @@ fun ItemsListPreview2() {
         )
         items.add(ali)
     }
-    ItemsList(listItems = AltListItems(items = items, total = items.size + 10),
+    ItemsList(
+        listItems = AltListItems(items = items, total = items.size + 10),
         track = null,
         thumbnailMap = emptyMap(),
         libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
-        executeCommand = { }
-    )}
+        executeCommand = { },
+        browserBackgroundColor = MaterialTheme.colorScheme.background,
+        lazyListState = LazyListState()
+    )
+}
