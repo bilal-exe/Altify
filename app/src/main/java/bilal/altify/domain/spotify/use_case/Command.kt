@@ -65,8 +65,6 @@ sealed interface UserCommand : Command {
 
     data class UpdateBrowserLibraryState(val uris: List<String>) : UserCommand
 
-    data class AddToLibrary(val uri: String) : UserCommand
-
-    data class RemoveFromLibrary(val uri: String) : UserCommand
+    data class ToggleLibraryStatus(val uri: String, val added: Boolean) : UserCommand
 
 }

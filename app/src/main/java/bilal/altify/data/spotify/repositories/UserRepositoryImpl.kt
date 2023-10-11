@@ -45,18 +45,12 @@ class UserRepositoryImpl(
         }
     }
 
-    override fun addToLibrary(uri: String) {
-        userApi.addToLibrary(uri)
-            .setResultCallback {
-                updateStates(uri = uri)
-            }
-            .setErrorCallback {
-                throw UserRepository.UserSourceException(it.localizedMessage)
-            }
-    }
-
-    override fun removeFromLibrary(uri: String) {
-        userApi.removeFromLibrary(uri)
+    override fun toggleLibraryStatus(uri: String, added: Boolean) {
+        val addOrRemove = when (added) {
+            true -> userApi::addToLibrary
+            false -> userApi::removeFromLibrary
+        }
+        addOrRemove(uri)
             .setResultCallback {
                 updateStates(uri = uri)
             }

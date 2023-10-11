@@ -133,12 +133,8 @@ class ExecuteCommandUseCase {
                 repositories.user.updateBrowserLibraryState(command.uris)
             }
 
-            is UserCommand.AddToLibrary -> {
-                repositories.user.addToLibrary(command.uri)
-            }
-
-            is UserCommand.RemoveFromLibrary -> {
-                repositories.user.removeFromLibrary(command.uri)
+            is UserCommand.ToggleLibraryStatus -> {
+                repositories.user.toggleLibraryStatus(command.uri, command.added)
             }
         }
 

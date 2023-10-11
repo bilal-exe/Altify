@@ -53,11 +53,8 @@ fun NowPlayingMusicInfo(
     val getLibraryState: (String) -> Unit = {
         executeCommand(UserCommand.UpdateCurrentTrackState(it))
     }
-    val addToLibrary: (String) -> Unit = {
-        executeCommand(UserCommand.AddToLibrary(it))
-    }
-    val removeFromLibrary: (String) -> Unit = {
-        executeCommand(UserCommand.RemoveFromLibrary(it))
+    val toggleLibraryStatus: (String, Boolean) -> Unit = {
+        uri, bool -> executeCommand(UserCommand.ToggleLibraryStatus(uri, bool))
     }
 
     LaunchedEffect(key1 = track) {
@@ -73,11 +70,9 @@ fun NowPlayingMusicInfo(
                 name = it.name,
                 artist = it.artist,
                 album = it.name,
-                uri = it.uri,
                 config = config,
                 libraryState = libraryState,
-                addToLibrary = addToLibrary,
-                removeFromLibrary = removeFromLibrary,
+                toggleLibraryStatus = toggleLibraryStatus,
                 showControls = showControls
             )
         }
@@ -89,11 +84,9 @@ private fun NowPlayingMusicInfo(
     name: String,
     artist: String,
     album: String,
-    uri: String,
     config: MusicInfoAlignmentConfig,
     libraryState: AltLibraryState?,
-    addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit,
+    toggleLibraryStatus: (String, Boolean) -> Unit,
     showControls: Boolean
 ) {
     Box(
@@ -142,10 +135,8 @@ private fun NowPlayingMusicInfo(
         ) {
             AnimatedVisibility(showControls) {
                 AddOrRemoveFromLibraryButton(
-                    uri = uri,
                     libraryState = libraryState,
-                    addToLibrary = addToLibrary,
-                    removeFromLibrary = removeFromLibrary,
+                    toggleLibraryStatus = toggleLibraryStatus,
                 )
             }
         }
@@ -154,10 +145,8 @@ private fun NowPlayingMusicInfo(
 
 @Composable
 fun AddOrRemoveFromLibraryButton(
-    uri: String,
     libraryState: AltLibraryState?,
-    addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit,
+    toggleLibraryStatus: (String, Boolean) -> Unit,
 ) {
     if (libraryState != null) {
         val scale = remember { Animatable(1f) }
@@ -170,10 +159,7 @@ fun AddOrRemoveFromLibraryButton(
 
         IconButton(
             onClick =  {
-                when (libraryState.isAdded) {
-                    true -> removeFromLibrary(uri)
-                    false -> if (libraryState.canAdd) addToLibrary(uri)
-                }
+                toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
             }
         ) {
             Icon(
@@ -191,50 +177,44 @@ fun AddOrRemoveFromLibraryButton(
     }
 }
 
-@Preview
+@Preview(showBackground=true)
 @Composable
 private fun NowPlayingMusicInfoPreview() {
     NowPlayingMusicInfo(
         name = "name",
         artist = "artist",
         album = "album",
-        uri = "",
         config = MusicInfoAlignmentConfig.CENTER,
         libraryState = AltLibraryState("", false, canAdd = false),
-        addToLibrary = {},
-        removeFromLibrary = {},
+        toggleLibraryStatus = { _, _ -> },
         showControls = true
     )
 }
 
-@Preview
+@Preview(showBackground=true)
 @Composable
 private fun NowPlayingLongMusicInfoPreview() {
     NowPlayingMusicInfo(
         name = "namenamenamenamenamenamenamename",
         artist = "artist",
         album = "album",
-        uri = "",
         config = MusicInfoAlignmentConfig.CENTER,
         libraryState = AltLibraryState("", false, canAdd = false),
-        addToLibrary = {},
-        removeFromLibrary = {},
+        toggleLibraryStatus = { _, _ -> },
         showControls = true
     )
 }
 
-@Preview
+@Preview(showBackground=true)
 @Composable
 private fun NowPlayingMusicInfoLeftPreview() {
     NowPlayingMusicInfo(
         name = "name",
         artist = "artist",
         album = "album",
-        uri = "",
         config = MusicInfoAlignmentConfig.LEFT,
-        libraryState = AltLibraryState("", false, false),
-        addToLibrary = {},
-        removeFromLibrary = {},
+        libraryState = AltLibraryState("", isAdded = false, canAdd = false),
+        toggleLibraryStatus = { _, _ -> },
         showControls = true
     )
 }

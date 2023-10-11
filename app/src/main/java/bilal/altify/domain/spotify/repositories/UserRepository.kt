@@ -13,9 +13,7 @@ interface UserRepository {
 
     fun updateBrowserLibraryState(uris: List<String>)
 
-    fun addToLibrary(uri: String)
-
-    fun removeFromLibrary(uri: String)
+    fun toggleLibraryStatus(uri: String, added: Boolean)
 
     class UserSourceException(override val message: String?): Exception(message)
 

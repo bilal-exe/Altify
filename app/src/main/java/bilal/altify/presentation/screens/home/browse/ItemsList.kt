@@ -106,11 +106,8 @@ fun ItemsList(
     val getThumbnail: (String) -> Unit = {
         executeCommand(ImagesCommand.GetThumbnail(it))
     }
-    val addToLibrary: (String) -> Unit = {
-        executeCommand(UserCommand.AddToLibrary(it))
-    }
-    val removeFromLibrary: (String) -> Unit = {
-        executeCommand(UserCommand.RemoveFromLibrary(it))
+    val toggleLibraryStatus: (String, Boolean) -> Unit = {
+        uri, added -> executeCommand(UserCommand.ToggleLibraryStatus(uri, added))
     }
     val addToQueue: (String) -> Unit = {
         executeCommand(PlaybackCommand.AddToQueue(it))
@@ -173,8 +170,7 @@ fun ItemsList(
                     playItem = { playItem(item) },
                     getChildrenOfItem = { getChildrenOfItem(item) },
                     libraryState = libraryState[item.uri],
-                    addToLibrary = addToLibrary,
-                    removeFromLibrary = removeFromLibrary,
+                    toggleLibraryStatus = toggleLibraryStatus,
                     addToQueue = addToQueue,
                     backgroundColor = browserBackgroundColor
                 )
@@ -219,8 +215,7 @@ fun ListItemRow(
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
     libraryState: AltLibraryState?,
-    addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit,
+    toggleLibraryStatus: (String, Boolean) -> Unit,
     addToQueue: (String) -> Unit,
     backgroundColor: Color,
 ) {
@@ -305,8 +300,7 @@ fun ListItemRow(
                 Spacer(modifier = Modifier.weight(1f))
                 if (libraryState != null) AddRemoveLibraryIcon(
                     libraryState = libraryState,
-                    addToLibrary = addToLibrary,
-                    removeFromLibrary = removeFromLibrary,
+                    toggleLibraryStatus = toggleLibraryStatus,
                     modifier = Modifier.size(rowHeight, rowHeight)
                 )
                 PlayButton(
@@ -323,8 +317,7 @@ fun ListItemRow(
 fun AddRemoveLibraryIcon(
     libraryState: AltLibraryState,
     modifier: Modifier = Modifier,
-    addToLibrary: (String) -> Unit,
-    removeFromLibrary: (String) -> Unit
+    toggleLibraryStatus: (String, Boolean) -> Unit,
 ) {
     val icon = when (libraryState.isAdded) {
         true -> Icons.Default.Favorite
@@ -344,10 +337,7 @@ fun AddRemoveLibraryIcon(
 
             Icon(imageVector = icon, contentDescription = "", modifier = Modifier
                 .clickable {
-                    when (libraryState.isAdded) {
-                        true -> removeFromLibrary(libraryState.uri)
-                        false -> addToLibrary(libraryState.uri)
-                    }
+                    toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
                 }
                 .scale(scale = scale.value)
                 .rotate(rotation.value)
@@ -433,8 +423,7 @@ private fun ListItemRowPreview() {
         playItem = {},
         getChildrenOfItem = {},
         libraryState = AltLibraryState(uri = "", isAdded = true, canAdd = true),
-        addToLibrary = {},
-        removeFromLibrary = {},
+        toggleLibraryStatus = { _, _ -> },
         addToQueue = {},
         backgroundColor = MaterialTheme.colorScheme.background
     )
