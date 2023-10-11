@@ -266,49 +266,55 @@ fun ListItemRow(
                     ),
                 contentAlignment = Alignment.CenterStart
             ) {
-                Text(
-                    text = "Add to queue...",
+                Icon(
+                    painter = painterResource(id = R.drawable.queue_music),
+                    contentDescription = "",
                     modifier = Modifier
                         .padding(start = 16.dp)
                         .scale(scale),
-                    fontSize = 25.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         },
         dismissContent = {
-            Box(
+            Row(
                 modifier = Modifier
-                    .width((LocalConfiguration.current.screenWidthDp - (24 + (16 + (2 * (rowHeight.value))))).dp)
                     .background(
                         color = if (selected) backgroundColor.copy(alpha = 0.25f) else backgroundColor,
                         shape = RoundedCornerShape(8.dp)
-                    )
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
+                else PlaceholderThumbnail(thumbnailModifier)
                 Row(
-                    modifier = Modifier.clickable { getChildrenOfItem() },
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .width(
+                            LocalConfiguration.current.screenWidthDp.dp -
+                                    (3 * rowHeight.value).dp -
+                                    16.dp -
+                                    24.dp
+                        )
+                        .clickable { getChildrenOfItem() }
                 ) {
-                    if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
-                    else PlaceholderThumbnail(thumbnailModifier)
                     Spacer(modifier = Modifier.width(16.dp))
                     ListItemInfo(
                         title = item.title, subtitle = item.subtitle, modifier = Modifier
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                if (libraryState != null) AddRemoveLibraryIcon(
+                    libraryState = libraryState,
+                    addToLibrary = addToLibrary,
+                    removeFromLibrary = removeFromLibrary,
+                    modifier = Modifier.size(rowHeight, rowHeight)
+                )
+                PlayButton(
+                    playItem = playItem,
+                    playable = item.playable,
+                    modifier = Modifier.size(rowHeight, rowHeight)
+                )
             }
-            Spacer(modifier = Modifier.weight(1f))
-            if (libraryState != null) AddRemoveLibraryIcon(
-                libraryState = libraryState,
-                addToLibrary = addToLibrary,
-                removeFromLibrary = removeFromLibrary,
-                modifier = Modifier.size(rowHeight, rowHeight)
-            )
-            PlayButton(
-                playItem = playItem,
-                playable = item.playable,
-                modifier = Modifier.size(rowHeight, rowHeight)
-            )
         },
     )
 }
@@ -368,7 +374,9 @@ fun PlayButton(
 
 @Composable
 fun ListItemInfo(
-    title: String, subtitle: String, modifier: Modifier = Modifier
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = Modifier) {
         Text(
