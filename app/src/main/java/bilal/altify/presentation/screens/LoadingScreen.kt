@@ -2,6 +2,7 @@ package bilal.altify.presentation.screens
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,8 @@ import bilal.altify.presentation.theme.AltifyTheme
 
 @Composable
 fun LoadingScreen(
-    text: String = "Loading..."
+    text: String = "Loading...",
+    darkTheme: Boolean? = null
 ) {
     // todo extract this for use with other screens
     val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -40,31 +42,35 @@ fun LoadingScreen(
             tween(1000, 0, FastOutLinearInEasing)
         ), label = ""
     )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+    AltifyTheme (
+        darkTheme = darkTheme ?: isSystemInDarkTheme()
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.refresh),
-            contentDescription = "",
-            tint = MaterialTheme.colorScheme.onBackground,
+        Column(
             modifier = Modifier
-                .size(80.dp)
-                .graphicsLayer {
-                    translationY = bounce
-                    rotationZ = spin
-                }
-        )
-        Text(
-            text = text,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.refresh),
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .size(80.dp)
+                    .graphicsLayer {
+                        translationY = bounce
+                        rotationZ = spin
+                    }
+            )
+            Text(
+                text = text,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 

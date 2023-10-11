@@ -138,10 +138,13 @@ private fun getBackgroundColor(
     backgroundStyleConfig: BackgroundStyleConfig,
     darkThemeConfig: DarkThemeConfig
 ): Color {
-    val palette = bitmap?.let {
-        if (backgroundStyleConfig != BackgroundStyleConfig.PLAIN)
-            Palette.from(it).generate()
-        else null
+
+    val palette = remember (bitmap, backgroundStyleConfig) {
+        bitmap?.let {
+            if (backgroundStyleConfig != BackgroundStyleConfig.PLAIN) {
+                Palette.from(it).generate()
+            } else null
+        }
     }
 
     val darkTheme = shouldUseDarkTheme(darkThemeConfig = darkThemeConfig)

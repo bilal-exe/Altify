@@ -8,8 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,22 +54,20 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            AltifyTheme {
 
-                when (val state = uiState) {
-                    AltifyUIState.Connecting ->
-                        LoadingScreen("Connecting to Spotify...")
-                    is AltifyUIState.Disconnected ->
-                        ErrorScreen(
-                            message = state.message ?: "Couldn't connect to Spotify",
-                            buttonText = "Tap to retry",
-                            buttonFunc = viewModel::connect
-                        )
-                    is AltifyUIState.Success ->
-                        AltifyApp(state) { viewModel.executeCommand(it, state.repositories) }
-                }
-
+            when (val state = uiState) {
+                AltifyUIState.Connecting ->
+                    LoadingScreen("Connecting to Spotify...")
+                is AltifyUIState.Disconnected ->
+                    ErrorScreen(
+                        message = state.message ?: "Couldn't connect to Spotify",
+                        buttonText = "Tap to retry",
+                        buttonFunc = viewModel::connect
+                    )
+                is AltifyUIState.Success ->
+                    AltifyApp(state) { viewModel.executeCommand(it, state.repositories) }
             }
+
         }
     }
 
@@ -111,9 +107,10 @@ fun LoadingPreview() {
 @Preview(showBackground = true)
 @Composable
 fun LoadingDarkPreview() {
-    MaterialTheme(colorScheme = darkColorScheme()) {
-        LoadingScreen("Connecting to Spotify...")
-    }
+    LoadingScreen(
+        "Connecting to Spotify...",
+        darkTheme = true
+    )
 }
 
 @Preview(showBackground = true)
@@ -121,5 +118,17 @@ fun LoadingDarkPreview() {
 fun DisconnectedPreview() {
     ErrorScreen(message = "Couldn't connect to Spotify",
         buttonText = "Tap to retry",
-        buttonFunc = {})
+        buttonFunc = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DisconnectedDarkPreview() {
+    ErrorScreen(
+        message = "Couldn't connect to Spotify",
+        buttonText = "Tap to retry",
+        buttonFunc = {},
+        darkTheme = true
+    )
 }

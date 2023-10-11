@@ -47,7 +47,6 @@ import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
-import bilal.altify.presentation.util.shouldUseDarkTheme
 
 const val NOW_PLAYING_HORIZONTAL_PADDING = 24
 
@@ -72,9 +71,7 @@ fun NowPlaying(
 
     NowPlayingBackground(
         backgroundColor = backgroundColor,
-        darkTheme = shouldUseDarkTheme(darkThemeConfig = uiState.preferences.darkTheme),
         styleConfig = uiState.preferences.backgroundStyle,
-        colourConfig = uiState.preferences.backgroundColour
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -165,6 +162,8 @@ private fun NowPlayingPortraitContent(
         Spacer(modifier = Modifier.height(8.dp))
         AnimatedVisibility(
             visible = showControls,
+            enter = expandVertically(),
+            exit = shrinkVertically()
         ) {
             Column {
                 NowPlayingProgressBar(
