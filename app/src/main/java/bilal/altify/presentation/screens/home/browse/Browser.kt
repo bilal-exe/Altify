@@ -101,7 +101,7 @@ private fun Browser(
         browserState.listItems().isEmpty() ->
             EmptyListItems()
         else ->
-            ItemsList(
+            BrowserItemsList(
                 listItems = browserState.listItems,
                 track = playingTrackUri,
                 thumbnailMap = browserState.thumbnailMap,

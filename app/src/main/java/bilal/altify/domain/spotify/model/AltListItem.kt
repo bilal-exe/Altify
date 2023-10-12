@@ -9,7 +9,8 @@ data class AltListItem(
     val title: String,
     val subtitle: String,
     val playable: Boolean,
-    val hasChildren: Boolean
+    val hasChildren: Boolean,
+    val type: ContentType = ContentType.Track
 ) {
     companion object {
         private var countId = 0
@@ -22,4 +23,16 @@ data class AltListItems(
     val total: Int = 0
 ) {
     operator fun invoke() = items
+}
+
+
+enum class ContentType {
+    Section,
+    Album,
+    Artist,
+    Playlist,
+    Track,
+//    Show,
+//    Episode,
+//    Audiobook,
 }

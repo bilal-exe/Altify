@@ -21,7 +21,7 @@ sealed interface PlaybackCommand : Command {
 
     data class AddToQueue(val uri: String) : PlaybackCommand
 
-    data class SkipToTrack(val uri: String, val index: Int) : PlaybackCommand
+    data class SkipToTrack(val trackUri: String, val index: Int) : PlaybackCommand
 
 }
 

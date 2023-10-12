@@ -6,6 +6,7 @@ import bilal.altify.domain.spotify.model.AltListItems
 import bilal.altify.domain.spotify.model.AltPlayerContext
 import bilal.altify.domain.spotify.model.AltPlayerStateAndContext
 import bilal.altify.domain.spotify.model.AltTrack
+import bilal.altify.domain.spotify.model.ContentType
 import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.LibraryState
 import com.spotify.protocol.types.ListItem
@@ -39,6 +40,14 @@ fun PlayerContext.toAlt() =
         type = this.type,
     )
 
+private val spotifyUriToType = mapOf(
+     "album" to ContentType.Album,
+     "artist" to ContentType.Artist,
+     "playlist" to ContentType.Playlist,
+     "track" to ContentType.Track,
+     "section" to ContentType.Section,
+)
+
 fun ListItem.toAlt() =
     AltListItem(
         uri = this.uri,
@@ -47,6 +56,7 @@ fun ListItem.toAlt() =
         subtitle = this.subtitle,
         playable = this.playable,
         hasChildren = this.hasChildren,
+        type = spotifyUriToType[uri.substringAfter(':').substringBefore(':')] ?: ContentType.Track
     )
 
 fun ListItems.toAlt() =

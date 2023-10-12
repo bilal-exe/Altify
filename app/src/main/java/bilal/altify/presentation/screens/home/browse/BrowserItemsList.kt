@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -61,6 +61,7 @@ import bilal.altify.R
 import bilal.altify.domain.spotify.model.AltLibraryState
 import bilal.altify.domain.spotify.model.AltListItem
 import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.ContentType
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.ContentCommand
 import bilal.altify.domain.spotify.use_case.ImagesCommand
@@ -74,7 +75,7 @@ import kotlin.math.ceil
 
 
 @Composable
-fun ItemsList(
+fun BrowserItemsList(
     listItems: AltListItems,
     track: String?,
     thumbnailMap: Map<String, Bitmap>,
@@ -91,8 +92,12 @@ fun ItemsList(
     val getRecommended: () -> Unit = {
         executeCommand(ContentCommand.GetRecommended)
     }
-    val playItem: (AltListItem) -> Unit = {
-        executeCommand(ContentCommand.Play(it))
+    val playItem: (AltListItem, Int) -> Unit = { item, index ->
+        val command = when (item.type) {
+            ContentType.Track -> PlaybackCommand.SkipToTrack(item.uri, index)
+            else -> ContentCommand.Play(item)
+        }
+        executeCommand(command)
     }
     val getChildrenOfItem: (AltListItem) -> Unit = {
         executeCommand(ContentCommand.GetChildrenOfItem(it))
@@ -153,15 +158,14 @@ fun ItemsList(
         LazyColumn(
             modifier = Modifier.height(columnHeight.dp),
         ) {
-            items(
+            itemsIndexed(
                 items = listItems(),
-                key = { it.id }
-            ) { item ->
+            ) { index, item ->
                 ListItemRow(
                     item = item,
                     selected = track == item.uri,
                     thumbnail = thumbnailMap[item.imageUri],
-                    playItem = { playItem(item) },
+                    playItem = { playItem(item, index) },
                     getChildrenOfItem = { getChildrenOfItem(item) },
                     libraryState = libraryState[item.uri],
                     toggleLibraryStatus = toggleLibraryStatus,
@@ -252,7 +256,7 @@ fun ListItemRow(
                 if (dismissState.targetValue == DismissValue.Default) 0.5f else 1f, label = ""
             )
             Log.d("dismissState", dismissState.progress.toString())
-            LaunchedEffect (dismissState.progress > 0.4f) {
+            LaunchedEffect(dismissState.progress > 0.4f) {
                 if (dismissState.progress == 1f) return@LaunchedEffect // bug where the val is 1
                 view.performHapticFeedback(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM
@@ -287,22 +291,27 @@ fun ListItemRow(
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
-                else PlaceholderThumbnail(thumbnailModifier)
                 Row(
                     modifier = Modifier
-                        .width(
-                            LocalConfiguration.current.screenWidthDp.dp -
-                                    (3 * rowHeight.value).dp -
-                                    16.dp -
-                                    24.dp
-                        )
-                        .clickable { getChildrenOfItem() }
+                        .clickable(onClick = getChildrenOfItem),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Spacer(modifier = Modifier.width(16.dp))
-                    ListItemInfo(
-                        title = item.title, subtitle = item.subtitle, modifier = Modifier
-                    )
+                    if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
+                    else PlaceholderThumbnail(thumbnailModifier)
+                    Row(
+                        modifier = Modifier
+                            .width(
+                                LocalConfiguration.current.screenWidthDp.dp -
+                                        (3 * rowHeight.value).dp -
+                                        16.dp -
+                                        24.dp
+                            )
+                    ) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        ListItemInfo(
+                            title = item.title, subtitle = item.subtitle, modifier = Modifier
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 if (libraryState != null) AddRemoveLibraryIcon(
@@ -352,7 +361,9 @@ fun AddRemoveLibraryIcon(
 
 @Composable
 fun PlayButton(
-    playItem: () -> Unit, modifier: Modifier = Modifier, playable: Boolean
+    playItem: () -> Unit,
+    modifier: Modifier = Modifier,
+    playable: Boolean
 ) {
     Box(
         modifier = modifier, contentAlignment = Alignment.Center
@@ -448,7 +459,7 @@ fun ItemsListPreview() {
         )
         items.add(ali)
     }
-    ItemsList(
+    BrowserItemsList(
         listItems = AltListItems(items),
         track = null,
         thumbnailMap = emptyMap(),
@@ -475,7 +486,7 @@ fun ItemsListPreview2() {
         )
         items.add(ali)
     }
-    ItemsList(
+    BrowserItemsList(
         listItems = AltListItems(items = items, total = items.size + 10),
         track = null,
         thumbnailMap = emptyMap(),

@@ -1,7 +1,9 @@
 package bilal.altify.domain.spotify.use_case
 
+import android.util.Log
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import bilal.altify.domain.spotify.model.AltListItem
+import bilal.altify.domain.spotify.model.ContentType
 import java.util.Stack
 
 class ExecuteCommandUseCase {
@@ -16,7 +18,7 @@ class ExecuteCommandUseCase {
         command: Command,
         repositories: AltifyRepositories
     ) {
-
+        Log.d("Command", command.toString())
         when (command) {
 
             // playback
@@ -49,7 +51,8 @@ class ExecuteCommandUseCase {
             }
 
             is PlaybackCommand.SkipToTrack -> {
-                repositories.player.skipToTrack(command.uri, command.index)
+                if (browserVisitedHistory.isEmpty()) repositories.player.play(command.trackUri)
+                else repositories.player.skipToTrack(browserVisitedHistory.peek().uri, command.index)
             }
 
             // content
@@ -58,6 +61,7 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.GetChildrenOfItem -> {
+                if (command.listItem.type == ContentType.Track) return
                 browserVisitedHistory.add(command.listItem)
                 repositories.content.getChildrenOfItem(command.listItem, BROWSER_PER_PAGE)
             }
