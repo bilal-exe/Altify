@@ -27,17 +27,6 @@ class BrowserViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState = spotifySource.data
-        .onEach {
-            // ensures the browser is loaded asap
-            when (it) {
-                is SpotifyConnectorResponse.Connected ->
-                    useCases.commands(
-                        command = ContentCommand.GetRecommended,
-                        repositories = it.repositories
-                    )
-                is SpotifyConnectorResponse.ConnectionFailed -> {}
-            }
-        }
         .flatMapLatest { response ->
             when (response) {
                 is SpotifyConnectorResponse.Connected ->

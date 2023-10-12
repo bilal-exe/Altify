@@ -22,6 +22,10 @@ class ContentRepositoryImpl(
     private val _listItemsFlow = MutableStateFlow(AltListItems())
     override val listItemsFlow = _listItemsFlow.asStateFlow()
 
+    init {
+        getRecommended()
+    }
+
     override fun getRecommended() {
         contentApi
             .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)

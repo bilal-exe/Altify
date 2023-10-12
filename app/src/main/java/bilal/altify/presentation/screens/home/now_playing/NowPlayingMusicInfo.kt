@@ -2,8 +2,9 @@ package bilal.altify.presentation.screens.home.now_playing
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,22 +12,17 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,8 +34,7 @@ import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import bilal.altify.presentation.screens.home.nowPlayingItemsPadding
-import bilal.altify.presentation.util.UpdateEffect
-import bilal.altify.presentation.util.shakeShrinkAnimation
+import bilal.altify.presentation.util.ShakeBounceAnimation
 
 @Composable
 fun NowPlayingMusicInfo(
@@ -53,8 +48,8 @@ fun NowPlayingMusicInfo(
     val getLibraryState: (String) -> Unit = {
         executeCommand(UserCommand.UpdateCurrentTrackState(it))
     }
-    val toggleLibraryStatus: (String, Boolean) -> Unit = {
-        uri, bool -> executeCommand(UserCommand.ToggleLibraryStatus(uri, bool))
+    val toggleLibraryStatus: (String, Boolean) -> Unit = { uri, bool ->
+        executeCommand(UserCommand.ToggleLibraryStatus(uri, bool))
     }
 
     LaunchedEffect(key1 = track) {
@@ -149,18 +144,17 @@ fun AddOrRemoveFromLibraryButton(
     toggleLibraryStatus: (String, Boolean) -> Unit,
 ) {
     if (libraryState != null) {
-        val scale = remember { Animatable(1f) }
-        val rotation = remember { Animatable(1f) }
-        val coroutineScope = rememberCoroutineScope()
-
-        UpdateEffect(libraryState.isAdded) {
-            shakeShrinkAnimation(scale =  scale, rotation = rotation, scope = coroutineScope)
+        val icon = when (libraryState.isAdded) {
+            true -> Icons.Filled.Favorite
+            false -> Icons.Outlined.FavoriteBorder
         }
-
-        IconButton(
-            onClick =  {
-                toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
-            }
+        val interactionSource = remember { MutableInteractionSource() }
+        ShakeBounceAnimation(
+            icon = icon,
+            modifier = Modifier
+                .clickable(interactionSource = interactionSource, indication = null ) {
+                    toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
+                },
         ) {
             Icon(
                 imageVector = when (libraryState.isAdded) {
@@ -169,15 +163,13 @@ fun AddOrRemoveFromLibraryButton(
                 },
                 contentDescription = "",
                 modifier = Modifier
-                    .size(30.dp)
-                    .scale(scale = scale.value)
-                    .rotate(rotation.value),
+                    .padding(16.dp)
             )
         }
     }
 }
 
-@Preview(showBackground=true)
+@Preview(showBackground = true)
 @Composable
 private fun NowPlayingMusicInfoPreview() {
     NowPlayingMusicInfo(
@@ -191,7 +183,7 @@ private fun NowPlayingMusicInfoPreview() {
     )
 }
 
-@Preview(showBackground=true)
+@Preview(showBackground = true)
 @Composable
 private fun NowPlayingLongMusicInfoPreview() {
     NowPlayingMusicInfo(
@@ -205,7 +197,7 @@ private fun NowPlayingLongMusicInfoPreview() {
     )
 }
 
-@Preview(showBackground=true)
+@Preview(showBackground = true)
 @Composable
 private fun NowPlayingMusicInfoLeftPreview() {
     NowPlayingMusicInfo(

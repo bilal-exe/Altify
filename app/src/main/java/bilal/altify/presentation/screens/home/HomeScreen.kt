@@ -1,6 +1,7 @@
 package bilal.altify.presentation.screens.home
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
@@ -92,7 +93,6 @@ private fun HomeScreen(
         ) {
             item {
                 NowPlaying(
-                    uiState = uiState,
                     navToSettings = navToSettings,
                     executeCommand = executeCommand,
                     backgroundColor = backgroundColor,
@@ -162,7 +162,7 @@ private fun getBackgroundColor(
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(
-        navToSettings = { /*TODO*/ },
+        navToSettings = { },
         executeCommand = {},
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(),

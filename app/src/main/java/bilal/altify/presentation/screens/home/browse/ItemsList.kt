@@ -5,7 +5,6 @@ import android.os.Build
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,19 +42,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,9 +67,8 @@ import bilal.altify.domain.spotify.use_case.ImagesCommand
 import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.screens.home.BROWSER_FAB_HEIGHT
-import bilal.altify.presentation.util.UpdateEffect
+import bilal.altify.presentation.util.ShakeBounceAnimation
 import bilal.altify.presentation.util.clipLen
-import bilal.altify.presentation.util.shakeShrinkAnimation
 import com.spotify.protocol.types.Image.Dimension
 import kotlin.math.ceil
 
@@ -106,8 +100,8 @@ fun ItemsList(
     val getThumbnail: (String) -> Unit = {
         executeCommand(ImagesCommand.GetThumbnail(it))
     }
-    val toggleLibraryStatus: (String, Boolean) -> Unit = {
-        uri, added -> executeCommand(UserCommand.ToggleLibraryStatus(uri, added))
+    val toggleLibraryStatus: (String, Boolean) -> Unit = { uri, added ->
+        executeCommand(UserCommand.ToggleLibraryStatus(uri, added))
     }
     val addToQueue: (String) -> Unit = {
         executeCommand(PlaybackCommand.AddToQueue(it))
@@ -226,18 +220,23 @@ fun ListItemRow(
         .aspectRatio(1f)
 
     val view = LocalView.current
-    val haptic = LocalHapticFeedback.current
+    val config = LocalConfiguration.current
+    val density = LocalDensity.current
+    val dismissThreshold = remember {
+        with(density) { config.screenWidthDp.times(0.4f).dp.toPx() }
+    }
     val dismissState = rememberDismissState(
         confirmValueChange = {
             if (it == DismissValue.DismissedToEnd) {
                 addToQueue(item.uri)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                else
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                view.performHapticFeedback(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM
+                    else 16
+                )
             }
             it != DismissValue.DismissedToEnd
-        }
+        },
+        positionalThreshold = { dismissThreshold }
     )
 
     SwipeToDismiss(
@@ -250,8 +249,16 @@ fun ListItemRow(
         background = {
             dismissState.dismissDirection ?: return@SwipeToDismiss
             val scale by animateFloatAsState(
-                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f, label = ""
+                if (dismissState.targetValue == DismissValue.Default) 0.5f else 1f, label = ""
             )
+            Log.d("dismissState", dismissState.progress.toString())
+            LaunchedEffect (dismissState.progress > 0.4f) {
+                if (dismissState.progress == 1f) return@LaunchedEffect // bug where the val is 1
+                view.performHapticFeedback(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM
+                    else 16
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -327,22 +334,18 @@ fun AddRemoveLibraryIcon(
         modifier = modifier, contentAlignment = Alignment.Center
     ) {
         if (libraryState.canAdd) {
-            val scale = remember { Animatable(1f) }
-            val rotation = remember { Animatable(1f) }
-            val coroutineScope = rememberCoroutineScope()
-
-            UpdateEffect(libraryState.isAdded) {
-                shakeShrinkAnimation(scale = scale, rotation = rotation, scope = coroutineScope)
+            ShakeBounceAnimation(
+                icon = icon,
+                modifier = Modifier
+                    .clickable {
+                        toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
+                    },
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "",
+                )
             }
-
-            Icon(imageVector = icon, contentDescription = "", modifier = Modifier
-                .clickable {
-                    toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
-                }
-                .scale(scale = scale.value)
-                .rotate(rotation.value)
-
-            )
         }
     }
 }

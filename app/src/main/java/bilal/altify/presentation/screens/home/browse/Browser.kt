@@ -35,7 +35,6 @@ import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 
-// TODO: Add swipe to add to queue
 @Composable
 fun Browser(
     preferences: AltPreferencesState,
@@ -52,8 +51,7 @@ fun Browser(
     val browserBackgroundColor = remember(backgroundColor, preferences.backgroundStyle) {
         when (preferences.backgroundStyle) {
             BackgroundStyleConfig.SOLID -> backgroundColor
-            BackgroundStyleConfig.VERTICAL_GRADIENT -> themeColor
-            BackgroundStyleConfig.PLAIN -> themeColor
+            else -> themeColor
         }
     }
     BrowserSolidBackground(

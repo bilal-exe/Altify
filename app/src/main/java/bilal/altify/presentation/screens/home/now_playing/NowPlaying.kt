@@ -28,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import bilal.altify.domain.spotify.model.AltPlayerContext
 import bilal.altify.domain.spotify.model.AltTrack
 import bilal.altify.domain.spotify.model.CurrentTrackState
@@ -47,11 +49,32 @@ import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
+import bilal.altify.presentation.screens.LoadingScreen
 
 const val NOW_PLAYING_HORIZONTAL_PADDING = 24
 
 @Composable
 fun NowPlaying(
+    navToSettings: () -> Unit,
+    executeCommand: (Command) -> Unit,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    viewModel: NowPlayingViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    when (val state = uiState) {
+        NowPlayingUIState.Loading -> LoadingScreen()
+        is NowPlayingUIState.Success ->
+            NowPlaying(
+                uiState = state,
+                navToSettings = navToSettings,
+                executeCommand = executeCommand,
+                backgroundColor = backgroundColor,
+            )
+    }
+}
+
+@Composable
+private fun NowPlaying(
     uiState: NowPlayingUIState.Success,
     navToSettings: () -> Unit,
     executeCommand: (Command) -> Unit,
@@ -93,7 +116,8 @@ fun NowPlaying(
                 }
             },
         ) { paddingValues ->
-            val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
+            val isPortrait =
+                LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
             if (isPortrait)
                 NowPlayingPortraitContent(
                     paddingValues = paddingValues,
@@ -231,8 +255,9 @@ private fun NowPlayingLandscapeContent(
                 Column {
                     NowPlayingProgressBar(
                         progress = uiState.trackState.playbackPosition,
-                        duration = uiState.trackState.track?.duration ?: 0
-                    ) { executeCommand(PlaybackCommand.Seek(it)) }
+                        duration = uiState.trackState.track?.duration ?: 0,
+                        onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingMusicControls(
                         isPaused = uiState.trackState.isPaused,
@@ -269,7 +294,7 @@ private fun NowPlayingPreview() {
 @Preview(name = "NowPlaying")
 @Composable
 private fun NowPlayingDarkPreview() {
-    MaterialTheme (colorScheme = darkColorScheme()) {
+    MaterialTheme(colorScheme = darkColorScheme()) {
         NowPlaying(
             uiState = NowPlayingUIState.Success(
                 trackState = CurrentTrackState(

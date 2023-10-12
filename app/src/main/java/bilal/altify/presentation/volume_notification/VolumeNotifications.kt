@@ -2,12 +2,13 @@ package bilal.altify.presentation.volume_notification
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Application
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import bilal.altify.AltifyApp.Companion.VOLUME_CHANNEL_ID
 import bilal.altify.R
 import bilal.altify.presentation.util.collectLatestOn
 import bilal.altify.presentation.util.quickCheckPerms
@@ -30,6 +31,14 @@ class VolumeNotifications @Inject constructor(private val context: Context) {
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+    init {
+        val mChannel = NotificationChannel(
+            VOLUME_CHANNEL_ID, "Volume", NotificationManager.IMPORTANCE_DEFAULT
+        )
+        val notificationManager = context.getSystemService(Application.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(mChannel)
+    }
+
     @SuppressLint("MissingPermission")
     fun show(scope: CoroutineScope, volume: Flow<Float>) {
         with(NotificationManagerCompat.from(context)) {
@@ -49,6 +58,7 @@ class VolumeNotifications @Inject constructor(private val context: Context) {
     }
 
     companion object {
+        const val VOLUME_CHANNEL_ID = "VOLUME_CHANNEL_ID"
         private var notificationId = 0
         private const val MAX_PROGRESS = 100
     }
