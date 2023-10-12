@@ -10,4 +10,6 @@ data class CurrentTrackState(
     val volume: Float = 0f,
     val artwork: Bitmap? = null,
     val libraryState: AltLibraryState? = null,
+    val repeatMode: RepeatMode = RepeatMode.OFF,
+    val isShuffled: Boolean = false
 )

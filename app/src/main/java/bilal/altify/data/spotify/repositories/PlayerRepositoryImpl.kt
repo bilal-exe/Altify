@@ -1,7 +1,9 @@
 package bilal.altify.data.spotify.repositories
 
+import android.util.Log
 import bilal.altify.data.spotify.mappers.toAlt
 import bilal.altify.domain.spotify.model.AltPlayerStateAndContext
+import bilal.altify.domain.spotify.model.RepeatMode
 import bilal.altify.domain.spotify.repositories.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
 import kotlinx.coroutines.channels.awaitClose
@@ -40,16 +42,25 @@ class PlayerRepositoryImpl(
 
     }
 
+    private val repeatModes = mapOf(
+        0 to RepeatMode.OFF,
+        1 to RepeatMode.CONTEXT,
+        3 to RepeatMode.TRACK
+    )
+
     override val playerStateAndContext =
         combine(
             playerState(),
             playerContext()
         ) { playerState, playerContext ->
+            Log.d("repeatmode", playerState.playbackOptions.repeatMode.toString())
             AltPlayerStateAndContext(
                 track = playerState.track.toAlt(),
                 isPaused = playerState.isPaused,
                 position = playerState.playbackPosition,
-                context = playerContext.toAlt()
+                context = playerContext.toAlt(),
+                repeatMode = repeatModes[playerState.playbackOptions.repeatMode] ?: RepeatMode.OFF,
+                isShuffling = playerState.playbackOptions.isShuffling
             )
         }
 
@@ -88,4 +99,13 @@ class PlayerRepositoryImpl(
         playerApi.skipToIndex(uri, index)
     }
 
+    override fun toggleRepeat() {
+        playerApi.toggleRepeat()
+    }
+
+    override fun toggleShuffle() {
+        playerApi.toggleShuffle()
+            .setResultCallback { Log.d("shuffle", "res") }
+            .setErrorCallback { Log.d("shuffle", it.message.toString()) }
+    }
 }

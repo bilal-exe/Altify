@@ -23,6 +23,10 @@ interface PlayerRepository {
 
     fun skipToTrack(uri: String, index: Int)
 
+    fun toggleRepeat()
+
+    fun toggleShuffle()
+
     class PlayerSourceException(override val message: String?): Exception(message)
 
 }

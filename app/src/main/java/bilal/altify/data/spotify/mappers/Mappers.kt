@@ -25,13 +25,6 @@ fun Track?.toAlt() =
         imageUri = this.imageUri.raw,
     ) else null
 
-fun PlayerState.toAlt() =
-    AltPlayerStateAndContext(
-        track = this.track.toAlt(),
-        isPaused = this.isPaused,
-        position = this.playbackPosition,
-    )
-
 fun PlayerContext.toAlt() =
     AltPlayerContext(
         uri = this.uri,

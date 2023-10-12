@@ -129,8 +129,6 @@ fun BrowserItemsList(
 
     LaunchedEffect(key1 = lazyListState.canScrollForward) {
         if (!lazyListState.canScrollForward) {
-            Log.d("visibleItems", "called")
-            Log.d("visibleItems", "${listItems.items.size} ${listItems.total}")
             executeCommand(ContentCommand.LoadMoreChildrenOfItem(listItems))
         }
     }
@@ -255,7 +253,6 @@ fun ListItemRow(
             val scale by animateFloatAsState(
                 if (dismissState.targetValue == DismissValue.Default) 0.5f else 1f, label = ""
             )
-            Log.d("dismissState", dismissState.progress.toString())
             LaunchedEffect(dismissState.progress > 0.4f) {
                 if (dismissState.progress == 1f) return@LaunchedEffect // bug where the val is 1
                 view.performHapticFeedback(

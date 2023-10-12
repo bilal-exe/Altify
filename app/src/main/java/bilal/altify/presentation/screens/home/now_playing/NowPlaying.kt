@@ -198,7 +198,9 @@ private fun NowPlayingPortraitContent(
                 Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingMusicControls(
                     executeCommand = executeCommand,
-                    isPaused = uiState.trackState.isPaused
+                    isPaused = uiState.trackState.isPaused,
+                    repeatMode = uiState.trackState.repeatMode,
+                    isShuffled = uiState.trackState.isShuffled
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingVolumeSlider(
@@ -260,8 +262,10 @@ private fun NowPlayingLandscapeContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingMusicControls(
+                        executeCommand = executeCommand,
                         isPaused = uiState.trackState.isPaused,
-                        executeCommand = executeCommand
+                        repeatMode = uiState.trackState.repeatMode,
+                        isShuffled = uiState.trackState.isShuffled
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingVolumeSlider(

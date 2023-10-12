@@ -18,7 +18,6 @@ class ExecuteCommandUseCase {
         command: Command,
         repositories: AltifyRepositories
     ) {
-        Log.d("Command", command.toString())
         when (command) {
 
             // playback
@@ -53,6 +52,14 @@ class ExecuteCommandUseCase {
             is PlaybackCommand.SkipToTrack -> {
                 if (browserVisitedHistory.isEmpty()) repositories.player.play(command.trackUri)
                 else repositories.player.skipToTrack(browserVisitedHistory.peek().uri, command.index)
+            }
+
+            PlaybackCommand.ToggleRepeat -> {
+                repositories.player.toggleRepeat()
+            }
+
+            PlaybackCommand.ToggleShuffle -> {
+                repositories.player.toggleShuffle()
             }
 
             // content

@@ -1,7 +1,6 @@
 package bilal.altify.presentation.screens.home
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height

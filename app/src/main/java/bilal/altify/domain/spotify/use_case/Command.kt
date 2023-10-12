@@ -23,6 +23,10 @@ sealed interface PlaybackCommand : Command {
 
     data class SkipToTrack(val trackUri: String, val index: Int) : PlaybackCommand
 
+    object ToggleShuffle : PlaybackCommand
+
+    object ToggleRepeat : PlaybackCommand
+
 }
 
 sealed interface ContentCommand : Command {

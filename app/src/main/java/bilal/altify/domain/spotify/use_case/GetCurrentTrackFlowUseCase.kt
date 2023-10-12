@@ -26,7 +26,9 @@ class GetCurrentTrackFlowUseCase {
             playerContext = psc.context,
             volume = vol,
             artwork = art,
-            libraryState = lib
+            libraryState = lib,
+            repeatMode = psc.repeatMode,
+            isShuffled = psc.isShuffling
         )
     }
         .interpolatePlaybackPosition()
