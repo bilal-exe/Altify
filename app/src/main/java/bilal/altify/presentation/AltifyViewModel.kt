@@ -57,15 +57,11 @@ class AltifyViewModel @Inject constructor(
             repositories = repositories,
         )
 
-    fun setSpotifyToken(accessToken: String?) {
-
-    }
-
     fun onAuthorizationResponse(response: AuthorizationResponse?) {
         if (response == null) return
         when (response.type) {
-            AuthorizationResponse.Type.TOKEN ->
-                viewModelScope.launch { preferences.setSpotifyToken(response.accessToken) }
+            AuthorizationResponse.Type.TOKEN -> TODO()
+//                viewModelScope.launch { preferences.setSpotifyToken(response.accessToken) }
             AuthorizationResponse.Type.ERROR -> TODO()
             else -> TODO()
         }

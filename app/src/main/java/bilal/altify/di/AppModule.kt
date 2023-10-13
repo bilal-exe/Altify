@@ -3,13 +3,12 @@ package bilal.altify.di
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
-import bilal.altify.data.spotify.remote.SpotifySourceImpl
+import bilal.altify.data.spotify.remote.appremote.SpotifySourceImpl
 import bilal.altify.domain.spotify.remote.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.ExecuteCommandUseCase
 import bilal.altify.domain.spotify.use_case.GetBrowserStateFlowUseCase
 import bilal.altify.domain.spotify.use_case.GetCurrentTrackFlowUseCase
-import bilal.altify.data.prefrences.DatastorePreferencesDataSource
 import bilal.altify.data.prefrences.PreferencesRepositoryImpl
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.remote.SpotifyConnector
@@ -40,10 +39,8 @@ object AppModule {
     @Singleton
     fun providesAltifyPreferencesDataSource(@ApplicationContext context: Context): PreferencesRepository =
         PreferencesRepositoryImpl(
-            DatastorePreferencesDataSource(
-                PreferenceDataStoreFactory.create(
-                    produceFile = { context.preferencesDataStoreFile("Settings") }
-                )
+            PreferenceDataStoreFactory.create(
+                produceFile = { context.preferencesDataStoreFile("Settings") }
             )
         )
 

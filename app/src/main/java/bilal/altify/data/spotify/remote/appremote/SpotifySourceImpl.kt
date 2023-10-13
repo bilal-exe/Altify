@@ -1,4 +1,4 @@
-package bilal.altify.data.spotify.remote
+package bilal.altify.data.spotify.remote.appremote
 
 import android.content.Context
 import android.util.Log

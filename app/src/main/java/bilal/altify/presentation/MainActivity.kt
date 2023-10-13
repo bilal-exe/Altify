@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -67,18 +66,18 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                @Suppress("UNCHECKED_CAST")
-                (viewModel.uiState.filter { it is AltifyUIState.Success } as Flow<AltifyUIState.Success>)
-                    .map { it.preferences.spotifyAccessToken }
-                    .distinctUntilChanged()
-                    .onEach {
-                        if (it.isNullOrEmpty()) authorizeSpotifyWebApi()
-                    }
-                    .collect()
-            }
-        }
+//        lifecycleScope.launch {
+//            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                @Suppress("UNCHECKED_CAST")
+//                (viewModel.uiState.filter { it is AltifyUIState.Success } as Flow<AltifyUIState.Success>)
+//                    .map { it.preferences.spotifyAccessToken }
+//                    .distinctUntilChanged()
+//                    .onEach {
+//                        if (it.isNullOrEmpty()) authorizeSpotifyWebApi()
+//                    }
+//                    .collect()
+//            }
+//        }
 
 
         setContent {
