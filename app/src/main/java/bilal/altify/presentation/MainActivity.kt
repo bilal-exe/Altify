@@ -17,9 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.CLIENT_ID
-import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.REDIRECT_URI
-import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.REQUEST_CODE
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.CLIENT_ID
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REDIRECT_URI
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REQUEST_CODE
 import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
@@ -29,9 +29,7 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -66,18 +64,13 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-//        lifecycleScope.launch {
-//            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                @Suppress("UNCHECKED_CAST")
-//                (viewModel.uiState.filter { it is AltifyUIState.Success } as Flow<AltifyUIState.Success>)
-//                    .map { it.preferences.spotifyAccessToken }
-//                    .distinctUntilChanged()
-//                    .onEach {
-//                        if (it.isNullOrEmpty()) authorizeSpotifyWebApi()
-//                    }
-//                    .collect()
-//            }
-//        }
+        lifecycleScope.launch {
+            viewModel.uiState
+                .map { it is AltifyUIState.Disconnected && it.error is Error.APIToken }
+                .filter { it }
+                .onEach { authorizeSpotifyWebApi() }
+                .collect()
+        }
 
 
         setContent {
@@ -87,7 +80,7 @@ class MainActivity : ComponentActivity() {
                     LoadingScreen("Connecting to Spotify...")
                 is AltifyUIState.Disconnected ->
                     ErrorScreen(
-                        message = state.message ?: "Couldn't connect to Spotify",
+                        message = /*state.message ?:*/ "Couldn't connect to Spotify",
                         buttonText = "Tap to retry",
                         buttonFunc = viewModel::connect
                     )

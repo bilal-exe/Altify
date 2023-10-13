@@ -1,23 +1,21 @@
 package bilal.altify.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
-import bilal.altify.domain.spotify.remote.SpotifyConnector
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
+import bilal.altify.domain.spotify.remote.web_api.AccessTokenRepository
+import bilal.altify.domain.spotify.remote.web_api.TokenState
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,28 +23,38 @@ import javax.inject.Inject
 class AltifyViewModel @Inject constructor(
     private val spotifyConnector: SpotifyConnector,
     private val preferences: PreferencesRepository,
+    private val accessTokenRepository: AccessTokenRepository,
     private val useCases: AltifyUseCases
 ) : ViewModel() {
 
-    val uiState = spotifyConnector.data
-        .flatMapLatest { response ->
-            when (response) {
-                is SpotifyConnectorResponse.Connected ->
-                    combine(
-                        preferences.state,
-                        flowOf(response.repositories),
-                        AltifyUIState::Success
-                    )
-                is SpotifyConnectorResponse.ConnectionFailed ->
-                    flowOf(AltifyUIState.Disconnected(response.exception.message))
-
-            }
+    val uiState = combine(
+        spotifyConnector.data,
+        preferences.state,
+        accessTokenRepository.state
+    ) { spotifyConnector, preferences, token ->
+        if (spotifyConnector is SpotifyConnectorResponse.Connected && token is TokenState.Token)
+            AltifyUIState.Success(
+                preferences = preferences,
+                repositories = spotifyConnector.repositories,
+                token = token.accessToken
+            )
+        else if (spotifyConnector is SpotifyConnectorResponse.ConnectionFailed)
+            AltifyUIState.Disconnected(
+                Error.SpotifyConnector(spotifyConnector.exception.localizedMessage)
+            )
+        else {
+            AltifyUIState.Disconnected(Error.APIToken)
         }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = AltifyUIState.Connecting
         )
+
+    private fun refreshToken() {
+
+    }
 
     fun connect() =
         spotifyConnector.connect()

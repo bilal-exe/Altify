@@ -7,11 +7,11 @@ import bilal.altify.data.spotify.repositories.ImagesRepositoryImpl
 import bilal.altify.data.spotify.repositories.PlayerRepositoryImpl
 import bilal.altify.data.spotify.repositories.UserRepositoryImpl
 import bilal.altify.data.spotify.repositories.VolumeRepositoryImpl
-import bilal.altify.domain.spotify.remote.SpotifyConnector
-import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.CLIENT_ID
-import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.REDIRECT_URI
-import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.remote.SpotifySource
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.CLIENT_ID
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REDIRECT_URI
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.remote.appremote.SpotifySource
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector

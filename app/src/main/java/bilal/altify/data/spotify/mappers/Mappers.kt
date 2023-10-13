@@ -4,7 +4,6 @@ import bilal.altify.domain.spotify.model.AltLibraryState
 import bilal.altify.domain.spotify.model.AltListItem
 import bilal.altify.domain.spotify.model.AltListItems
 import bilal.altify.domain.spotify.model.AltPlayerContext
-import bilal.altify.domain.spotify.model.AltPlayerStateAndContext
 import bilal.altify.domain.spotify.model.AltTrack
 import bilal.altify.domain.spotify.model.ContentType
 import com.spotify.protocol.types.ImageUri
@@ -12,7 +11,6 @@ import com.spotify.protocol.types.LibraryState
 import com.spotify.protocol.types.ListItem
 import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerContext
-import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 
 fun Track?.toAlt() =
@@ -40,10 +38,11 @@ private val spotifyUriToType = mapOf(
      "track" to ContentType.Track,
      "section" to ContentType.Section,
 )
+private val typeToSpotifyUri = spotifyUriToType.entries.associate { it.value to it.key }
 
 fun ListItem.toAlt() =
     AltListItem(
-        uri = this.uri,
+        uri = this.uri.substringAfterLast(':'),
         imageUri = this.imageUri.raw,
         title = this.title,
         subtitle = this.subtitle,
@@ -65,13 +64,15 @@ fun LibraryState.toAlt() =
         canAdd = this.canAdd
     )
 
-fun AltListItem.toOriginal() =
-    ListItem(
-        /* id = */ uri,
-        /* uri = */ uri,
+fun AltListItem.toOriginal(): ListItem {
+    val spotifyUri = "spotify:${typeToSpotifyUri[this.type]}:${this.uri}"
+    return ListItem(
+        /* id = */ spotifyUri,
+        /* uri = */ spotifyUri,
         /* imageUri = */ ImageUri(imageUri),
         /* title = */ title,
         /* subtitle = */ subtitle,
         /* playable = */ playable,
         /* hasChildren = */ hasChildren
     )
+}

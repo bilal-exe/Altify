@@ -32,7 +32,4 @@ enum class ContentType {
     Artist,
     Playlist,
     Track,
-//    Show,
-//    Episode,
-//    Audiobook,
 }

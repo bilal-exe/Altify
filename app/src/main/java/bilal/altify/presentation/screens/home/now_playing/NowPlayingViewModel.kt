@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.model.CurrentTrackState
-import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.remote.SpotifySource
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.remote.appremote.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.volume_notification.VolumeNotifications
