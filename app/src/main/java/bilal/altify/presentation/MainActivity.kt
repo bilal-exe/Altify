@@ -1,8 +1,10 @@
 package bilal.altify.presentation
 
 import android.Manifest
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,14 +18,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.CLIENT_ID
+import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.REDIRECT_URI
+import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.REQUEST_CODE
 import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.theme.AltifyTheme
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -49,9 +63,23 @@ class MainActivity : ComponentActivity() {
                     .onEach {
                         uiState = it
                     }
-                    .collect { }
+                    .collect()
             }
         }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                @Suppress("UNCHECKED_CAST")
+                (viewModel.uiState.filter { it is AltifyUIState.Success } as Flow<AltifyUIState.Success>)
+                    .map { it.preferences.spotifyAccessToken }
+                    .distinctUntilChanged()
+                    .onEach {
+                        if (it.isNullOrEmpty()) authorizeSpotifyWebApi()
+                    }
+                    .collect()
+            }
+        }
+
 
         setContent {
 
@@ -84,6 +112,25 @@ class MainActivity : ComponentActivity() {
             else -> return false
         }
         return true
+    }
+
+    private fun authorizeSpotifyWebApi() {
+        AuthorizationClient.clearCookies(this)
+        val request = AuthorizationRequest.Builder(
+            CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI
+        )
+            .setScopes(arrayOf("streaming"))
+            .setShowDialog(true)
+            .build()
+        AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
+    }
+
+    @Deprecated(message = "Required for spotify auth")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_CODE) return
+        val response = AuthorizationClient.getResponse(resultCode, data)
+        viewModel.onAuthorizationResponse(response)
     }
 }
 

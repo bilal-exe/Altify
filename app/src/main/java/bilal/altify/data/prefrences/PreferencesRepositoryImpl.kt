@@ -14,6 +14,9 @@ class PreferencesRepositoryImpl(
 
     override val state get() = source.state
 
+    override suspend fun setSpotifyToken(token: String?) =
+        source.setSpotifyToken(token)
+
     override suspend fun setDarkThemeConfig(config: DarkThemeConfig) =
         source.setDarkThemeConfig(config = config)
 

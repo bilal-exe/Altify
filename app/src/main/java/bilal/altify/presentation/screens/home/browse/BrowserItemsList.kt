@@ -2,7 +2,6 @@ package bilal.altify.presentation.screens.home.browse
 
 import android.graphics.Bitmap
 import android.os.Build
-import android.util.Log
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState

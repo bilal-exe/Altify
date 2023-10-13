@@ -13,6 +13,8 @@ interface PreferencesRepository {
 
     val state: Flow<AltPreferencesState>
 
+    suspend fun setSpotifyToken(token: String?)
+
     suspend fun setDarkThemeConfig(config: DarkThemeConfig)
 
     suspend fun setBackgroundStyleConfig(config: BackgroundStyleConfig)

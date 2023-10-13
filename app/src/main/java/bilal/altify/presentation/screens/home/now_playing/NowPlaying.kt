@@ -50,6 +50,7 @@ import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.screens.LoadingScreen
+import bilal.altify.presentation.util.DevicePreviews
 
 const val NOW_PLAYING_HORIZONTAL_PADDING = 24
 
@@ -195,14 +196,12 @@ private fun NowPlayingPortraitContent(
                     duration = uiState.trackState.track?.duration ?: 0,
                     onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingMusicControls(
                     executeCommand = executeCommand,
                     isPaused = uiState.trackState.isPaused,
                     repeatMode = uiState.trackState.repeatMode,
                     isShuffled = uiState.trackState.isShuffled
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 NowPlayingVolumeSlider(
                     volume = uiState.trackState.volume,
                     setVolume = { executeCommand(VolumeCommand.SetVolume(it)) }
@@ -278,7 +277,7 @@ private fun NowPlayingLandscapeContent(
     }
 }
 
-@Preview(name = "NowPlaying")
+@DevicePreviews
 @Composable
 private fun NowPlayingPreview() {
     NowPlaying(
@@ -295,7 +294,7 @@ private fun NowPlayingPreview() {
     )
 }
 
-@Preview(name = "NowPlaying")
+@DevicePreviews
 @Composable
 private fun NowPlayingDarkPreview() {
     MaterialTheme(colorScheme = darkColorScheme()) {
@@ -314,7 +313,7 @@ private fun NowPlayingDarkPreview() {
     }
 }
 
-@Preview(name = "NowPlaying", showBackground = true)
+@DevicePreviews
 @Composable
 private fun NowPlayingToggledPreview() {
     NowPlayingPortraitContent(
@@ -332,20 +331,3 @@ private fun NowPlayingToggledPreview() {
     ) {}
 }
 
-@Preview
-@Composable
-private fun NowPlayingLandscapePreview() {
-    NowPlayingLandscapeContent(
-        paddingValues = PaddingValues(),
-        uiState = NowPlayingUIState.Success(
-            trackState = CurrentTrackState(
-                playerContext = AltPlayerContext.example,
-                track = AltTrack.example,
-                playbackPosition = 5000
-            ),
-            preferences = AltPreferencesState(),
-        ),
-        executeCommand = {},
-        showControls = true
-    ) {}
-}

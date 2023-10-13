@@ -32,6 +32,7 @@ enum class FullScreenMusicInfoAlignment(override val code: Int, override val tit
 }
 
 data class AltPreferencesState(
+    val spotifyAccessToken: String? = null,
     val darkTheme: DarkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
     val backgroundStyle: BackgroundStyleConfig = BackgroundStyleConfig.SOLID,
     val artworkDisplay: ArtworkDisplayConfig = ArtworkDisplayConfig.NORMAL,

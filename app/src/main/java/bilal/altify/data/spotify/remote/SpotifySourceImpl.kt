@@ -8,6 +8,8 @@ import bilal.altify.data.spotify.repositories.PlayerRepositoryImpl
 import bilal.altify.data.spotify.repositories.UserRepositoryImpl
 import bilal.altify.data.spotify.repositories.VolumeRepositoryImpl
 import bilal.altify.domain.spotify.remote.SpotifyConnector
+import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.CLIENT_ID
+import bilal.altify.domain.spotify.remote.SpotifyConnector.Companion.REDIRECT_URI
 import bilal.altify.domain.spotify.remote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.remote.SpotifySource
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
@@ -31,13 +33,14 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 class SpotifySourceImpl(
     private val context: Context
 ) : SpotifySource, SpotifyConnector {
 
     private val connectionParams: ConnectionParams = ConnectionParams
-        .Builder(clientId)
-        .setRedirectUri(redirectUri)
+        .Builder(CLIENT_ID)
+        .setRedirectUri(REDIRECT_URI)
         .showAuthView(true)
         .build()
 
@@ -107,10 +110,5 @@ class SpotifySourceImpl(
 
     override fun connect() {
         connectRequestChannel.trySend(Unit)
-    }
-
-    companion object {
-        private const val clientId = "50109e10614941e596e264af1e7b3685"
-        private const val redirectUri = "altify://now_playing"
     }
 }

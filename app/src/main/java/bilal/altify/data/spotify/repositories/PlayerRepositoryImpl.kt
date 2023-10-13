@@ -53,7 +53,6 @@ class PlayerRepositoryImpl(
             playerState(),
             playerContext()
         ) { playerState, playerContext ->
-            Log.d("repeatmode", playerState.playbackOptions.repeatMode.toString())
             AltPlayerStateAndContext(
                 track = playerState.track.toAlt(),
                 isPaused = playerState.isPaused,
@@ -105,7 +104,5 @@ class PlayerRepositoryImpl(
 
     override fun toggleShuffle() {
         playerApi.toggleShuffle()
-            .setResultCallback { Log.d("shuffle", "res") }
-            .setErrorCallback { Log.d("shuffle", it.message.toString()) }
     }
 }
