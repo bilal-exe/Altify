@@ -42,7 +42,7 @@ private val typeToSpotifyUri = spotifyUriToType.entries.associate { it.value to 
 
 fun ListItem.toAlt() =
     AltListItem(
-        uri = this.uri.substringAfterLast(':'),
+        uri = this.uri,
         imageUri = this.imageUri.raw,
         title = this.title,
         subtitle = this.subtitle,
@@ -50,6 +50,9 @@ fun ListItem.toAlt() =
         hasChildren = this.hasChildren,
         type = spotifyUriToType[uri.substringAfter(':').substringBefore(':')] ?: ContentType.Track
     )
+
+fun AltListItem.getSpotifyUri() =
+    this.uri.substringAfterLast(':')
 
 fun ListItems.toAlt() =
     AltListItems(
@@ -65,10 +68,9 @@ fun LibraryState.toAlt() =
     )
 
 fun AltListItem.toOriginal(): ListItem {
-    val spotifyUri = "spotify:${typeToSpotifyUri[this.type]}:${this.uri}"
     return ListItem(
-        /* id = */ spotifyUri,
-        /* uri = */ spotifyUri,
+        /* id = */ uri,
+        /* uri = */ uri,
         /* imageUri = */ ImageUri(imageUri),
         /* title = */ title,
         /* subtitle = */ subtitle,

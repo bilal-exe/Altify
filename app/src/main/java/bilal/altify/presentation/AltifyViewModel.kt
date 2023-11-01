@@ -2,24 +2,24 @@ package bilal.altify.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.use_case.AltifyUseCases
-import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.prefrences.PreferencesRepository
-import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
+import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.remote.web_api.AccessTokenRepository
 import bilal.altify.domain.spotify.remote.web_api.TokenState
+import bilal.altify.domain.spotify.repositories.AltifyRepositories
+import bilal.altify.domain.spotify.use_case.AltifyUseCases
+import bilal.altify.domain.spotify.use_case.Command
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalCoroutinesApi::class)
 class AltifyViewModel @Inject constructor(
     private val spotifyConnector: SpotifyConnector,
     private val preferences: PreferencesRepository,
@@ -52,10 +52,6 @@ class AltifyViewModel @Inject constructor(
             initialValue = AltifyUIState.Connecting
         )
 
-    private fun refreshToken() {
-
-    }
-
     fun connect() =
         spotifyConnector.connect()
 
@@ -68,8 +64,14 @@ class AltifyViewModel @Inject constructor(
     fun onAuthorizationResponse(response: AuthorizationResponse?) {
         if (response == null) return
         when (response.type) {
-            AuthorizationResponse.Type.TOKEN -> TODO()
-//                viewModelScope.launch { preferences.setSpotifyToken(response.accessToken) }
+            AuthorizationResponse.Type.TOKEN ->
+                viewModelScope.launch {
+                    val token = TokenState.Token(
+                        accessToken = response.accessToken,
+                        expiry = Instant.now().plusSeconds(response.expiresIn.toLong())
+                    )
+                    accessTokenRepository.setToken(token)
+                }
             AuthorizationResponse.Type.ERROR -> TODO()
             else -> TODO()
         }
