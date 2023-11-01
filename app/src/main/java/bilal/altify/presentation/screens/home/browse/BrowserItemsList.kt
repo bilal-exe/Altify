@@ -201,7 +201,6 @@ fun GetRecommendedButton(getRecommended: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListItemRow(
     item: AltListItem,
@@ -214,12 +213,49 @@ fun ListItemRow(
     addToQueue: (String) -> Unit,
     backgroundColor: Color,
 ) {
-    val rowHeight = with(LocalDensity.current) { Dimension.THUMBNAIL.value.toDp() }
-    val thumbnailModifier = Modifier
-        .clip(RoundedCornerShape(6.dp))
-        .width(rowHeight)
-        .aspectRatio(1f)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .height((144 / LocalDensity.current.density).dp),
+    ) {
+        // only tracks can be queued
+        if (item.type == ContentType.Track) SwipeableListItemRowContent(
+            item = item,
+            selected = selected,
+            thumbnail = thumbnail,
+            playItem = playItem,
+            getChildrenOfItem = getChildrenOfItem,
+            libraryState = libraryState,
+            toggleLibraryStatus = toggleLibraryStatus,
+            addToQueue = addToQueue,
+            backgroundColor = backgroundColor,
+        ) else ListItemRowContent(
+            item = item,
+            selected = selected,
+            thumbnail = thumbnail,
+            playItem = playItem,
+            getChildrenOfItem = getChildrenOfItem,
+            libraryState = libraryState,
+            toggleLibraryStatus = toggleLibraryStatus,
+            backgroundColor = backgroundColor,
+        )
+    }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeableListItemRowContent(
+    item: AltListItem,
+    selected: Boolean,
+    thumbnail: Bitmap?,
+    playItem: () -> Unit,
+    getChildrenOfItem: () -> Unit,
+    libraryState: AltLibraryState?,
+    toggleLibraryStatus: (String, Boolean) -> Unit,
+    addToQueue: (String) -> Unit,
+    backgroundColor: Color,
+) {
     val view = LocalView.current
     val config = LocalConfiguration.current
     val density = LocalDensity.current
@@ -240,17 +276,14 @@ fun ListItemRow(
         positionalThreshold = { dismissThreshold }
     )
 
+
     SwipeToDismiss(
         state = dismissState,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp)
-            .height((144 / LocalDensity.current.density).dp),
         directions = setOf(DismissDirection.StartToEnd),
         background = {
             dismissState.dismissDirection ?: return@SwipeToDismiss
             val scale by animateFloatAsState(
-                if (dismissState.targetValue == DismissValue.Default) 0.5f else 1f, label = ""
+                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1.25f, label = ""
             )
             LaunchedEffect(dismissState.progress > 0.4f) {
                 if (dismissState.progress == 1f) return@LaunchedEffect // bug where the val is 1
@@ -279,50 +312,80 @@ fun ListItemRow(
             }
         },
         dismissContent = {
-            Row(
-                modifier = Modifier
-                    .background(
-                        color = if (selected) backgroundColor.copy(alpha = 0.25f) else backgroundColor,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Row(
-                    modifier = Modifier
-                        .clickable(onClick = getChildrenOfItem),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
-                    else PlaceholderThumbnail(thumbnailModifier)
-                    Row(
-                        modifier = Modifier
-                            .width(
-                                LocalConfiguration.current.screenWidthDp.dp -
-                                        (3 * rowHeight.value).dp -
-                                        16.dp -
-                                        24.dp
-                            )
-                    ) {
-                        Spacer(modifier = Modifier.width(16.dp))
-                        ListItemInfo(
-                            title = item.title, subtitle = item.subtitle, modifier = Modifier
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                if (libraryState != null) AddRemoveLibraryIcon(
-                    libraryState = libraryState,
-                    toggleLibraryStatus = toggleLibraryStatus,
-                    modifier = Modifier.size(rowHeight, rowHeight)
-                )
-                PlayButton(
-                    playItem = playItem,
-                    playable = item.playable,
-                    modifier = Modifier.size(rowHeight, rowHeight)
-                )
-            }
+            ListItemRowContent(
+                item = item,
+                selected = selected,
+                thumbnail = thumbnail,
+                playItem = playItem,
+                getChildrenOfItem = getChildrenOfItem,
+                libraryState = libraryState,
+                toggleLibraryStatus = toggleLibraryStatus,
+                backgroundColor = backgroundColor,
+            )
         },
     )
+}
+
+@Composable
+fun ListItemRowContent(
+    item: AltListItem,
+    selected: Boolean,
+    thumbnail: Bitmap?,
+    playItem: () -> Unit,
+    getChildrenOfItem: () -> Unit,
+    libraryState: AltLibraryState?,
+    toggleLibraryStatus: (String, Boolean) -> Unit,
+    backgroundColor: Color,
+) {
+    val rowHeight = with(LocalDensity.current) { Dimension.THUMBNAIL.value.toDp() }
+    val thumbnailModifier = Modifier
+        .clip(RoundedCornerShape(6.dp))
+        .width(rowHeight)
+        .aspectRatio(1f)
+
+    Row(
+        modifier = Modifier
+            .background(
+                color = if (selected) backgroundColor.copy(alpha = 0.25f) else backgroundColor,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable(onClick = getChildrenOfItem),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (thumbnail != null) ItemThumbnail(thumbnail, thumbnailModifier)
+            else PlaceholderThumbnail(thumbnailModifier)
+            Row(
+                modifier = Modifier
+                    .width(
+                        LocalConfiguration.current.screenWidthDp.dp -
+                                (3 * rowHeight.value).dp -
+                                16.dp -
+                                24.dp
+                    )
+            ) {
+                Spacer(modifier = Modifier.width(16.dp))
+                ListItemInfo(
+                    title = item.title, subtitle = item.subtitle, modifier = Modifier
+                )
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        if (libraryState != null) AddRemoveLibraryIcon(
+            libraryState = libraryState,
+            toggleLibraryStatus = toggleLibraryStatus,
+            modifier = Modifier.size(rowHeight, rowHeight)
+        )
+        PlayButton(
+            playItem = playItem,
+            playable = item.playable,
+            modifier = Modifier.size(rowHeight, rowHeight)
+        )
+    }
 }
 
 @Composable
