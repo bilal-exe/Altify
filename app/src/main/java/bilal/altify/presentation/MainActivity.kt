@@ -10,6 +10,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -24,18 +26,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import bilal.altify.R
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.CLIENT_ID
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REDIRECT_URI
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REQUEST_CODE
 import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
+import bilal.altify.presentation.screens.ErrorScreenInfo
 import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.theme.AltifyTheme
+import bilal.altify.presentation.util.Icon
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
@@ -96,14 +103,21 @@ class MainActivity : ComponentActivity() {
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
             ) {
                 when (val state = uiState) {
+
                     AltifyUIState.Connecting ->
-                        LoadingScreen("Connecting to Spotify...",)
-                    is AltifyUIState.Disconnected ->
-                        ErrorScreen(
-                            message = /*state.message ?:*/ "Couldn't connect to Spotify",
-                            buttonText = "Tap to retry",
-                            buttonFunc = viewModel::connect
-                        )
+                        LoadingScreen("Connecting to Spotify...")
+
+                    is AltifyUIState.Disconnected -> {
+                        val errorInfo = when (state.error) {
+                            is Error.SpotifyConnector -> spotifyConnectorErrorInfo
+                            is Error.APIToken -> when (state.error.error) {
+                                APITokenError.EXPIRED -> emptyApiTokenErrorInfo
+                                APITokenError.EMPTY -> expiredApiTokenErrorInfo
+                            }
+                        }
+                        ErrorScreen(errorInfo)
+                    }
+
                     is AltifyUIState.Success ->
                         AltifyApp(state) { viewModel.executeCommand(it, state.repositories) }
                 }
@@ -145,10 +159,41 @@ class MainActivity : ComponentActivity() {
         val response = AuthorizationClient.getResponse(resultCode, data)
         viewModel.onAuthorizationResponse(response)
     }
+
+    private val spotifyConnectorErrorInfo = ErrorScreenInfo(
+        message = "Could not connect to Spotify",
+        buttonText = "Retry connection",
+        buttonFunc = viewModel::connect,
+        buttonFrontIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+    )
+
+    private val emptyApiTokenErrorInfo = ErrorScreenInfo(
+        message = "No Spotify API token",
+        icon = Icon.DrawableResourceIcon(R.drawable.key_off),
+        buttonText = "Refresh key",
+        buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+        // todo should i use lifecycle-scope?
+        buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
+    )
+
+    private val expiredApiTokenErrorInfo = ErrorScreenInfo(
+        message = "Expired Spotify API token",
+        icon = Icon.DrawableResourceIcon(R.drawable.key_off),
+        buttonText = "Refresh key",
+        buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+        // todo should i use lifecycle-scope?
+        buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
+    )
 }
 
 enum class DarkThemeConfig(override val code: Int, override val title: String) : AltPreference {
     FOLLOW_SYSTEM(0, "Follow System"), LIGHT(1, "Light"), DARK(2, "Dark")
+}
+
+fun DarkThemeConfig.shouldUseDarkTheme(): Boolean? = when (this) {
+    DarkThemeConfig.FOLLOW_SYSTEM -> null
+    DarkThemeConfig.LIGHT -> false
+    DarkThemeConfig.DARK -> true
 }
 
 
@@ -175,7 +220,8 @@ fun LoadingDarkPreview() {
 @Preview(showBackground = true)
 @Composable
 fun DisconnectedPreview() {
-    ErrorScreen(message = "Couldn't connect to Spotify",
+    ErrorScreen(
+        message = "Couldn't connect to Spotify",
         buttonText = "Tap to retry",
         buttonFunc = {}
     )

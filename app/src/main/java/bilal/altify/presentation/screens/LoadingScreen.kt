@@ -23,10 +23,9 @@ import bilal.altify.presentation.theme.AltifyTheme
 @Composable
 fun LoadingScreen(
     text: String = "Loading...",
+    modifier: Modifier = Modifier,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    modifier: Modifier = Modifier
 ) {
-    // todo extract this for use with other screens
     val infiniteTransition = rememberInfiniteTransition(label = "Loading Animation")
     val bounce by infiniteTransition.animateFloat(
         initialValue = -150f,
