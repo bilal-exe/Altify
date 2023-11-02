@@ -160,14 +160,15 @@ class MainActivity : ComponentActivity() {
         viewModel.onAuthorizationResponse(response)
     }
 
-    private val spotifyConnectorErrorInfo = ErrorScreenInfo(
+    // use get instead of direct assignment as You can't request ViewModel before onCreate call
+    private val spotifyConnectorErrorInfo get() = ErrorScreenInfo(
         message = "Could not connect to Spotify",
         buttonText = "Retry connection",
         buttonFunc = viewModel::connect,
         buttonFrontIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
     )
 
-    private val emptyApiTokenErrorInfo = ErrorScreenInfo(
+    private val emptyApiTokenErrorInfo get() = ErrorScreenInfo(
         message = "No Spotify API token",
         icon = Icon.DrawableResourceIcon(R.drawable.key_off),
         buttonText = "Refresh key",
@@ -176,7 +177,7 @@ class MainActivity : ComponentActivity() {
         buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
     )
 
-    private val expiredApiTokenErrorInfo = ErrorScreenInfo(
+    private val expiredApiTokenErrorInfo get() = ErrorScreenInfo(
         message = "Expired Spotify API token",
         icon = Icon.DrawableResourceIcon(R.drawable.key_off),
         buttonText = "Refresh key",

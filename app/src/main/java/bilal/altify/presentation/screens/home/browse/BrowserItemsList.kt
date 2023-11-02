@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,27 +67,20 @@ import bilal.altify.domain.spotify.use_case.ContentCommand
 import bilal.altify.domain.spotify.use_case.ImagesCommand
 import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.UserCommand
-import bilal.altify.presentation.screens.home.BROWSER_FAB_HEIGHT
 import bilal.altify.presentation.util.ShakeBounceAnimation
 import bilal.altify.presentation.util.clipLen
 import com.spotify.protocol.types.Image.Dimension
-import kotlin.math.ceil
 
 
-@Composable
-fun BrowserItemsList(
+fun LazyListScope.browserItemsList(
     listItems: AltListItems,
     track: String?,
     thumbnailMap: Map<String, Bitmap>,
     libraryState: Map<String, AltLibraryState>,
     executeCommand: (Command) -> Unit,
-    browserBackgroundColor: Color,
+    backgroundColor: Color,
     lazyListState: LazyListState
 ) {
-
-    BackHandler {
-        executeCommand(ContentCommand.GetPrevious)
-    }
 
     val getRecommended: () -> Unit = {
         executeCommand(ContentCommand.GetRecommended)
@@ -116,72 +110,61 @@ fun BrowserItemsList(
 //        newListLoading = false
 //    }
 //
-    LaunchedEffect(key1 = listItems) {
-        if (listItems().isNotEmpty()) {
-            executeCommand(ImagesCommand.ClearThumbnails)
-            listItems().forEach { item ->
-                if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
-            }
-            executeCommand(UserCommand.UpdateBrowserLibraryState(listItems().map { it.uri }))
-        }
-    }
 
-    LaunchedEffect(key1 = lazyListState.canScrollForward) {
-        if (!lazyListState.canScrollForward) {
-            executeCommand(ContentCommand.LoadMoreChildrenOfItem(listItems))
-        }
-    }
+    item {
 
-
-    val showLoadingIndicator = remember(listItems.items) {
-        listItems.items.size < listItems.total
-    }
-
-    // progress indicator for when there more list to load
-    val progressIndicatorHeight = LocalConfiguration.current.screenHeightDp / 4
-//    calculates the height of the list by the thumbnail height plus padding for each list item
-//    allows this lazy column to sit in a scrollable without causing an IllegalStateException for nesting
-
-    val density = LocalDensity.current.density
-    val columnHeight = remember(listItems.items, density, showLoadingIndicator) {
-        (listItems().size * ceil((144 / density) + 16)) + // each listItem is 144 px, with 16 dp of padding
-                16 + // extra room
-                BROWSER_FAB_HEIGHT +// so floating action button doesn't overlap
-                if (showLoadingIndicator) progressIndicatorHeight else 0 // make space for loading animation
-    }
-
-    Column {
         GetRecommendedButton(getRecommended)
-        LazyColumn(
-            modifier = Modifier.height(columnHeight.dp),
-        ) {
-            itemsIndexed(
-                items = listItems(),
-            ) { index, item ->
-                ListItemRow(
-                    item = item,
-                    selected = track == item.uri,
-                    thumbnail = thumbnailMap[item.imageUri],
-                    playItem = { playItem(item, index) },
-                    getChildrenOfItem = { getChildrenOfItem(item) },
-                    libraryState = libraryState[item.uri],
-                    toggleLibraryStatus = toggleLibraryStatus,
-                    addToQueue = addToQueue,
-                    backgroundColor = browserBackgroundColor
-                )
-            }
-            if (showLoadingIndicator) item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+
+        BackHandler {
+            executeCommand(ContentCommand.GetPrevious)
+        }
+
+        LaunchedEffect(key1 = listItems) {
+            if (listItems().isNotEmpty()) {
+                executeCommand(ImagesCommand.ClearThumbnails)
+                listItems().forEach { item ->
+                    if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
                 }
+                executeCommand(UserCommand.UpdateBrowserLibraryState(listItems().map { it.uri }))
             }
         }
+
+        LaunchedEffect(key1 = lazyListState.canScrollForward) {
+            if (!lazyListState.canScrollForward) {
+                executeCommand(ContentCommand.LoadMoreChildrenOfItem(listItems))
+            }
+        }
+
+        val showLoadingIndicator = remember(listItems.items) {
+            listItems.items.size < listItems.total
+        }
+
+        if (showLoadingIndicator) Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
     }
+    itemsIndexed(
+        items = listItems(),
+    ) { index, item ->
+        ListItemRow(
+            item = item,
+            selected = track == item.uri,
+            thumbnail = thumbnailMap[item.imageUri],
+            playItem = { playItem(item, index) },
+            getChildrenOfItem = { getChildrenOfItem(item) },
+            libraryState = libraryState[item.uri],
+            toggleLibraryStatus = toggleLibraryStatus,
+            addToQueue = addToQueue,
+            backgroundColor = backgroundColor
+        )
+    }
+
 }
 
 @Composable
@@ -518,15 +501,18 @@ fun ItemsListPreview() {
         )
         items.add(ali)
     }
-    BrowserItemsList(
-        listItems = AltListItems(items),
-        track = null,
-        thumbnailMap = emptyMap(),
-        libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
-        executeCommand = { },
-        browserBackgroundColor = MaterialTheme.colorScheme.background,
-        lazyListState = LazyListState(),
-    )
+    val backgroundColor = MaterialTheme.colorScheme.background
+    LazyColumn {
+        browserItemsList(
+            listItems = AltListItems(items),
+            track = null,
+            thumbnailMap = emptyMap(),
+            libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
+            executeCommand = { },
+            backgroundColor = backgroundColor,
+            lazyListState = LazyListState(),
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -545,13 +531,16 @@ fun ItemsListPreview2() {
         )
         items.add(ali)
     }
-    BrowserItemsList(
-        listItems = AltListItems(items = items, total = items.size + 10),
-        track = null,
-        thumbnailMap = emptyMap(),
-        libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
-        executeCommand = { },
-        browserBackgroundColor = MaterialTheme.colorScheme.background,
-        lazyListState = LazyListState()
-    )
+    val backgroundColor = MaterialTheme.colorScheme.background
+    LazyColumn {
+        browserItemsList(
+            listItems = AltListItems(items = items, total = items.size + 10),
+            track = null,
+            thumbnailMap = emptyMap(),
+            libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
+            executeCommand = { },
+            backgroundColor = backgroundColor,
+            lazyListState = LazyListState()
+        )
+    }
 }

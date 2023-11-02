@@ -1,6 +1,7 @@
 package bilal.altify.presentation.screens.home
 
 import android.graphics.Bitmap
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
@@ -33,7 +34,8 @@ import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.screens.LoadingScreen
-import bilal.altify.presentation.screens.home.browse.Browser
+import bilal.altify.presentation.screens.home.browse.browser
+import bilal.altify.presentation.screens.home.browse.BrowserViewModel
 import bilal.altify.presentation.screens.home.now_playing.NowPlaying
 import bilal.altify.presentation.screens.home.now_playing.NowPlayingUIState
 import bilal.altify.presentation.screens.home.now_playing.NowPlayingViewModel
@@ -82,12 +84,24 @@ private fun HomeScreen(
 //        overlay = OverlayType.Volume(uiState.trackState.volume)
 //    }
 
+    val browserViewModel = hiltViewModel<BrowserViewModel>()
+    val browserUIState by browserViewModel.uiState.collectAsState()
+
+    val themeColor = MaterialTheme.colorScheme.background
+    val browserBackgroundColor = remember(backgroundColor, uiState.preferences.backgroundStyle) {
+        when (uiState.preferences.backgroundStyle) {
+            BackgroundStyleConfig.SOLID -> backgroundColor
+            else -> themeColor
+        }
+    }
+
     Scaffold(
         floatingActionButton = { ScrollToTopButton(lazyListState) }
     ) { pv ->
         LazyColumn(
             modifier = Modifier
-                .padding(pv),
+                .padding(pv)
+                .background(backgroundColor),
             state = lazyListState
         ) {
             item {
@@ -97,15 +111,14 @@ private fun HomeScreen(
                     backgroundColor = backgroundColor,
                 )
             }
-            item {
-                Browser(
-                    preferences = uiState.preferences,
-                    playingTrackUri = uiState.trackState.track?.uri,
-                    backgroundColor = backgroundColor,
-                    executeCommand = executeCommand,
-                    lazyListState = lazyListState
-                )
-            }
+            browser(
+                preferences = uiState.preferences,
+                playingTrackUri = uiState.trackState.track?.uri,
+                backgroundColor = browserBackgroundColor,
+                executeCommand = executeCommand,
+                uiState = browserUIState,
+                lazyListState = lazyListState
+            )
         }
 //        Overlay(overlayType = overlay)
     }
@@ -139,7 +152,7 @@ private fun getBackgroundColor(
     darkThemeConfig: DarkThemeConfig
 ): Color {
 
-    val palette = remember (bitmap, backgroundStyleConfig) {
+    val palette = remember(bitmap, backgroundStyleConfig) {
         bitmap?.let {
             if (backgroundStyleConfig != BackgroundStyleConfig.PLAIN) {
                 Palette.from(it).generate()
