@@ -15,5 +15,9 @@ sealed interface AltifyUIState {
 
 sealed interface Error {
     data class SpotifyConnector(val message: String?) : Error
-    object APIToken : Error
+    data class APIToken(val error: APITokenError) : Error
+}
+
+enum class APITokenError {
+    EXPIRED, EMPTY
 }

@@ -23,30 +23,33 @@ import bilal.altify.presentation.theme.AltifyTheme
 @Composable
 fun LoadingScreen(
     text: String = "Loading...",
-    darkTheme: Boolean? = null
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    modifier: Modifier = Modifier
 ) {
     // todo extract this for use with other screens
-    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val infiniteTransition = rememberInfiniteTransition(label = "Loading Animation")
     val bounce by infiniteTransition.animateFloat(
         initialValue = -150f,
         targetValue = 150f,
         animationSpec = infiniteRepeatable(
             tween(1000, 0, FastOutSlowInEasing),
             RepeatMode.Reverse
-        ), label = ""
+        ),
+        label = "Loading Bounce Animation"
     )
     val spin by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
             tween(1000, 0, FastOutLinearInEasing)
-        ), label = ""
+        ),
+        label = "Loading Rotate Animation"
     )
     AltifyTheme (
-        darkTheme = darkTheme ?: isSystemInDarkTheme()
+        darkTheme = darkTheme
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(10.dp),

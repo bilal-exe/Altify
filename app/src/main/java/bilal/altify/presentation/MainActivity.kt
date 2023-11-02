@@ -1,6 +1,7 @@
 package bilal.altify.presentation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -9,9 +10,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
@@ -30,8 +37,7 @@ import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -43,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
     private var uiState: AltifyUIState by mutableStateOf(AltifyUIState.Connecting)
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,26 +70,43 @@ class MainActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.uiState
-                .filter { it is AltifyUIState.Disconnected && it.error is Error.APIToken }
+            viewModel.refreshTokenSignalFlow
                 .onEach { authorizeSpotifyWebApi() }
                 .collect()
         }
 
-
         setContent {
 
-            when (val state = uiState) {
-                AltifyUIState.Connecting ->
-                    LoadingScreen("Connecting to Spotify...")
-                is AltifyUIState.Disconnected ->
-                    ErrorScreen(
-                        message = /*state.message ?:*/ "Couldn't connect to Spotify",
-                        buttonText = "Tap to retry",
-                        buttonFunc = viewModel::connect
-                    )
-                is AltifyUIState.Success ->
-                    AltifyApp(state) { viewModel.executeCommand(it, state.repositories) }
+            val snackbarHostState = SnackbarHostState()
+            val scope = rememberCoroutineScope()
+            LaunchedEffect(Unit) {
+                scope.launch {
+                    viewModel.errors.collectLatest {
+                        if (it != null) {
+                            snackbarHostState.showSnackbar(
+                                message = it,
+                                duration = SnackbarDuration.Long
+                            )
+                        }
+                    }
+                }
+            }
+
+            Scaffold(
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+            ) {
+                when (val state = uiState) {
+                    AltifyUIState.Connecting ->
+                        LoadingScreen("Connecting to Spotify...",)
+                    is AltifyUIState.Disconnected ->
+                        ErrorScreen(
+                            message = /*state.message ?:*/ "Couldn't connect to Spotify",
+                            buttonText = "Tap to retry",
+                            buttonFunc = viewModel::connect
+                        )
+                    is AltifyUIState.Success ->
+                        AltifyApp(state) { viewModel.executeCommand(it, state.repositories) }
+                }
             }
 
         }
@@ -145,7 +169,6 @@ fun LoadingPreview() {
 fun LoadingDarkPreview() {
     LoadingScreen(
         "Connecting to Spotify...",
-        darkTheme = true
     )
 }
 
