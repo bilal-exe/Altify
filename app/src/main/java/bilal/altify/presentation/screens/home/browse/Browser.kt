@@ -38,7 +38,6 @@ fun LazyListScope.browser(
     backgroundColor: Color,
     executeCommand: (Command) -> Unit,
     uiState: BrowserUIState,
-    lazyListState: LazyListState,
 ) {
 
     when (uiState) {
@@ -52,7 +51,6 @@ fun LazyListScope.browser(
                 browserState = uiState.browserState,
                 executeCommand = executeCommand,
                 backgroundColor = backgroundColor,
-                lazyListState = lazyListState
             )
     }
 }
@@ -80,7 +78,6 @@ private fun LazyListScope.browser(
     browserState: BrowserState,
     executeCommand: (Command) -> Unit,
     backgroundColor: Color,
-    lazyListState: LazyListState
 ) {
     when {
         browserState.listItems().isEmpty() ->
@@ -93,7 +90,6 @@ private fun LazyListScope.browser(
                 libraryState = browserState.libraryState,
                 executeCommand = executeCommand,
                 backgroundColor = backgroundColor,
-                lazyListState = lazyListState
             )
     }
 }
@@ -148,7 +144,6 @@ private fun EmptyPreview() {
             browserState = BrowserState(),
             executeCommand = { },
             backgroundColor = backgroundColor,
-            lazyListState = LazyListState()
         )
     }
 }
@@ -178,7 +173,6 @@ fun BrowserPreview() {
             ),
             executeCommand = { },
             backgroundColor = backgroundColor,
-            lazyListState = LazyListState()
         )
     }
 }

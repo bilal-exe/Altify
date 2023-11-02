@@ -3,7 +3,6 @@ package bilal.altify.presentation.screens.home.browse
 import android.graphics.Bitmap
 import android.os.Build
 import android.view.HapticFeedbackConstants
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -64,7 +62,6 @@ import bilal.altify.domain.spotify.model.AltListItems
 import bilal.altify.domain.spotify.model.ContentType
 import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.domain.spotify.use_case.ContentCommand
-import bilal.altify.domain.spotify.use_case.ImagesCommand
 import bilal.altify.domain.spotify.use_case.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.util.ShakeBounceAnimation
@@ -79,7 +76,6 @@ fun LazyListScope.browserItemsList(
     libraryState: Map<String, AltLibraryState>,
     executeCommand: (Command) -> Unit,
     backgroundColor: Color,
-    lazyListState: LazyListState
 ) {
 
     val getRecommended: () -> Unit = {
@@ -95,9 +91,6 @@ fun LazyListScope.browserItemsList(
     val getChildrenOfItem: (AltListItem) -> Unit = {
         executeCommand(ContentCommand.GetChildrenOfItem(it))
     }
-    val getThumbnail: (String) -> Unit = {
-        executeCommand(ImagesCommand.GetThumbnail(it))
-    }
     val toggleLibraryStatus: (String, Boolean) -> Unit = { uri, added ->
         executeCommand(UserCommand.ToggleLibraryStatus(uri, added))
     }
@@ -112,42 +105,7 @@ fun LazyListScope.browserItemsList(
 //
 
     item {
-
         GetRecommendedButton(getRecommended)
-
-        BackHandler {
-            executeCommand(ContentCommand.GetPrevious)
-        }
-
-        LaunchedEffect(key1 = listItems) {
-            if (listItems().isNotEmpty()) {
-                executeCommand(ImagesCommand.ClearThumbnails)
-                listItems().forEach { item ->
-                    if (!item.imageUri.isNullOrBlank()) getThumbnail(item.imageUri)
-                }
-                executeCommand(UserCommand.UpdateBrowserLibraryState(listItems().map { it.uri }))
-            }
-        }
-
-        LaunchedEffect(key1 = lazyListState.canScrollForward) {
-            if (!lazyListState.canScrollForward) {
-                executeCommand(ContentCommand.LoadMoreChildrenOfItem(listItems))
-            }
-        }
-
-        val showLoadingIndicator = remember(listItems.items) {
-            listItems.items.size < listItems.total
-        }
-
-        if (showLoadingIndicator) Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-
     }
     itemsIndexed(
         items = listItems(),
@@ -164,7 +122,16 @@ fun LazyListScope.browserItemsList(
             backgroundColor = backgroundColor
         )
     }
-
+    if (listItems.items.size < listItems.total) item {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
 }
 
 @Composable
@@ -510,7 +477,6 @@ fun ItemsListPreview() {
             libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
             executeCommand = { },
             backgroundColor = backgroundColor,
-            lazyListState = LazyListState(),
         )
     }
 }
@@ -540,7 +506,6 @@ fun ItemsListPreview2() {
             libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
             executeCommand = { },
             backgroundColor = backgroundColor,
-            lazyListState = LazyListState()
         )
     }
 }

@@ -1,6 +1,8 @@
 package bilal.altify.presentation.screens.home
 
 import android.graphics.Bitmap
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -29,11 +32,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
 import bilal.altify.domain.spotify.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.ContentCommand
+import bilal.altify.domain.spotify.use_case.ImagesCommand
+import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.BackgroundColourConfig
 import bilal.altify.presentation.prefrences.BackgroundStyleConfig
 import bilal.altify.presentation.screens.LoadingScreen
+import bilal.altify.presentation.screens.home.browse.BrowserUIState
 import bilal.altify.presentation.screens.home.browse.browser
 import bilal.altify.presentation.screens.home.browse.BrowserViewModel
 import bilal.altify.presentation.screens.home.now_playing.NowPlaying
@@ -95,6 +102,43 @@ private fun HomeScreen(
         }
     }
 
+    BackHandler {
+        Log.d("Back", "Back called")
+        executeCommand(ContentCommand.GetPrevious)
+    }
+
+    val state = remember(browserUIState) {
+        browserUIState
+    }
+
+    if (state is BrowserUIState.Success) {
+        LaunchedEffect(key1 = state.browserState.listItems) {
+            Log.d("browserUIState", "called")
+            if (state.browserState.listItems().isNotEmpty()) {
+                executeCommand(ImagesCommand.ClearThumbnails)
+                state.browserState.listItems().forEach { item ->
+                    if (!item.imageUri.isNullOrBlank()) executeCommand(
+                        ImagesCommand.GetThumbnail(
+                            item.imageUri
+                        )
+                    )
+                }
+                executeCommand(
+                    UserCommand.UpdateBrowserLibraryState(
+                        state.browserState.listItems().map { it.uri }
+                    )
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = lazyListState.canScrollForward) {
+        if (state !is BrowserUIState.Success) return@LaunchedEffect
+        if (!lazyListState.canScrollForward) {
+            executeCommand(ContentCommand.LoadMoreChildrenOfItem(state.browserState.listItems))
+        }
+    }
+
     Scaffold(
         floatingActionButton = { ScrollToTopButton(lazyListState) }
     ) { pv ->
@@ -117,7 +161,6 @@ private fun HomeScreen(
                 backgroundColor = browserBackgroundColor,
                 executeCommand = executeCommand,
                 uiState = browserUIState,
-                lazyListState = lazyListState
             )
         }
 //        Overlay(overlayType = overlay)
