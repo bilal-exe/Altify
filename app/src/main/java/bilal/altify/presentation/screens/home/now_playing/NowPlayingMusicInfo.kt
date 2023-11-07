@@ -28,10 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import bilal.altify.domain.spotify.model.Album
-import bilal.altify.domain.spotify.model.Artist
-import bilal.altify.domain.spotify.model.LibraryState
-import bilal.altify.domain.spotify.model.Track
+import bilal.altify.domain.model.LibraryState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.UserCommand
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig

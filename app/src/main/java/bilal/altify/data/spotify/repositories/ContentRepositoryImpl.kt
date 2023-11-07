@@ -1,10 +1,10 @@
 package bilal.altify.data.spotify.repositories
 
-import bilal.altify.data.spotify.mappers.SpotifyListItems
-import bilal.altify.data.spotify.mappers.toModel
-import bilal.altify.data.spotify.mappers.toOriginal
-import bilal.altify.domain.spotify.model.ListItem
-import bilal.altify.domain.spotify.repositories.ContentRepository
+import bilal.altify.data.mappers.SpotifyListItems
+import bilal.altify.data.mappers.toModel
+import bilal.altify.data.mappers.toOriginal
+import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.spotify.repositories.appremote.ContentRepository
 import com.spotify.android.appremote.api.ContentApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ class ContentRepositoryImpl(
         _listItemsFlow.value = lis.toModel()
     }
 
-    private val _listItemsFlow = MutableStateFlow(bilal.altify.domain.spotify.model.ListItems())
+    private val _listItemsFlow = MutableStateFlow(TODO())
     override val listItemsFlow = _listItemsFlow.asStateFlow()
 
     init {
@@ -32,16 +32,16 @@ class ContentRepositoryImpl(
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun getChildrenOfItem(listItem: ListItem, count: Int) {
+    override fun getChildrenOfItem(mediaItem: MediaItem, count: Int) {
         contentApi
-            .getChildrenOfItem(listItem.toOriginal(), count, 0)
+            .getChildrenOfItem(mediaItem.toOriginal(), count, 0)
             .setResultCallback(::listItemsCallback)
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun loadMoreChildrenOfItem(listItem: ListItem, offset: Int, count: Int) {
+    override fun loadMoreChildrenOfItem(mediaItem: MediaItem, offset: Int, count: Int) {
         contentApi
-            .getChildrenOfItem(listItem.toOriginal(), count, offset)
+            .getChildrenOfItem(mediaItem.toOriginal(), count, offset)
             .setResultCallback { res ->
                 _listItemsFlow.update {
                     it.copy(
@@ -53,8 +53,8 @@ class ContentRepositoryImpl(
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun play(listItem: ListItem) {
-        contentApi.playContentItem(listItem.toOriginal())
+    override fun play(mediaItem: MediaItem) {
+        contentApi.playContentItem(mediaItem.toOriginal())
     }
 
 }

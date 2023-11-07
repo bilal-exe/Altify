@@ -1,6 +1,8 @@
-package bilal.altify.data.spotify.mappers
+package bilal.altify.data.mappers
 
-import bilal.altify.domain.spotify.model.*
+import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.PlayerContext
+import bilal.altify.domain.model.*
 import com.spotify.protocol.types.ImageUri
 
 typealias SpotifyTrack = com.spotify.protocol.types.Track
@@ -12,26 +14,26 @@ typealias SpotifyAlbum = com.spotify.protocol.types.Album
 typealias SpotifyArtist = com.spotify.protocol.types.Artist
 
 fun SpotifyTrack.toModel() =
-    Track(
+    MediaItem.Track(
+        remoteId = this.uri.uriToSpotifyId(),
         artist = this.artist.toModel(),
         artists = this.artists.map { it.toModel() },
         album = this.album.toModel(),
         duration = this.duration,
         name = this.name,
-        uri = this.uri,
         imageUri = this.imageUri.raw,
     )
 
 fun SpotifyAlbum.toModel() =
     Album(
+        remoteId = this.uri.uriToSpotifyId(),
         name = this.name,
-        uri = this.uri
     )
 
 fun SpotifyArtist.toModel() =
     Artist(
         name = this.name,
-        uri = this.uri
+        remoteId = this.uri.uriToSpotifyId(),
     )
 
 fun SpotifyPlayerContext.toModel() =
@@ -42,31 +44,35 @@ fun SpotifyPlayerContext.toModel() =
         type = this.type,
     )
 
-private val spotifyUriToType = mapOf(
-     "album" to ContentType.Album,
-     "artist" to ContentType.Artist,
-     "playlist" to ContentType.Playlist,
-     "track" to ContentType.Track,
-     "section" to ContentType.Section,
-)
-private val typeToSpotifyUri = spotifyUriToType.entries.associate { it.value to it.key }
-
 fun SpotifyListItem.toModel() =
-    ListItem(
-        uri = this.uri,
-        imageUri = this.imageUri.raw,
-        title = this.title,
-        subtitle = this.subtitle,
-        playable = this.playable,
-        hasChildren = this.hasChildren,
-        type = spotifyUriToType[uri.substringAfter(':').substringBefore(':')] ?: ContentType.Track
-    )
+    when (uri.substringAfter(':').substringBefore(':')) {
+        "album" ->
+            Album(
+                remoteId = this.uri.uriToSpotifyId(),
+                name = this.title,
+            )
+        "artist" ->
+            Artist(
+                remoteId = this.uri.uriToSpotifyId(),
+                name = this.title,
+            )
+        "playlist" ->
+            Playlist(
+                remoteId = this.uri.uriToSpotifyId(),
+                name = this.title,
 
-fun ListItem.getSpotifyUri() =
-    this.uri.substringAfterLast(':')
+            )
+        "track" ->
+            Track(
+                remoteId = this.uri.uriToSpotifyId(),
+                name = this.title,
+            )
+        "section" -> TODO()
+        else -> throw Exception()
+    }
 
 fun SpotifyListItems.toModel() =
-    ListItems(
+    MediaItemsList(
         items = this.items.map { it.toModel() },
         total = this.total
     )
@@ -78,7 +84,7 @@ fun SpotifyLibraryState.toModel() =
         canAdd = this.canAdd
     )
 
-fun ListItem.toOriginal(): SpotifyListItem {
+fun MediaItem.toOriginal(): SpotifyListItem {
     return com.spotify.protocol.types.ListItem(
         /* id = */ uri,
         /* uri = */ uri,
@@ -89,3 +95,8 @@ fun ListItem.toOriginal(): SpotifyListItem {
         /* hasChildren = */ hasChildren
     )
 }
+
+private fun String.uriToSpotifyId() =
+    this.substringAfterLast(':')
+
+private fun

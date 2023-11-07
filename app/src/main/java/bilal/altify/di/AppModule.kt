@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import bilal.altify.data.spotify.remote.appremote.SpotifySourceImpl
-import bilal.altify.domain.spotify.remote.appremote.SpotifySource
+import bilal.altify.domain.spotify.repositories.appremote.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.ExecuteCommandUseCase
 import bilal.altify.domain.spotify.use_case.GetBrowserStateFlowUseCase
@@ -12,8 +12,8 @@ import bilal.altify.domain.spotify.use_case.GetCurrentTrackFlowUseCase
 import bilal.altify.data.prefrences.PreferencesRepositoryImpl
 import bilal.altify.data.spotify.remote.web_api.access_token.AccessTokenRepositoryImpl
 import bilal.altify.domain.prefrences.PreferencesRepository
-import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
-import bilal.altify.domain.spotify.remote.web_api.access_token.AccessTokenRepository
+import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector
+import bilal.altify.domain.spotify.repositories.web_api.access_token.AccessTokenRepository
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module

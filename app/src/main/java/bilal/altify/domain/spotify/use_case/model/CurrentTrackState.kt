@@ -1,10 +1,9 @@
 package bilal.altify.domain.spotify.use_case.model
 
 import android.graphics.Bitmap
-import bilal.altify.domain.spotify.model.LibraryState
-import bilal.altify.domain.spotify.model.PlayerContext
-import bilal.altify.domain.spotify.model.Track
-import bilal.altify.domain.spotify.model.RepeatMode
+import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.PlayerContext
+import bilal.altify.domain.model.RepeatMode
 
 data class CurrentTrackState(
     val track: Track? = null,

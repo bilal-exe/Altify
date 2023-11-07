@@ -1,4 +1,4 @@
-package bilal.altify.domain.spotify.model
+package bilal.altify.domain.model
 
 data class PlayerStateAndContext(
     val track: Track? = null,

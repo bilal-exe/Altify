@@ -1,7 +1,7 @@
 package bilal.altify.data.spotify.repositories
 
 import android.graphics.Bitmap
-import bilal.altify.domain.spotify.repositories.ImagesRepository
+import bilal.altify.domain.spotify.repositories.appremote.ImagesRepository
 import com.spotify.android.appremote.api.ImagesApi
 import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ImageUri

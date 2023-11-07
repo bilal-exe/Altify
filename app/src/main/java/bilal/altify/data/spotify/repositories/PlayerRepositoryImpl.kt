@@ -1,9 +1,9 @@
 package bilal.altify.data.spotify.repositories
 
-import bilal.altify.data.spotify.mappers.toModel
-import bilal.altify.domain.spotify.model.PlayerStateAndContext
-import bilal.altify.domain.spotify.model.RepeatMode
-import bilal.altify.domain.spotify.repositories.PlayerRepository
+import bilal.altify.data.mappers.toModel
+import bilal.altify.domain.model.PlayerStateAndContext
+import bilal.altify.domain.model.RepeatMode
+import bilal.altify.domain.spotify.repositories.appremote.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow

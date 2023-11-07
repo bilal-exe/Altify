@@ -1,8 +1,8 @@
 package bilal.altify.domain.spotify.use_case.model
 
 import android.graphics.Bitmap
-import bilal.altify.domain.spotify.model.LibraryState
-import bilal.altify.domain.spotify.model.ListItems
+import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.ListItems
 import java.util.Stack
 
 data class BrowserState(

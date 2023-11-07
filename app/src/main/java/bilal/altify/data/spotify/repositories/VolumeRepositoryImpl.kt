@@ -1,6 +1,6 @@
 package bilal.altify.data.spotify.repositories
 
-import bilal.altify.domain.spotify.repositories.VolumeRepository
+import bilal.altify.domain.spotify.repositories.appremote.VolumeRepository
 import com.spotify.android.appremote.api.ConnectApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow

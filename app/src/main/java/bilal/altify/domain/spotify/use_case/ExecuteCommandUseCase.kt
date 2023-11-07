@@ -1,8 +1,8 @@
 package bilal.altify.domain.spotify.use_case
 
-import bilal.altify.domain.spotify.repositories.AltifyRepositories
-import bilal.altify.domain.spotify.model.ListItem
-import bilal.altify.domain.spotify.model.ContentType
+import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
+import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.model.ContentType
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ContentCommand
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand
@@ -13,7 +13,7 @@ import java.util.Stack
 
 class ExecuteCommandUseCase {
 
-    private val browserVisitedHistory: Stack<ListItem> = Stack()
+    private val browserVisitedHistory: Stack<MediaItem> = Stack()
 
     companion object {
         const val BROWSER_PER_PAGE = 25
@@ -73,9 +73,9 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.GetChildrenOfItem -> {
-                if (command.listItem.type == ContentType.Track) return
-                browserVisitedHistory.add(command.listItem)
-                repositories.content.getChildrenOfItem(command.listItem, BROWSER_PER_PAGE)
+                if (command.mediaItem.type == ContentType.Track) return
+                browserVisitedHistory.add(command.mediaItem)
+                repositories.content.getChildrenOfItem(command.mediaItem, BROWSER_PER_PAGE)
             }
 
             is ContentCommand.LoadMoreChildrenOfItem -> {
@@ -86,7 +86,7 @@ class ExecuteCommandUseCase {
                     command.listItems.total - listItemsSize
                 } else BROWSER_PER_PAGE
                 repositories.content.loadMoreChildrenOfItem(
-                    listItem = browserVisitedHistory.peek(),
+                    mediaItem = browserVisitedHistory.peek(),
                     offset = command.listItems().size,
                     count = loadCount
                 )
@@ -111,7 +111,7 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.Play -> {
-                repositories.content.play(command.listItem)
+                repositories.content.play(command.mediaItem)
             }
 
             //volume

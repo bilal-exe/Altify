@@ -1,6 +1,6 @@
-package bilal.altify.domain.spotify.remote.appremote
+package bilal.altify.domain.spotify.repositories.appremote
 
-import bilal.altify.domain.spotify.repositories.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
 import kotlinx.coroutines.flow.Flow
 import java.lang.Exception
 

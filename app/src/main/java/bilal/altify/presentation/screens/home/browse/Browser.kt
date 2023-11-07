@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.spotify.model.ListItem
-import bilal.altify.domain.spotify.model.ListItems
+import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.spotify.use_case.model.BrowserState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.presentation.prefrences.AltPreferencesState
@@ -150,9 +150,9 @@ private fun EmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun BrowserPreview() {
-    val items = mutableListOf<ListItem>()
+    val items = mutableListOf<MediaItem>()
     repeat(5) {
-        val ali = ListItem(
+        val ali = MediaItem(
             uri = "",
             imageUri = "",
             title = "Title",

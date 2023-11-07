@@ -39,8 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import bilal.altify.domain.spotify.model.PlayerContext
-import bilal.altify.domain.spotify.model.Track
+import bilal.altify.domain.model.PlayerContext
 import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand

@@ -3,11 +3,11 @@ package bilal.altify.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
-import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
-import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.remote.web_api.access_token.AccessTokenRepository
-import bilal.altify.domain.spotify.remote.web_api.access_token.TokenState
-import bilal.altify.domain.spotify.repositories.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector
+import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.repositories.web_api.access_token.AccessTokenRepository
+import bilal.altify.domain.spotify.repositories.web_api.access_token.TokenState
+import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.util.getISO3166code

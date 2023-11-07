@@ -1,8 +1,8 @@
 package bilal.altify.data.spotify.repositories
 
-import bilal.altify.data.spotify.mappers.toModel
-import bilal.altify.domain.spotify.model.LibraryState
-import bilal.altify.domain.spotify.repositories.UserRepository
+import bilal.altify.data.mappers.toModel
+import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.spotify.repositories.appremote.UserRepository
 import com.spotify.android.appremote.api.UserApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,6 +1,6 @@
-package bilal.altify.domain.spotify.repositories
+package bilal.altify.domain.spotify.repositories.appremote
 
-import bilal.altify.domain.spotify.model.PlayerStateAndContext
+import bilal.altify.domain.model.PlayerStateAndContext
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {

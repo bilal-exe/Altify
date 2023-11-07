@@ -56,10 +56,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.spotify.model.LibraryState
-import bilal.altify.domain.spotify.model.ListItem
-import bilal.altify.domain.spotify.model.ListItems
-import bilal.altify.domain.spotify.model.ContentType
+import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.model.ListItems
+import bilal.altify.domain.model.ContentType
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ContentCommand
 import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
@@ -81,14 +81,14 @@ fun LazyListScope.browserItemsList(
     val getRecommended: () -> Unit = {
         executeCommand(ContentCommand.GetRecommended)
     }
-    val playItem: (ListItem, Int) -> Unit = { item, index ->
+    val playItem: (MediaItem, Int) -> Unit = { item, index ->
         val command = when (item.type) {
             ContentType.Track -> PlaybackCommand.SkipToTrack(item.uri, index)
             else -> ContentCommand.Play(item)
         }
         executeCommand(command)
     }
-    val getChildrenOfItem: (ListItem) -> Unit = {
+    val getChildrenOfItem: (MediaItem) -> Unit = {
         executeCommand(ContentCommand.GetChildrenOfItem(it))
     }
     val toggleLibraryStatus: (String, Boolean) -> Unit = { uri, added ->
@@ -153,7 +153,7 @@ fun GetRecommendedButton(getRecommended: () -> Unit) {
 
 @Composable
 fun ListItemRow(
-    item: ListItem,
+    item: MediaItem,
     selected: Boolean,
     thumbnail: Bitmap?,
     playItem: () -> Unit,
@@ -196,7 +196,7 @@ fun ListItemRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeableListItemRowContent(
-    item: ListItem,
+    item: MediaItem,
     selected: Boolean,
     thumbnail: Bitmap?,
     playItem: () -> Unit,
@@ -278,7 +278,7 @@ fun SwipeableListItemRowContent(
 
 @Composable
 fun ListItemRowContent(
-    item: ListItem,
+    item: MediaItem,
     selected: Boolean,
     thumbnail: Bitmap?,
     playItem: () -> Unit,
@@ -433,7 +433,7 @@ fun PlaceholderThumbnail(modifier: Modifier) {
 @Composable
 private fun ListItemRowPreview() {
     ListItemRow(
-        item = ListItem(
+        item = MediaItem(
             uri = "",
             imageUri = "",
             title = "Title",
@@ -455,10 +455,10 @@ private fun ListItemRowPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ItemsListPreview() {
-    val items = mutableListOf<ListItem>()
+    val items = mutableListOf<MediaItem>()
     repeat(5) {
         val alter = it % 2 == 0
-        val ali = ListItem(
+        val ali = MediaItem(
             uri = if (alter) "" else "a",
             imageUri = "",
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
@@ -484,10 +484,10 @@ fun ItemsListPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ItemsListPreview2() {
-    val items = mutableListOf<ListItem>()
+    val items = mutableListOf<MediaItem>()
     repeat(5) {
         val alter = it % 2 == 0
-        val ali = ListItem(
+        val ali = MediaItem(
             uri = if (alter) "" else "a",
             imageUri = "",
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",

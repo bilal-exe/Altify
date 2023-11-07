@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.spotify.model.RepeatMode
+import bilal.altify.domain.model.RepeatMode
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
 import bilal.altify.presentation.screens.home.nowPlayingItemsPadding

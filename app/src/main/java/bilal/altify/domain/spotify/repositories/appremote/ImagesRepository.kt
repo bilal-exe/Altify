@@ -1,4 +1,4 @@
-package bilal.altify.domain.spotify.repositories
+package bilal.altify.domain.spotify.repositories.appremote
 
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
