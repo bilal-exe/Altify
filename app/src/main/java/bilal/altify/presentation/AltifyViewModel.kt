@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.remote.web_api.access_token.AccessTokenRepository
-import bilal.altify.domain.spotify.remote.web_api.access_token.TokenState
+import bilal.altify.domain.spotify.remote.web_api.AccessTokenRepository
+import bilal.altify.domain.spotify.remote.web_api.TokenState
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
-import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.use_case.Command
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,15 +1,15 @@
 package bilal.altify.domain.spotify.repositories
 
-import bilal.altify.domain.spotify.model.LibraryState
+import bilal.altify.domain.spotify.model.AltLibraryState
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
-    val currentTrackLibraryState: Flow<LibraryState?>
+    val currentTrackLibraryState: Flow<AltLibraryState?>
 
     fun updateCurrentTrackState(uri: String)
 
-    val browserLibraryState: Flow<Map<String, LibraryState>>
+    val browserLibraryState: Flow<Map<String, AltLibraryState>>
 
     fun updateBrowserLibraryState(uris: List<String>)
 

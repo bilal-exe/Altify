@@ -23,13 +23,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import bilal.altify.R
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.CLIENT_ID
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REDIRECT_URI
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REQUEST_CODE
-import bilal.altify.domain.spotify.use_case.model.VolumeCommand
+import bilal.altify.domain.spotify.use_case.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.ErrorScreenInfo
@@ -68,15 +69,15 @@ class MainActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.uiState
-                .flowWithLifecycle(lifecycle)
-                .onEach { uiState = it }
-                .collect()
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState
+                    .onEach { uiState = it }
+                    .collect()
+            }
         }
 
         lifecycleScope.launch {
             viewModel.refreshTokenSignalFlow
-                .flowWithLifecycle(lifecycle)
                 .onEach { authorizeSpotifyWebApi() }
                 .collect()
         }
@@ -160,33 +161,30 @@ class MainActivity : ComponentActivity() {
     }
 
     // use get instead of direct assignment as You can't request ViewModel before onCreate call
-    private val spotifyConnectorErrorInfo
-        get() = ErrorScreenInfo(
-            message = "Could not connect to Spotify",
-            buttonText = "Retry connection",
-            buttonFunc = viewModel::connect,
-            buttonFrontIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
-        )
+    private val spotifyConnectorErrorInfo get() = ErrorScreenInfo(
+        message = "Could not connect to Spotify",
+        buttonText = "Retry connection",
+        buttonFunc = viewModel::connect,
+        buttonFrontIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+    )
 
-    private val emptyApiTokenErrorInfo
-        get() = ErrorScreenInfo(
-            message = "No Spotify API token",
-            icon = Icon.DrawableResourceIcon(R.drawable.key_off),
-            buttonText = "Refresh key",
-            buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
-            // todo should i use lifecycle-scope?
-            buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
-        )
+    private val emptyApiTokenErrorInfo get() = ErrorScreenInfo(
+        message = "No Spotify API token",
+        icon = Icon.DrawableResourceIcon(R.drawable.key_off),
+        buttonText = "Refresh key",
+        buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+        // todo should i use lifecycle-scope?
+        buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
+    )
 
-    private val expiredApiTokenErrorInfo
-        get() = ErrorScreenInfo(
-            message = "Expired Spotify API token",
-            icon = Icon.DrawableResourceIcon(R.drawable.key_off),
-            buttonText = "Refresh key",
-            buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
-            // todo should i use lifecycle-scope?
-            buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
-        )
+    private val expiredApiTokenErrorInfo get() = ErrorScreenInfo(
+        message = "Expired Spotify API token",
+        icon = Icon.DrawableResourceIcon(R.drawable.key_off),
+        buttonText = "Refresh key",
+        buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+        // todo should i use lifecycle-scope?
+        buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
+    )
 }
 
 enum class DarkThemeConfig(override val code: Int, override val title: String) : AltPreference {

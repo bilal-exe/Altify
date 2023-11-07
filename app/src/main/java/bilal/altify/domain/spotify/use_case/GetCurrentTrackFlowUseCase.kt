@@ -1,6 +1,6 @@
 package bilal.altify.domain.spotify.use_case
 
-import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
+import bilal.altify.domain.spotify.model.CurrentTrackState
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay

@@ -28,19 +28,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import bilal.altify.domain.spotify.model.LibraryState
-import bilal.altify.domain.spotify.model.Track
-import bilal.altify.domain.spotify.use_case.model.Command
-import bilal.altify.domain.spotify.use_case.model.UserCommand
+import bilal.altify.domain.spotify.model.AltLibraryState
+import bilal.altify.domain.spotify.model.AltTrack
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
 import bilal.altify.presentation.screens.home.nowPlayingItemsPadding
 import bilal.altify.presentation.util.ShakeBounceAnimation
 
 @Composable
 fun NowPlayingMusicInfo(
-    track: Track?,
+    track: AltTrack?,
     config: MusicInfoAlignmentConfig,
-    libraryState: LibraryState?,
+    libraryState: AltLibraryState?,
     executeCommand: (Command) -> Unit,
     showControls: Boolean
 ) {
@@ -80,7 +80,7 @@ private fun NowPlayingMusicInfo(
     artist: String,
     album: String,
     config: MusicInfoAlignmentConfig,
-    libraryState: LibraryState?,
+    libraryState: AltLibraryState?,
     toggleLibraryStatus: (String, Boolean) -> Unit,
     showControls: Boolean
 ) {
@@ -140,7 +140,7 @@ private fun NowPlayingMusicInfo(
 
 @Composable
 fun AddOrRemoveFromLibraryButton(
-    libraryState: LibraryState?,
+    libraryState: AltLibraryState?,
     toggleLibraryStatus: (String, Boolean) -> Unit,
 ) {
     if (libraryState != null) {
@@ -177,7 +177,7 @@ private fun NowPlayingMusicInfoPreview() {
         artist = "artist",
         album = "album",
         config = MusicInfoAlignmentConfig.CENTER,
-        libraryState = LibraryState("", false, canAdd = false),
+        libraryState = AltLibraryState("", false, canAdd = false),
         toggleLibraryStatus = { _, _ -> },
         showControls = true
     )
@@ -191,7 +191,7 @@ private fun NowPlayingLongMusicInfoPreview() {
         artist = "artist",
         album = "album",
         config = MusicInfoAlignmentConfig.CENTER,
-        libraryState = LibraryState("", false, canAdd = false),
+        libraryState = AltLibraryState("", false, canAdd = false),
         toggleLibraryStatus = { _, _ -> },
         showControls = true
     )
@@ -205,7 +205,7 @@ private fun NowPlayingMusicInfoLeftPreview() {
         artist = "artist",
         album = "album",
         config = MusicInfoAlignmentConfig.LEFT,
-        libraryState = LibraryState("", isAdded = false, canAdd = false),
+        libraryState = AltLibraryState("", isAdded = false, canAdd = false),
         toggleLibraryStatus = { _, _ -> },
         showControls = true
     )

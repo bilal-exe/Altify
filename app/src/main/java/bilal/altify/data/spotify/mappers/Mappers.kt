@@ -1,10 +1,20 @@
 package bilal.altify.data.spotify.mappers
 
-import bilal.altify.domain.spotify.model.*
-import com.spotify.protocol.types.*
+import bilal.altify.domain.spotify.model.AltLibraryState
+import bilal.altify.domain.spotify.model.AltListItem
+import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.AltPlayerContext
+import bilal.altify.domain.spotify.model.AltTrack
+import bilal.altify.domain.spotify.model.ContentType
+import com.spotify.protocol.types.ImageUri
+import com.spotify.protocol.types.LibraryState
+import com.spotify.protocol.types.ListItem
+import com.spotify.protocol.types.ListItems
+import com.spotify.protocol.types.PlayerContext
+import com.spotify.protocol.types.Track
 
-fun com.spotify.protocol.types.Track?.toModel() =
-    if (this != null) bilal.altify.domain.spotify.model.Track(
+fun Track?.toAlt() =
+    if (this != null) AltTrack(
         artist = this.artist.name,
         album = this.album.name,
         duration = this.duration,
@@ -13,8 +23,8 @@ fun com.spotify.protocol.types.Track?.toModel() =
         imageUri = this.imageUri.raw,
     ) else null
 
-fun com.spotify.protocol.types.PlayerContext.toModel() =
-    bilal.altify.domain.spotify.model.PlayerContext(
+fun PlayerContext.toAlt() =
+    AltPlayerContext(
         uri = this.uri,
         title = this.title,
         subtitle = this.subtitle,
@@ -30,8 +40,8 @@ private val spotifyUriToType = mapOf(
 )
 private val typeToSpotifyUri = spotifyUriToType.entries.associate { it.value to it.key }
 
-fun com.spotify.protocol.types.ListItem.toModel() =
-    bilal.altify.domain.spotify.model.ListItem(
+fun ListItem.toAlt() =
+    AltListItem(
         uri = this.uri,
         imageUri = this.imageUri.raw,
         title = this.title,
@@ -41,24 +51,24 @@ fun com.spotify.protocol.types.ListItem.toModel() =
         type = spotifyUriToType[uri.substringAfter(':').substringBefore(':')] ?: ContentType.Track
     )
 
-fun bilal.altify.domain.spotify.model.ListItem.getSpotifyUri() =
+fun AltListItem.getSpotifyUri() =
     this.uri.substringAfterLast(':')
 
-fun com.spotify.protocol.types.ListItems.toModel() =
-    bilal.altify.domain.spotify.model.ListItems(
-        items = this.items.map { it.toModel() },
+fun ListItems.toAlt() =
+    AltListItems(
+        items = this.items.map { it.toAlt() },
         total = this.total
     )
 
-fun com.spotify.protocol.types.LibraryState.toModel() =
-    bilal.altify.domain.spotify.model.LibraryState(
+fun LibraryState.toAlt() =
+    AltLibraryState(
         uri = this.uri,
         isAdded = this.isAdded,
         canAdd = this.canAdd
     )
 
-fun bilal.altify.domain.spotify.model.ListItem.toOriginal(): com.spotify.protocol.types.ListItem {
-    return com.spotify.protocol.types.ListItem(
+fun AltListItem.toOriginal(): ListItem {
+    return ListItem(
         /* id = */ uri,
         /* uri = */ uri,
         /* imageUri = */ ImageUri(imageUri),

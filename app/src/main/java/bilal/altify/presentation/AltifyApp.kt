@@ -3,7 +3,7 @@ package bilal.altify.presentation
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.navigation.AltifyNavHost
 import bilal.altify.presentation.theme.AltifyTheme
 

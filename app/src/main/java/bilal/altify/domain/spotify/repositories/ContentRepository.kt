@@ -1,20 +1,20 @@
 package bilal.altify.domain.spotify.repositories
 
-import bilal.altify.domain.spotify.model.ListItem
-import bilal.altify.domain.spotify.model.ListItems
+import bilal.altify.domain.spotify.model.AltListItem
+import bilal.altify.domain.spotify.model.AltListItems
 import kotlinx.coroutines.flow.Flow
 
 interface ContentRepository {
 
-    val listItemsFlow: Flow<ListItems>
+    val listItemsFlow: Flow<AltListItems>
 
     fun getRecommended()
 
-    fun getChildrenOfItem(listItem: ListItem, count: Int)
+    fun getChildrenOfItem(listItem: AltListItem, count: Int)
 
-    fun loadMoreChildrenOfItem(listItem: ListItem, offset: Int, count: Int)
+    fun loadMoreChildrenOfItem(listItem: AltListItem, offset: Int, count: Int)
 
-    fun play(listItem: ListItem)
+    fun play(listItem: AltListItem)
 
     class ContentSourceException(override val message: String?) : Exception(message)
 

@@ -1,7 +1,7 @@
 package bilal.altify.data.spotify.repositories
 
-import bilal.altify.data.spotify.mappers.toModel
-import bilal.altify.domain.spotify.model.LibraryState
+import bilal.altify.data.spotify.mappers.toAlt
+import bilal.altify.domain.spotify.model.AltLibraryState
 import bilal.altify.domain.spotify.repositories.UserRepository
 import com.spotify.android.appremote.api.UserApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,31 +12,31 @@ class UserRepositoryImpl(
     private val userApi: UserApi
 ) : UserRepository {
 
-    private val _currentTrackLibraryState = MutableStateFlow<LibraryState?>(null)
+    private val _currentTrackLibraryState = MutableStateFlow<AltLibraryState?>(null)
     override val currentTrackLibraryState = _currentTrackLibraryState.asStateFlow()
 
     override fun updateCurrentTrackState(uri: String) {
         userApi.getLibraryState(uri)
             .setResultCallback {
-                _currentTrackLibraryState.value = it.toModel()
+                _currentTrackLibraryState.value = it.toAlt()
             }
             .setErrorCallback {
                 throw UserRepository.UserSourceException(it.localizedMessage)
             }
     }
 
-    private val _browserLibraryState = MutableStateFlow<Map<String, LibraryState>>(emptyMap())
+    private val _browserLibraryState = MutableStateFlow<Map<String, AltLibraryState>>(emptyMap())
     override val browserLibraryState = _browserLibraryState.asStateFlow()
 
     override fun updateBrowserLibraryState(uris: List<String>) {
 
         _browserLibraryState.value = emptyMap()
-        val newLibraryStates = mutableMapOf<String, LibraryState>()
+        val newLibraryStates = mutableMapOf<String, AltLibraryState>()
 
         uris.forEach { uri ->
             userApi.getLibraryState(uri)
                 .setResultCallback {
-                    newLibraryStates[it.uri] = it.toModel()
+                    newLibraryStates[it.uri] = it.toAlt()
                     _browserLibraryState.update { newLibraryStates }
                 }
                 .setErrorCallback {
@@ -69,7 +69,7 @@ class UserRepositoryImpl(
                     .setResultCallback { ls ->
                         _browserLibraryState.update {
                             val mm = it.toMutableMap()
-                            mm[uri] = ls.toModel()
+                            mm[uri] = ls.toAlt()
                             mm.toMap()
                         }
                     }

@@ -1,19 +1,14 @@
 package bilal.altify.domain.spotify.use_case
 
+import android.util.Log
 import bilal.altify.domain.spotify.repositories.AltifyRepositories
-import bilal.altify.domain.spotify.model.ListItem
+import bilal.altify.domain.spotify.model.AltListItem
 import bilal.altify.domain.spotify.model.ContentType
-import bilal.altify.domain.spotify.use_case.model.Command
-import bilal.altify.domain.spotify.use_case.model.ContentCommand
-import bilal.altify.domain.spotify.use_case.model.ImagesCommand
-import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
-import bilal.altify.domain.spotify.use_case.model.UserCommand
-import bilal.altify.domain.spotify.use_case.model.VolumeCommand
 import java.util.Stack
 
 class ExecuteCommandUseCase {
 
-    private val browserVisitedHistory: Stack<ListItem> = Stack()
+    private val browserVisitedHistory: Stack<AltListItem> = Stack()
 
     companion object {
         const val BROWSER_PER_PAGE = 25

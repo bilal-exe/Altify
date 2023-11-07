@@ -30,11 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
-import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
-import bilal.altify.domain.spotify.use_case.model.Command
-import bilal.altify.domain.spotify.use_case.model.ContentCommand
-import bilal.altify.domain.spotify.use_case.model.ImagesCommand
-import bilal.altify.domain.spotify.use_case.model.UserCommand
+import bilal.altify.domain.spotify.model.CurrentTrackState
+import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.ContentCommand
+import bilal.altify.domain.spotify.use_case.ImagesCommand
+import bilal.altify.domain.spotify.use_case.UserCommand
 import bilal.altify.presentation.DarkThemeConfig
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.BackgroundColourConfig

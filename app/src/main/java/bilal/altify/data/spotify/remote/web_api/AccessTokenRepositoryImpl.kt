@@ -1,13 +1,12 @@
-package bilal.altify.data.spotify.remote.web_api.access_token
+package bilal.altify.data.spotify.remote.web_api
 
-import androidx.compose.ui.text.intl.Locale
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import bilal.altify.domain.spotify.remote.web_api.access_token.TokenState
-import bilal.altify.domain.spotify.remote.web_api.access_token.AccessTokenRepository
+import bilal.altify.domain.spotify.remote.web_api.TokenState
+import bilal.altify.domain.spotify.remote.web_api.AccessTokenRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Instant
@@ -22,8 +21,7 @@ class AccessTokenRepositoryImpl(
     override val state: Flow<TokenState> = altPreferences.data.map { preferences ->
         TokenState.Token(
             accessToken = preferences[accessTokenKey] ?: return@map TokenState.Empty,
-            expiry = Instant.ofEpochSecond(preferences[expiryDateKey]?: return@map TokenState.Empty),
-            countryCode = Locale.current.region
+            expiry = Instant.ofEpochSecond(preferences[expiryDateKey]?: return@map TokenState.Empty)
         )
     }
 

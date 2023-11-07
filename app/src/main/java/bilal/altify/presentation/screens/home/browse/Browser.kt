@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,10 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.spotify.model.ListItem
-import bilal.altify.domain.spotify.model.ListItems
-import bilal.altify.domain.spotify.use_case.model.BrowserState
-import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.model.AltListItem
+import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.BrowserState
+import bilal.altify.domain.spotify.use_case.Command
 import bilal.altify.presentation.prefrences.AltPreferencesState
 
 fun LazyListScope.browser(
@@ -150,9 +151,9 @@ private fun EmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun BrowserPreview() {
-    val items = mutableListOf<ListItem>()
+    val items = mutableListOf<AltListItem>()
     repeat(5) {
-        val ali = ListItem(
+        val ali = AltListItem(
             uri = "",
             imageUri = "",
             title = "Title",
@@ -168,7 +169,7 @@ fun BrowserPreview() {
             preferences = AltPreferencesState(),
             playingTrackUri = null,
             browserState = BrowserState(
-                listItems = ListItems(items)
+                listItems = AltListItems(items)
             ),
             executeCommand = { },
             backgroundColor = backgroundColor,

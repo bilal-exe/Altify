@@ -3,7 +3,7 @@ package bilal.altify.presentation.screens.home.browse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
-import bilal.altify.domain.spotify.use_case.model.BrowserState
+import bilal.altify.domain.spotify.model.BrowserState
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.remote.appremote.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
