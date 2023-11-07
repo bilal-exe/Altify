@@ -1,4 +1,4 @@
-package bilal.altify.domain.spotify.remote.web_api
+package bilal.altify.domain.spotify.remote.web_api.access_token
 
 import kotlinx.coroutines.flow.Flow
 

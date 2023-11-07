@@ -90,6 +90,9 @@ dependencies {
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
+    // ISO country codes conversion
+    implementation 'com.neovisionaries:nv-i18n:1.28'
+
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
 

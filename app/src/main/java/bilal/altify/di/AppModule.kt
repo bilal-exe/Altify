@@ -1,9 +1,7 @@
 package bilal.altify.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import bilal.altify.data.spotify.remote.appremote.SpotifySourceImpl
 import bilal.altify.domain.spotify.remote.appremote.SpotifySource
@@ -12,10 +10,10 @@ import bilal.altify.domain.spotify.use_case.ExecuteCommandUseCase
 import bilal.altify.domain.spotify.use_case.GetBrowserStateFlowUseCase
 import bilal.altify.domain.spotify.use_case.GetCurrentTrackFlowUseCase
 import bilal.altify.data.prefrences.PreferencesRepositoryImpl
-import bilal.altify.data.spotify.remote.web_api.AccessTokenRepositoryImpl
+import bilal.altify.data.spotify.remote.web_api.access_token.AccessTokenRepositoryImpl
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
-import bilal.altify.domain.spotify.remote.web_api.AccessTokenRepository
+import bilal.altify.domain.spotify.remote.web_api.access_token.AccessTokenRepository
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -82,7 +80,7 @@ object AppModule {
     fun providesRetrofitInstance(): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .baseUrl("https://api.spotify.com")
+            .baseUrl(baseUrl)
             .build()
 
 }

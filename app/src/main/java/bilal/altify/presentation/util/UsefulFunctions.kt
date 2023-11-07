@@ -72,22 +72,6 @@ fun shouldUseDarkTheme(
         null -> isSystemInDarkTheme()
     }
 
-fun Color.complement(): Color {
-    val rgb = this.convert(ColorSpaces.Srgb)
-    val r = rgb.red
-    val g = rgb.green
-    val b = rgb.blue
-
-    val sumOfHighestLowest = max(max(r, g), b) + min(r, min(g, b))
-
-    return Color(
-        red = sumOfHighestLowest - r,
-        blue = sumOfHighestLowest - b,
-        green = sumOfHighestLowest - g,
-        alpha = this.alpha
-    )
-}
-
 /**
  * The same as [LaunchedEffect] but skips the first invocation
  */
