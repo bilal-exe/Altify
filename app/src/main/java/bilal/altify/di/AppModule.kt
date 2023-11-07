@@ -17,11 +17,15 @@ import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector
 import bilal.altify.domain.spotify.remote.web_api.AccessTokenRepository
 import bilal.altify.presentation.volume_notification.VolumeNotifications
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
@@ -69,5 +73,16 @@ object AppModule {
             browser = GetBrowserStateFlowUseCase(),
             commands = ExecuteCommandUseCase()
         )
+
+    private val json = Json { ignoreUnknownKeys = true }
+    private const val baseUrl = "https://api.spotify.com"
+
+    @Provides
+    @Singleton
+    fun providesRetrofitInstance(): Retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .baseUrl("https://api.spotify.com")
+            .build()
 
 }

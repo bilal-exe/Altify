@@ -1,8 +1,7 @@
 package bilal.altify.data.spotify.repositories
 
-import android.util.Log
-import bilal.altify.data.spotify.mappers.toAlt
-import bilal.altify.domain.spotify.model.AltPlayerStateAndContext
+import bilal.altify.data.spotify.mappers.toModel
+import bilal.altify.domain.spotify.model.PlayerStateAndContext
 import bilal.altify.domain.spotify.model.RepeatMode
 import bilal.altify.domain.spotify.repositories.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
@@ -53,11 +52,11 @@ class PlayerRepositoryImpl(
             playerState(),
             playerContext()
         ) { playerState, playerContext ->
-            AltPlayerStateAndContext(
-                track = playerState.track.toAlt(),
+            PlayerStateAndContext(
+                track = playerState.track.toModel(),
                 isPaused = playerState.isPaused,
                 position = playerState.playbackPosition,
-                context = playerContext.toAlt(),
+                context = playerContext.toModel(),
                 repeatMode = repeatModes[playerState.playbackOptions.repeatMode] ?: RepeatMode.OFF,
                 isShuffling = playerState.playbackOptions.isShuffling
             )

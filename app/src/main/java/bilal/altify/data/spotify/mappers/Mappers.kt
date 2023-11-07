@@ -1,30 +1,41 @@
 package bilal.altify.data.spotify.mappers
 
-import bilal.altify.domain.spotify.model.AltLibraryState
-import bilal.altify.domain.spotify.model.AltListItem
-import bilal.altify.domain.spotify.model.AltListItems
-import bilal.altify.domain.spotify.model.AltPlayerContext
-import bilal.altify.domain.spotify.model.AltTrack
-import bilal.altify.domain.spotify.model.ContentType
+import bilal.altify.domain.spotify.model.*
 import com.spotify.protocol.types.ImageUri
-import com.spotify.protocol.types.LibraryState
-import com.spotify.protocol.types.ListItem
-import com.spotify.protocol.types.ListItems
-import com.spotify.protocol.types.PlayerContext
-import com.spotify.protocol.types.Track
 
-fun Track?.toAlt() =
-    if (this != null) AltTrack(
-        artist = this.artist.name,
-        album = this.album.name,
+typealias SpotifyTrack = com.spotify.protocol.types.Track
+typealias SpotifyPlayerContext = com.spotify.protocol.types.PlayerContext
+typealias SpotifyListItem = com.spotify.protocol.types.ListItem
+typealias SpotifyListItems = com.spotify.protocol.types.ListItems
+typealias SpotifyLibraryState = com.spotify.protocol.types.LibraryState
+typealias SpotifyAlbum = com.spotify.protocol.types.Album
+typealias SpotifyArtist = com.spotify.protocol.types.Artist
+
+fun SpotifyTrack.toModel() =
+    Track(
+        artist = this.artist.toModel(),
+        artists = this.artists.map { it.toModel() },
+        album = this.album.toModel(),
         duration = this.duration,
         name = this.name,
         uri = this.uri,
         imageUri = this.imageUri.raw,
-    ) else null
+    )
 
-fun PlayerContext.toAlt() =
-    AltPlayerContext(
+fun SpotifyAlbum.toModel() =
+    Album(
+        name = this.name,
+        uri = this.uri
+    )
+
+fun SpotifyArtist.toModel() =
+    Artist(
+        name = this.name,
+        uri = this.uri
+    )
+
+fun SpotifyPlayerContext.toModel() =
+    PlayerContext(
         uri = this.uri,
         title = this.title,
         subtitle = this.subtitle,
@@ -40,8 +51,8 @@ private val spotifyUriToType = mapOf(
 )
 private val typeToSpotifyUri = spotifyUriToType.entries.associate { it.value to it.key }
 
-fun ListItem.toAlt() =
-    AltListItem(
+fun SpotifyListItem.toModel() =
+    ListItem(
         uri = this.uri,
         imageUri = this.imageUri.raw,
         title = this.title,
@@ -51,24 +62,24 @@ fun ListItem.toAlt() =
         type = spotifyUriToType[uri.substringAfter(':').substringBefore(':')] ?: ContentType.Track
     )
 
-fun AltListItem.getSpotifyUri() =
+fun ListItem.getSpotifyUri() =
     this.uri.substringAfterLast(':')
 
-fun ListItems.toAlt() =
-    AltListItems(
-        items = this.items.map { it.toAlt() },
+fun SpotifyListItems.toModel() =
+    ListItems(
+        items = this.items.map { it.toModel() },
         total = this.total
     )
 
-fun LibraryState.toAlt() =
-    AltLibraryState(
+fun SpotifyLibraryState.toModel() =
+    LibraryState(
         uri = this.uri,
         isAdded = this.isAdded,
         canAdd = this.canAdd
     )
 
-fun AltListItem.toOriginal(): ListItem {
-    return ListItem(
+fun ListItem.toOriginal(): SpotifyListItem {
+    return com.spotify.protocol.types.ListItem(
         /* id = */ uri,
         /* uri = */ uri,
         /* imageUri = */ ImageUri(imageUri),

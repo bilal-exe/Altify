@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -35,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
 import bilal.altify.domain.spotify.model.RepeatMode
-import bilal.altify.domain.spotify.use_case.Command
-import bilal.altify.domain.spotify.use_case.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
 import bilal.altify.presentation.screens.home.nowPlayingItemsPadding
 import kotlin.math.roundToInt
 import kotlin.math.sqrt

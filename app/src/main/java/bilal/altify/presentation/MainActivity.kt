@@ -30,7 +30,7 @@ import bilal.altify.R
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.CLIENT_ID
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REDIRECT_URI
 import bilal.altify.domain.spotify.remote.appremote.SpotifyConnector.Companion.REQUEST_CODE
-import bilal.altify.domain.spotify.use_case.VolumeCommand
+import bilal.altify.domain.spotify.use_case.model.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen
 import bilal.altify.presentation.screens.ErrorScreenInfo
