@@ -18,12 +18,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import bilal.altify.domain.spotify.model.AltPlayerContext
+import bilal.altify.domain.spotify.model.PlayerContext
 import bilal.altify.presentation.util.clipLen
 
 @Composable
 fun NowPlayingTopBar(
-    player: AltPlayerContext,
+    player: PlayerContext,
     modifier: Modifier = Modifier,
     rightButtonIcon: ImageVector? = null,
     rightButtonIconContentDescription: String = "",

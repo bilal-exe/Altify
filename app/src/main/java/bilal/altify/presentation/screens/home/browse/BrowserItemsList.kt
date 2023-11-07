@@ -56,24 +56,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.spotify.model.AltLibraryState
-import bilal.altify.domain.spotify.model.AltListItem
-import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.LibraryState
+import bilal.altify.domain.spotify.model.ListItem
+import bilal.altify.domain.spotify.model.ListItems
 import bilal.altify.domain.spotify.model.ContentType
-import bilal.altify.domain.spotify.use_case.Command
-import bilal.altify.domain.spotify.use_case.ContentCommand
-import bilal.altify.domain.spotify.use_case.PlaybackCommand
-import bilal.altify.domain.spotify.use_case.UserCommand
+import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.use_case.model.ContentCommand
+import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.model.UserCommand
 import bilal.altify.presentation.util.ShakeBounceAnimation
 import bilal.altify.presentation.util.clipLen
 import com.spotify.protocol.types.Image.Dimension
 
 
 fun LazyListScope.browserItemsList(
-    listItems: AltListItems,
+    listItems: ListItems,
     track: String?,
     thumbnailMap: Map<String, Bitmap>,
-    libraryState: Map<String, AltLibraryState>,
+    libraryState: Map<String, LibraryState>,
     executeCommand: (Command) -> Unit,
     backgroundColor: Color,
 ) {
@@ -81,14 +81,14 @@ fun LazyListScope.browserItemsList(
     val getRecommended: () -> Unit = {
         executeCommand(ContentCommand.GetRecommended)
     }
-    val playItem: (AltListItem, Int) -> Unit = { item, index ->
+    val playItem: (ListItem, Int) -> Unit = { item, index ->
         val command = when (item.type) {
             ContentType.Track -> PlaybackCommand.SkipToTrack(item.uri, index)
             else -> ContentCommand.Play(item)
         }
         executeCommand(command)
     }
-    val getChildrenOfItem: (AltListItem) -> Unit = {
+    val getChildrenOfItem: (ListItem) -> Unit = {
         executeCommand(ContentCommand.GetChildrenOfItem(it))
     }
     val toggleLibraryStatus: (String, Boolean) -> Unit = { uri, added ->
@@ -153,12 +153,12 @@ fun GetRecommendedButton(getRecommended: () -> Unit) {
 
 @Composable
 fun ListItemRow(
-    item: AltListItem,
+    item: ListItem,
     selected: Boolean,
     thumbnail: Bitmap?,
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
-    libraryState: AltLibraryState?,
+    libraryState: LibraryState?,
     toggleLibraryStatus: (String, Boolean) -> Unit,
     addToQueue: (String) -> Unit,
     backgroundColor: Color,
@@ -196,12 +196,12 @@ fun ListItemRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeableListItemRowContent(
-    item: AltListItem,
+    item: ListItem,
     selected: Boolean,
     thumbnail: Bitmap?,
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
-    libraryState: AltLibraryState?,
+    libraryState: LibraryState?,
     toggleLibraryStatus: (String, Boolean) -> Unit,
     addToQueue: (String) -> Unit,
     backgroundColor: Color,
@@ -278,12 +278,12 @@ fun SwipeableListItemRowContent(
 
 @Composable
 fun ListItemRowContent(
-    item: AltListItem,
+    item: ListItem,
     selected: Boolean,
     thumbnail: Bitmap?,
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
-    libraryState: AltLibraryState?,
+    libraryState: LibraryState?,
     toggleLibraryStatus: (String, Boolean) -> Unit,
     backgroundColor: Color,
 ) {
@@ -340,7 +340,7 @@ fun ListItemRowContent(
 
 @Composable
 fun AddRemoveLibraryIcon(
-    libraryState: AltLibraryState,
+    libraryState: LibraryState,
     modifier: Modifier = Modifier,
     toggleLibraryStatus: (String, Boolean) -> Unit,
 ) {
@@ -433,7 +433,7 @@ fun PlaceholderThumbnail(modifier: Modifier) {
 @Composable
 private fun ListItemRowPreview() {
     ListItemRow(
-        item = AltListItem(
+        item = ListItem(
             uri = "",
             imageUri = "",
             title = "Title",
@@ -445,7 +445,7 @@ private fun ListItemRowPreview() {
         thumbnail = null,
         playItem = {},
         getChildrenOfItem = {},
-        libraryState = AltLibraryState(uri = "", isAdded = true, canAdd = true),
+        libraryState = LibraryState(uri = "", isAdded = true, canAdd = true),
         toggleLibraryStatus = { _, _ -> },
         addToQueue = {},
         backgroundColor = MaterialTheme.colorScheme.background
@@ -455,10 +455,10 @@ private fun ListItemRowPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ItemsListPreview() {
-    val items = mutableListOf<AltListItem>()
+    val items = mutableListOf<ListItem>()
     repeat(5) {
         val alter = it % 2 == 0
-        val ali = AltListItem(
+        val ali = ListItem(
             uri = if (alter) "" else "a",
             imageUri = "",
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
@@ -471,10 +471,10 @@ fun ItemsListPreview() {
     val backgroundColor = MaterialTheme.colorScheme.background
     LazyColumn {
         browserItemsList(
-            listItems = AltListItems(items),
+            listItems = ListItems(items),
             track = null,
             thumbnailMap = emptyMap(),
-            libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
+            libraryState = mapOf("a" to LibraryState(uri = "", isAdded = true, canAdd = true)),
             executeCommand = { },
             backgroundColor = backgroundColor,
         )
@@ -484,10 +484,10 @@ fun ItemsListPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ItemsListPreview2() {
-    val items = mutableListOf<AltListItem>()
+    val items = mutableListOf<ListItem>()
     repeat(5) {
         val alter = it % 2 == 0
-        val ali = AltListItem(
+        val ali = ListItem(
             uri = if (alter) "" else "a",
             imageUri = "",
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
@@ -500,10 +500,10 @@ fun ItemsListPreview2() {
     val backgroundColor = MaterialTheme.colorScheme.background
     LazyColumn {
         browserItemsList(
-            listItems = AltListItems(items = items, total = items.size + 10),
+            listItems = ListItems(items = items, total = items.size + 10),
             track = null,
             thumbnailMap = emptyMap(),
-            libraryState = mapOf("a" to AltLibraryState(uri = "", isAdded = true, canAdd = true)),
+            libraryState = mapOf("a" to LibraryState(uri = "", isAdded = true, canAdd = true)),
             executeCommand = { },
             backgroundColor = backgroundColor,
         )

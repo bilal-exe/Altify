@@ -37,16 +37,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import bilal.altify.domain.spotify.model.AltPlayerContext
-import bilal.altify.domain.spotify.model.AltTrack
-import bilal.altify.domain.spotify.model.CurrentTrackState
-import bilal.altify.domain.spotify.use_case.Command
-import bilal.altify.domain.spotify.use_case.ImagesCommand
-import bilal.altify.domain.spotify.use_case.PlaybackCommand
-import bilal.altify.domain.spotify.use_case.VolumeCommand
+import bilal.altify.domain.spotify.model.PlayerContext
+import bilal.altify.domain.spotify.model.Track
+import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
+import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.use_case.model.ImagesCommand
+import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
+import bilal.altify.domain.spotify.use_case.model.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.screens.LoadingScreen
@@ -283,8 +282,8 @@ private fun NowPlayingPreview() {
     NowPlaying(
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(
-                playerContext = AltPlayerContext.example,
-                track = AltTrack.example,
+                playerContext = PlayerContext.example,
+                track = Track.example,
                 playbackPosition = 5000
             ),
             preferences = AltPreferencesState(),
@@ -301,8 +300,8 @@ private fun NowPlayingDarkPreview() {
         NowPlaying(
             uiState = NowPlayingUIState.Success(
                 trackState = CurrentTrackState(
-                    playerContext = AltPlayerContext.example,
-                    track = AltTrack.example,
+                    playerContext = PlayerContext.example,
+                    track = Track.example,
                     playbackPosition = 5000
                 ),
                 preferences = AltPreferencesState(),
@@ -320,8 +319,8 @@ private fun NowPlayingToggledPreview() {
         paddingValues = PaddingValues(),
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(
-                playerContext = AltPlayerContext.example,
-                track = AltTrack.example,
+                playerContext = PlayerContext.example,
+                track = Track.example,
                 playbackPosition = 5000
             ),
             preferences = AltPreferencesState(),

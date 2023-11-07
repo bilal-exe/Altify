@@ -1,9 +1,9 @@
 package bilal.altify.data.spotify.repositories
 
-import bilal.altify.data.spotify.mappers.toAlt
+import bilal.altify.data.spotify.mappers.toModel
 import bilal.altify.data.spotify.mappers.toOriginal
-import bilal.altify.domain.spotify.model.AltListItem
-import bilal.altify.domain.spotify.model.AltListItems
+import bilal.altify.domain.spotify.model.ListItem
+import bilal.altify.domain.spotify.model.ListItems
 import bilal.altify.domain.spotify.repositories.ContentRepository
 import com.spotify.android.appremote.api.ContentApi
 import com.spotify.protocol.types.ListItems
@@ -19,7 +19,7 @@ class ContentRepositoryImpl(
         _listItemsFlow.value = lis.toAlt()
     }
 
-    private val _listItemsFlow = MutableStateFlow(AltListItems())
+    private val _listItemsFlow = MutableStateFlow(bilal.altify.domain.spotify.model.ListItems())
     override val listItemsFlow = _listItemsFlow.asStateFlow()
 
     init {
@@ -33,20 +33,20 @@ class ContentRepositoryImpl(
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun getChildrenOfItem(listItem: AltListItem, count: Int) {
+    override fun getChildrenOfItem(listItem: ListItem, count: Int) {
         contentApi
             .getChildrenOfItem(listItem.toOriginal(), count, 0)
             .setResultCallback(::listItemsCallback)
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun loadMoreChildrenOfItem(listItem: AltListItem, offset: Int, count: Int) {
+    override fun loadMoreChildrenOfItem(listItem: ListItem, offset: Int, count: Int) {
         contentApi
             .getChildrenOfItem(listItem.toOriginal(), count, offset)
             .setResultCallback { res ->
                 _listItemsFlow.update {
                     it.copy(
-                        items = it.items + res.toAlt().items,
+                        items = it.items + res.toModel().items,
                         total = res.total
                     )
                 }
@@ -54,7 +54,7 @@ class ContentRepositoryImpl(
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun play(listItem: AltListItem) {
+    override fun play(listItem: ListItem) {
         contentApi.playContentItem(listItem.toOriginal())
     }
 

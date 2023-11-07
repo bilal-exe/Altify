@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import bilal.altify.domain.spotify.use_case.Command
+import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.presentation.screens.home.HomeScreen
 import bilal.altify.presentation.screens.preferences.PreferencesScreen
 

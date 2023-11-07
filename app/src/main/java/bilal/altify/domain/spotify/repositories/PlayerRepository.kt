@@ -1,11 +1,11 @@
 package bilal.altify.domain.spotify.repositories
 
-import bilal.altify.domain.spotify.model.AltPlayerStateAndContext
+import bilal.altify.domain.spotify.model.PlayerStateAndContext
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
 
-    val playerStateAndContext: Flow<AltPlayerStateAndContext>
+    val playerStateAndContext: Flow<PlayerStateAndContext>
 
     fun pauseResume(isPaused: Boolean)
 
