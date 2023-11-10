@@ -25,15 +25,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
+import bilal.altify.domain.model.ContentType
+import bilal.altify.domain.model.ImageRemoteId
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
+import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.spotify.use_case.model.BrowserState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.presentation.prefrences.AltPreferencesState
 
 fun LazyListScope.browser(
     preferences: AltPreferencesState,
-    playingTrackUri: String?,
+    playingTrackId: RemoteId?,
     backgroundColor: Color,
     executeCommand: (Command) -> Unit,
     uiState: BrowserUIState,
@@ -46,7 +49,7 @@ fun LazyListScope.browser(
         is BrowserUIState.Success ->
             browser(
                 preferences = preferences,
-                playingTrackUri = playingTrackUri,
+                playingTrackId = playingTrackId,
                 browserState = uiState.browserState,
                 executeCommand = executeCommand,
                 backgroundColor = backgroundColor,
@@ -73,18 +76,18 @@ fun BrowserLoading(backgroundColor: Color) {
 
 private fun LazyListScope.browser(
     preferences: AltPreferencesState,
-    playingTrackUri: String?,
+    playingTrackId: RemoteId?,
     browserState: BrowserState,
     executeCommand: (Command) -> Unit,
     backgroundColor: Color,
 ) {
-    when(browserState.listItems) {
+    when (browserState.listItems) {
         null ->
             emptyListItems()
         else ->
             browserItemsList(
                 listItems = browserState.listItems,
-                track = playingTrackUri,
+                playingTrackId = playingTrackId,
                 thumbnailMap = browserState.thumbnailMap,
                 libraryState = browserState.libraryState,
                 executeCommand = executeCommand,
@@ -139,7 +142,7 @@ private fun EmptyPreview() {
     LazyColumn {
         browser(
             preferences = AltPreferencesState(),
-            playingTrackUri = null,
+            playingTrackId = null,
             browserState = BrowserState(),
             executeCommand = { },
             backgroundColor = backgroundColor,
@@ -153,12 +156,11 @@ fun BrowserPreview() {
     val items = mutableListOf<ListItem>()
     repeat(5) {
         val ali = ListItem(
-            remoteId = "",
-            imageUri = "",
+            remoteId = RemoteId.fake,
+            imageRemoteId = ImageRemoteId(""),
             title = "Title",
             subtitle = "Subtitle",
             playable = it % 2 == 0,
-            contentType = ListItem.ContentType.Track
         )
         items.add(ali)
     }
@@ -166,7 +168,7 @@ fun BrowserPreview() {
     LazyColumn {
         browser(
             preferences = AltPreferencesState(),
-            playingTrackUri = null,
+            playingTrackId = null,
             browserState = BrowserState(
                 listItems = ListItems(5, items)
             ),

@@ -1,5 +1,6 @@
 package bilal.altify.data.spotify.repositories
 
+import android.util.Log
 import bilal.altify.data.mappers.SpotifyListItems
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toOriginal
@@ -30,14 +31,20 @@ class ContentRepositoryImpl(
         contentApi
             .getRecommendedContentItems(ContentApi.ContentType.DEFAULT)
             .setResultCallback(::listItemsCallback)
-            .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
+            .setErrorCallback {
+                Log.d("Error", it.message.toString())
+                throw ContentRepository.ContentSourceException(it.localizedMessage)
+            }
     }
 
     override fun getChildrenOfItem(item: ListItem, count: Int) {
         contentApi
             .getChildrenOfItem(item.toOriginal(), count, 0)
             .setResultCallback(::listItemsCallback)
-            .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
+            .setErrorCallback {
+                Log.d("Error", "${it.message.toString()} $item")
+                throw ContentRepository.ContentSourceException(it.localizedMessage)
+            }
     }
 
     override fun loadMoreChildrenOfItem(item: ListItem, offset: Int, count: Int) {
@@ -50,7 +57,10 @@ class ContentRepositoryImpl(
                     )
                         ?: res.toModel()
             } }
-            .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
+            .setErrorCallback {
+                Log.d("Error", "${it.message.toString()} $item")
+                throw ContentRepository.ContentSourceException(it.localizedMessage)
+            }
     }
 
     override fun play(item: ListItem) {

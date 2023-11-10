@@ -56,9 +56,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
+import bilal.altify.domain.model.ContentType
+import bilal.altify.domain.model.ImageRemoteId
 import bilal.altify.domain.model.LibraryState
 import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.model.ListItem
+import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ContentCommand
 import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
@@ -67,12 +70,11 @@ import bilal.altify.presentation.util.ShakeBounceAnimation
 import bilal.altify.presentation.util.clipLen
 import com.spotify.protocol.types.Image.Dimension
 
-
 fun LazyListScope.browserItemsList(
     listItems: ListItems,
-    track: String?,
-    thumbnailMap: Map<String, Bitmap>,
-    libraryState: Map<String, LibraryState>,
+    playingTrackId: RemoteId?,
+    thumbnailMap: Map<ImageRemoteId, Bitmap>,
+    libraryState: Map<RemoteId, LibraryState>,
     executeCommand: (Command) -> Unit,
     backgroundColor: Color,
 ) {
@@ -81,8 +83,8 @@ fun LazyListScope.browserItemsList(
         executeCommand(ContentCommand.GetRecommended)
     }
     val playItem: (ListItem, Int) -> Unit = { item, index ->
-        val command = when (item.contentType) {
-            ListItem.ContentType.Track -> PlaybackCommand.SkipToTrack(item.remoteId, index)
+        val command = when (item.remoteId.contentType) {
+            ContentType.Track -> PlaybackCommand.SkipToTrack(item.remoteId, index)
             else -> ContentCommand.Play(item)
         }
         executeCommand(command)
@@ -90,10 +92,10 @@ fun LazyListScope.browserItemsList(
     val getChildrenOfItem: (ListItem) -> Unit = {
         executeCommand(ContentCommand.GetChildrenOfItem(it))
     }
-    val toggleLibraryStatus: (String, Boolean) -> Unit = { uri, added ->
+    val toggleLibraryStatus: (RemoteId, Boolean) -> Unit = { uri, added ->
         executeCommand(UserCommand.ToggleLibraryStatus(uri, added))
     }
-    val addToQueue: (String) -> Unit = {
+    val addToQueue: (RemoteId) -> Unit = {
         executeCommand(PlaybackCommand.AddToQueue(it))
     }
 
@@ -111,8 +113,8 @@ fun LazyListScope.browserItemsList(
     ) { index, item ->
         ListItemRow(
             item = item,
-            selected = track == item.remoteId,
-            thumbnail = thumbnailMap[item.imageUri],
+            selected = playingTrackId == item.remoteId,
+            thumbnail = thumbnailMap[item.imageRemoteId],
             playItem = { playItem(item, index) },
             getChildrenOfItem = { getChildrenOfItem(item) },
             libraryState = libraryState[item.remoteId],
@@ -158,8 +160,8 @@ fun ListItemRow(
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
     libraryState: LibraryState?,
-    toggleLibraryStatus: (String, Boolean) -> Unit,
-    addToQueue: (String) -> Unit,
+    toggleLibraryStatus: (RemoteId, Boolean) -> Unit,
+    addToQueue: (RemoteId) -> Unit,
     backgroundColor: Color,
 ) {
     Box(
@@ -169,7 +171,7 @@ fun ListItemRow(
             .height((144 / LocalDensity.current.density).dp),
     ) {
         // only tracks can be queued
-        if (item.contentType == ListItem.ContentType.Track) SwipeableListItemRowContent(
+        if (item.remoteId.contentType == ContentType.Track) SwipeableListItemRowContent(
             item = item,
             selected = selected,
             thumbnail = thumbnail,
@@ -201,8 +203,8 @@ fun SwipeableListItemRowContent(
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
     libraryState: LibraryState?,
-    toggleLibraryStatus: (String, Boolean) -> Unit,
-    addToQueue: (String) -> Unit,
+    toggleLibraryStatus: (RemoteId, Boolean) -> Unit,
+    addToQueue: (RemoteId) -> Unit,
     backgroundColor: Color,
 ) {
     val view = LocalView.current
@@ -283,7 +285,7 @@ fun ListItemRowContent(
     playItem: () -> Unit,
     getChildrenOfItem: () -> Unit,
     libraryState: LibraryState?,
-    toggleLibraryStatus: (String, Boolean) -> Unit,
+    toggleLibraryStatus: (RemoteId, Boolean) -> Unit,
     backgroundColor: Color,
 ) {
     val rowHeight = with(LocalDensity.current) { Dimension.THUMBNAIL.value.toDp() }
@@ -341,7 +343,7 @@ fun ListItemRowContent(
 fun AddRemoveLibraryIcon(
     libraryState: LibraryState,
     modifier: Modifier = Modifier,
-    toggleLibraryStatus: (String, Boolean) -> Unit,
+    toggleLibraryStatus: (RemoteId, Boolean) -> Unit,
 ) {
     val icon = when (libraryState.isAdded) {
         true -> Icons.Default.Favorite
@@ -433,18 +435,17 @@ fun PlaceholderThumbnail(modifier: Modifier) {
 private fun ListItemRowPreview() {
     ListItemRow(
         item = ListItem(
-            remoteId = "",
-            imageUri = "",
+            remoteId = RemoteId.fake,
+            imageRemoteId = ImageRemoteId(""),
             title = "Title",
             subtitle = "Subtitle",
             playable = true,
-            contentType = ListItem.ContentType.Track
         ),
         selected = false,
         thumbnail = null,
         playItem = {},
         getChildrenOfItem = {},
-        libraryState = LibraryState(remoteId = "", isAdded = true, canAdd = true),
+        libraryState = LibraryState(remoteId = RemoteId.fake, isAdded = true, canAdd = true),
         toggleLibraryStatus = { _, _ -> },
         addToQueue = {},
         backgroundColor = MaterialTheme.colorScheme.background
@@ -455,15 +456,15 @@ private fun ListItemRowPreview() {
 @Composable
 fun ItemsListPreview() {
     val items = mutableListOf<ListItem>()
+    val a = RemoteId.fake.copy(id = "a")
     repeat(5) {
         val alter = it % 2 == 0
         val ali = ListItem(
-            remoteId = if (alter) "" else "a",
-            imageUri = "",
+            remoteId = if (alter) RemoteId.fake else RemoteId.fake.copy(id = "a"),
+            imageRemoteId = ImageRemoteId(""),
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
             subtitle = "Subtitle",
             playable = alter,
-            contentType = ListItem.ContentType.Track
         )
         items.add(ali)
     }
@@ -471,9 +472,9 @@ fun ItemsListPreview() {
     LazyColumn {
         browserItemsList(
             listItems = ListItems(5, items),
-            track = null,
+            playingTrackId = null,
             thumbnailMap = emptyMap(),
-            libraryState = mapOf("a" to LibraryState(remoteId = "", isAdded = true, canAdd = true)),
+            libraryState = mapOf(a to LibraryState(a, isAdded = true, canAdd = true)),
             executeCommand = { },
             backgroundColor = backgroundColor,
         )
@@ -484,15 +485,15 @@ fun ItemsListPreview() {
 @Composable
 fun ItemsListPreview2() {
     val items = mutableListOf<ListItem>()
+    val a = RemoteId.fake.copy(id = "a")
     repeat(5) {
         val alter = it % 2 == 0
         val ali = ListItem(
-            remoteId = if (alter) "" else "a",
-            imageUri = "",
+            remoteId = if (alter) RemoteId.fake else a,
+            imageRemoteId = ImageRemoteId(""),
             title = if (alter) "Title" else "TitleTitleTitleTitleTitleTitleTitle",
             subtitle = "Subtitle",
             playable = alter,
-            contentType = ListItem.ContentType.Track
         )
         items.add(ali)
     }
@@ -500,9 +501,9 @@ fun ItemsListPreview2() {
     LazyColumn {
         browserItemsList(
             listItems = ListItems(items = items, total = items.size + 10),
-            track = null,
+            playingTrackId = null,
             thumbnailMap = emptyMap(),
-            libraryState = mapOf("a" to LibraryState(remoteId = "", isAdded = true, canAdd = true)),
+            libraryState = mapOf(a to LibraryState(remoteId = a, isAdded = true, canAdd = true)),
             executeCommand = { },
             backgroundColor = backgroundColor,
         )

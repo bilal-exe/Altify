@@ -1,12 +1,12 @@
 package bilal.altify.data.mappers
 
+import bilal.altify.domain.model.ImageRemoteId
+import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.model.LibraryState
-import bilal.altify.domain.model.Item.*
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.model.PlayerContext
-import bilal.altify.domain.model.RemoteId
-import com.spotify.protocol.types.ImageUri
+import bilal.altify.domain.model.SimpleItem
 
 typealias SpotifyTrack = com.spotify.protocol.types.Track
 typealias SpotifyPlayerContext = com.spotify.protocol.types.PlayerContext
@@ -15,26 +15,27 @@ typealias SpotifyListItems = com.spotify.protocol.types.ListItems
 typealias SpotifyLibraryState = com.spotify.protocol.types.LibraryState
 typealias SpotifyAlbum = com.spotify.protocol.types.Album
 typealias SpotifyArtist = com.spotify.protocol.types.Artist
+typealias SpotifyImage = com.spotify.protocol.types.ImageUri
 
 fun SpotifyTrack.toModel() =
-    Track(
+    SimpleItem.Track(
         remoteId = this.uri.spotifyUriToRemoteId(),
         name = this.name,
         artist = this.artist.toModel(),
         artists = this.artists.map { it.toModel() },
         album = this.album.toModel(),
         duration = this.duration,
-        imageUri = this.imageUri.raw,
+        imageId = this.imageUri.toImageRemoteId(),
     )
 
 fun SpotifyAlbum.toModel() =
-    Album(
+    SimpleItem.Album(
         remoteId = this.uri.spotifyUriToRemoteId(),
         name = this.name,
     )
 
 fun SpotifyArtist.toModel() =
-    Artist(
+    SimpleItem.Artist(
         name = this.name,
         remoteId = this.uri.spotifyUriToRemoteId(),
     )
@@ -50,7 +51,7 @@ fun SpotifyPlayerContext.toModel() =
 fun SpotifyListItem.toModel() =
     ListItem(
         remoteId = uri.spotifyUriToRemoteId(),
-        imageUri = imageUri.raw,
+        imageRemoteId = imageUri.toImageRemoteId(),
         title = title,
         subtitle = subtitle,
         playable = playable,
@@ -78,7 +79,7 @@ fun ListItem.toOriginal(): SpotifyListItem {
     return com.spotify.protocol.types.ListItem(
         /* id = */ uri,
         /* uri = */ uri,
-        /* imageUri = */ ImageUri(imageUri),
+        /* imageUri = */ imageRemoteId.toSpotifyImageUri(),
         /* title = */ title,
         /* subtitle = */ subtitle,
         /* playable = */ playable,
@@ -88,11 +89,16 @@ fun ListItem.toOriginal(): SpotifyListItem {
 
 fun String.spotifyUriToRemoteId() =
     RemoteId(
-        remoteId = this.substringAfterLast(':'),
-        contentTypeString = this.substringAfter(':').substringBefore(':')
+        remoteId = substringAfterLast(':'),
+        contentTypeString = substringAfter(':').substringBefore(':')
     )
 
+fun SpotifyImage.toImageRemoteId() =
+    this.raw?.let { ImageRemoteId(it.substringAfterLast(':')) }
+
+fun ImageRemoteId?.toSpotifyImageUri() =
+    if (this != null) SpotifyImage("spotify:image:$remoteId") else SpotifyImage(null)
 
 fun RemoteId.toSpotifyUri() =
-    "spotify:${this.getContentTypeString()}:$remoteId"
+    "spotify:${this.getContentTypeString()}:$id"
 

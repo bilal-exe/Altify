@@ -1,5 +1,6 @@
 package bilal.altify.data.spotify.repositories
 
+import android.util.Log
 import bilal.altify.data.mappers.spotifyUriToRemoteId
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toSpotifyUri
@@ -24,6 +25,7 @@ class UserRepositoryImpl(
                 _currentTrackLibraryState.value = it.toModel()
             }
             .setErrorCallback {
+                Log.d("Error", "${it.message.toString()} $remoteId")
                 throw UserRepository.UserSourceException(it.localizedMessage)
             }
     }
@@ -32,17 +34,17 @@ class UserRepositoryImpl(
     override val browserLibraryState = _browserLibraryState.asStateFlow()
 
     override fun updateBrowserLibraryState(remoteIds: List<RemoteId>) {
-
         _browserLibraryState.value = emptyMap()
-
-        remoteIds.forEach { uri ->
-            userApi.getLibraryState(uri.toSpotifyUri())
+        remoteIds.forEach { remoteId ->
+            userApi.getLibraryState(remoteId.toSpotifyUri())
                 .setResultCallback { result ->
                     _browserLibraryState.update {
-                        it + (result.uri.spotifyUriToRemoteId() to result.toModel())
+                        val ls = result.toModel()
+                        it + (ls.remoteId to ls)
                     }
                 }
                 .setErrorCallback {
+                    Log.d("Error", "${it.message.toString()} $remoteId")
                     throw UserRepository.UserSourceException(it.localizedMessage)
                 }
         }
@@ -58,6 +60,7 @@ class UserRepositoryImpl(
                 updateStates(remoteId)
             }
             .setErrorCallback {
+                Log.d("Error", "${it.message.toString()} $remoteId")
                 throw UserRepository.UserSourceException(it.localizedMessage)
             }
     }
@@ -75,6 +78,7 @@ class UserRepositoryImpl(
                         }
                     }
                     .setErrorCallback {
+                        Log.d("Error", "${it.message.toString()} $remoteId")
                         throw UserRepository.UserSourceException(it.localizedMessage)
                     }
             }

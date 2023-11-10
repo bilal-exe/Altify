@@ -1,5 +1,6 @@
 package bilal.altify.data.spotify.repositories
 
+import android.util.Log
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.PlayerStateAndContext
@@ -21,6 +22,7 @@ class PlayerRepositoryImpl(
                 trySend(it)
             }
             .setErrorCallback {
+                Log.d("Error", it.message.toString())
                 throw PlayerRepository.PlayerSourceException(it.localizedMessage)
             }
         awaitClose {
@@ -36,6 +38,7 @@ class PlayerRepositoryImpl(
                 trySend(it)
             }
             .setErrorCallback {
+                Log.d("Error", it.message.toString())
                 throw PlayerRepository.PlayerSourceException(it.localizedMessage)
             }
 

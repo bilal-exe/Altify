@@ -117,8 +117,8 @@ private fun HomeScreen(
             if (state.browserState.listItems != null) {
                 executeCommand(ImagesCommand.ClearThumbnails)
                 state.browserState.listItems.items.forEach { item ->
-                    if (!item.imageUri.isNullOrBlank())
-                        executeCommand(ImagesCommand.GetThumbnail(item.imageUri))
+                    if (item.imageRemoteId != null)
+                        executeCommand(ImagesCommand.GetThumbnail(item.imageRemoteId))
                 }
                 executeCommand(
                     UserCommand.UpdateBrowserLibraryState(
@@ -154,7 +154,7 @@ private fun HomeScreen(
             }
             browser(
                 preferences = uiState.preferences,
-                playingTrackUri = uiState.trackState.track?.remoteId,
+                playingTrackId = uiState.trackState.track?.remoteId,
                 backgroundColor = browserBackgroundColor,
                 executeCommand = executeCommand,
                 uiState = browserUIState,
@@ -215,7 +215,7 @@ private fun getBackgroundColor(
 fun HomeScreenPreview() {
     HomeScreen(
         navToSettings = { },
-        executeCommand = {},
+        executeCommand = { },
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(),
             preferences = AltPreferencesState()

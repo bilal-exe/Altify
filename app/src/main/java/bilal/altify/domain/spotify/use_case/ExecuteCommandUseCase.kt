@@ -1,5 +1,6 @@
 package bilal.altify.domain.spotify.use_case
 
+import bilal.altify.domain.model.ContentType
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
 import bilal.altify.domain.spotify.use_case.model.Command
@@ -38,7 +39,7 @@ class ExecuteCommandUseCase {
             }
 
             is PlaybackCommand.Play -> {
-                repositories.player.play(command.uri)
+                repositories.player.play(command.remoteId)
             }
 
             is PlaybackCommand.Seek -> {
@@ -50,11 +51,11 @@ class ExecuteCommandUseCase {
             }
 
             is PlaybackCommand.AddToQueue -> {
-                repositories.player.addToQueue(command.uri)
+                repositories.player.addToQueue(command.remoteId)
             }
 
             is PlaybackCommand.SkipToTrack -> {
-                if (browserVisitedHistory.isEmpty()) repositories.player.play(command.trackUri)
+                if (browserVisitedHistory.isEmpty()) repositories.player.play(command.trackId)
                 else repositories.player.skipToTrack(browserVisitedHistory.peek().remoteId, command.index)
             }
 
@@ -72,7 +73,7 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.GetChildrenOfItem -> {
-                if (command.item.contentType == ListItem.ContentType.Track) return
+                if (command.item.remoteId.contentType == ContentType.Track) return
                 browserVisitedHistory.add(command.item)
                 repositories.content.getChildrenOfItem(command.item, BROWSER_PER_PAGE)
             }
@@ -128,7 +129,7 @@ class ExecuteCommandUseCase {
 
             // images
             is ImagesCommand.GetThumbnail -> {
-                repositories.images.getThumbnail(command.uri)
+                repositories.images.getThumbnail(command.imageRemoteId)
             }
 
             is ImagesCommand.ClearThumbnails -> {
@@ -136,20 +137,20 @@ class ExecuteCommandUseCase {
             }
 
             is ImagesCommand.GetArtwork -> {
-                repositories.images.getArtwork(command.uri)
+                repositories.images.getArtwork(command.imageRemoteId)
             }
 
             // user
             is UserCommand.UpdateCurrentTrackState -> {
-                repositories.user.updateCurrentTrackState(command.uri)
+                repositories.user.updateCurrentTrackState(command.remoteId)
             }
 
             is UserCommand.UpdateBrowserLibraryState -> {
-                repositories.user.updateBrowserLibraryState(command.uris)
+                repositories.user.updateBrowserLibraryState(command.remoteIds)
             }
 
             is UserCommand.ToggleLibraryStatus -> {
-                repositories.user.toggleLibraryStatus(command.uri, command.added)
+                repositories.user.toggleLibraryStatus(command.remoteId, command.added)
             }
         }
 

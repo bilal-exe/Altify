@@ -1,5 +1,7 @@
 package bilal.altify.domain.spotify.use_case.model
 
+import bilal.altify.domain.model.ImageRemoteId
+import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
 
@@ -13,15 +15,15 @@ sealed interface PlaybackCommand : Command {
 
     object SkipNext : PlaybackCommand
 
-    data class Play(val uri: String) : PlaybackCommand
+    data class Play(val remoteId: RemoteId) : PlaybackCommand
 
     data class Seek(val position: Long) : PlaybackCommand
 
     data class SeekRelative(val position: Long) : PlaybackCommand
 
-    data class AddToQueue(val uri: String) : PlaybackCommand
+    data class AddToQueue(val remoteId: RemoteId) : PlaybackCommand
 
-    data class SkipToTrack(val trackUri: String, val index: Int) : PlaybackCommand
+    data class SkipToTrack(val trackId: RemoteId, val index: Int) : PlaybackCommand
 
     object ToggleShuffle : PlaybackCommand
 
@@ -55,9 +57,9 @@ sealed interface VolumeCommand : Command {
 
 sealed interface ImagesCommand : Command {
 
-    data class GetArtwork(val uri: String) : ImagesCommand
+    data class GetArtwork(val imageRemoteId: ImageRemoteId) : ImagesCommand
 
-    data class GetThumbnail(val uri: String) : ImagesCommand
+    data class GetThumbnail(val imageRemoteId: ImageRemoteId) : ImagesCommand
 
     object ClearThumbnails : ImagesCommand
 
@@ -65,10 +67,10 @@ sealed interface ImagesCommand : Command {
 
 sealed interface UserCommand : Command {
 
-    data class UpdateCurrentTrackState(val uri: String) : UserCommand
+    data class UpdateCurrentTrackState(val remoteId: RemoteId) : UserCommand
 
-    data class UpdateBrowserLibraryState(val uris: List<String>) : UserCommand
+    data class UpdateBrowserLibraryState(val remoteIds: List<RemoteId>) : UserCommand
 
-    data class ToggleLibraryStatus(val uri: String, val added: Boolean) : UserCommand
+    data class ToggleLibraryStatus(val remoteId: RemoteId, val added: Boolean) : UserCommand
 
 }

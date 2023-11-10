@@ -1,7 +1,7 @@
 package bilal.altify.domain.spotify.repositories.appremote
 
 import android.graphics.Bitmap
-import bilal.altify.domain.model.RemoteId
+import bilal.altify.domain.model.ImageRemoteId
 import kotlinx.coroutines.flow.Flow
 
 /* this class could be decoupled from the Android framework by removing the Bitmap reference
@@ -11,11 +11,11 @@ interface ImagesRepository {
 
     val artworkFlow: Flow<Bitmap?>
 
-    fun getArtwork(remoteId: RemoteId)
+    fun getArtwork(imageRemoteId: ImageRemoteId)
 
-    val thumbnailFlow: Flow<Map<RemoteId, Bitmap>>
+    val thumbnailFlow: Flow<Map<ImageRemoteId, Bitmap>>
 
-    fun getThumbnail(remoteId: RemoteId)
+    fun getThumbnail(imageRemoteId: ImageRemoteId)
 
     fun clearThumbnails()
 

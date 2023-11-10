@@ -1,5 +1,6 @@
 package bilal.altify.data.spotify.repositories
 
+import android.util.Log
 import bilal.altify.domain.spotify.repositories.appremote.VolumeRepository
 import com.spotify.android.appremote.api.ConnectApi
 import kotlinx.coroutines.channels.awaitClose
@@ -19,6 +20,7 @@ class VolumeRepositoryImpl(
                 trySend(it.mVolume)
             }
             .setErrorCallback {
+                Log.d("Error", it.message.toString())
                 throw VolumeRepository.VolumeSourceException(it.localizedMessage)
             }
 

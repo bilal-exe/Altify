@@ -7,6 +7,6 @@ data class PlayerContext(
     val type: String
 ) {
     companion object {
-        val example = PlayerContext(RemoteId(""), "Title", "Subtitle", "Type")
+        val example = PlayerContext(RemoteId.fake, "Title", "Subtitle", "Type")
     }
 }

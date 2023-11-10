@@ -2,7 +2,7 @@ package bilal.altify.domain.model
 
 // represents the ID for the item
 data class RemoteId(
-    val remoteId: String,
+    val id: String,
     val contentType: ContentType
 ) {
 
@@ -10,7 +10,7 @@ data class RemoteId(
             this(remoteId, stringToContentType[contentTypeString]!!)
 
     init {
-        if (!remoteId.matches(regex)) throw InvalidRemoteIdException(remoteId)
+        if (!id.matches(regex)) throw InvalidRemoteIdException(id)
     }
 
     fun getContentTypeString() =
@@ -27,8 +27,13 @@ data class RemoteId(
         )
         private val contentTypeToString = stringToContentType.entries
             .associate { (k, v) -> v to k }
+        val fake = RemoteId("", ContentType.Track)
     }
 }
+
+data class ImageRemoteId(
+    val remoteId: String
+)
 
 enum class ContentType {
     Section,

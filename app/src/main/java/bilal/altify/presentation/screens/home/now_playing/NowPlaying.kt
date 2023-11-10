@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.PlayerContext
-import bilal.altify.domain.model.Item
-import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
+import bilal.altify.domain.model.SimpleItem
 import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand
 import bilal.altify.domain.spotify.use_case.model.PlaybackCommand
 import bilal.altify.domain.spotify.use_case.model.VolumeCommand
@@ -84,9 +84,9 @@ private fun NowPlaying(
 
     // gets new artwork for each new track
     LaunchedEffect(key1 = uiState.trackState.track?.toSpotifyUri()) {
-        val uri = uiState.trackState.track?.imageUri
-        if (!uri.isNullOrEmpty()) {
-            executeCommand(ImagesCommand.GetArtwork(uri))
+        val imageRemoteId = uiState.trackState.track?.imageId
+        if (imageRemoteId != null) {
+            executeCommand(ImagesCommand.GetArtwork(imageRemoteId))
         }
     }
 
@@ -284,7 +284,7 @@ private fun NowPlayingPreview() {
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(
                 playerContext = PlayerContext.example,
-                track = Item.Track.example,
+                track = SimpleItem.Track.fake,
                 playbackPosition = 5000
             ),
             preferences = AltPreferencesState(),
@@ -302,7 +302,7 @@ private fun NowPlayingDarkPreview() {
             uiState = NowPlayingUIState.Success(
                 trackState = CurrentTrackState(
                     playerContext = PlayerContext.example,
-                    track = Item.Track.example,
+                    track = SimpleItem.Track.fake,
                     playbackPosition = 5000
                 ),
                 preferences = AltPreferencesState(),
@@ -321,7 +321,7 @@ private fun NowPlayingToggledPreview() {
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(
                 playerContext = PlayerContext.example,
-                track = Item.Track.example,
+                track = SimpleItem.Track.fake,
                 playbackPosition = 5000
             ),
             preferences = AltPreferencesState(),
