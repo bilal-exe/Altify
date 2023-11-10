@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bilal.altify.R
-import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.spotify.use_case.model.BrowserState
 import bilal.altify.domain.spotify.use_case.model.Command
@@ -78,8 +78,8 @@ private fun LazyListScope.browser(
     executeCommand: (Command) -> Unit,
     backgroundColor: Color,
 ) {
-    when {
-        browserState.listItems().isEmpty() ->
+    when(browserState.listItems) {
+        null ->
             emptyListItems()
         else ->
             browserItemsList(
@@ -150,15 +150,15 @@ private fun EmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun BrowserPreview() {
-    val items = mutableListOf<MediaItem>()
+    val items = mutableListOf<ListItem>()
     repeat(5) {
-        val ali = MediaItem(
-            uri = "",
+        val ali = ListItem(
+            remoteId = "",
             imageUri = "",
             title = "Title",
             subtitle = "Subtitle",
             playable = it % 2 == 0,
-            hasChildren = true
+            contentType = ListItem.ContentType.Track
         )
         items.add(ali)
     }
@@ -168,7 +168,7 @@ fun BrowserPreview() {
             preferences = AltPreferencesState(),
             playingTrackUri = null,
             browserState = BrowserState(
-                listItems = ListItems(items)
+                listItems = ListItems(5, items)
             ),
             executeCommand = { },
             backgroundColor = backgroundColor,

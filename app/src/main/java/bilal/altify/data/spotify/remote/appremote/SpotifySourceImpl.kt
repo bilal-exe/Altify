@@ -16,7 +16,6 @@ import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositorie
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.protocol.error.SpotifyAppRemoteException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -30,7 +29,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -49,9 +47,7 @@ class SpotifySourceImpl(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val connectorFlow = connectRequestChannel
         .consumeAsFlow()
-        .onStart {
-            emit(Unit)
-        }
+        .onStart { emit(Unit) }
         .flatMapLatest {
 
             callbackFlow {
@@ -62,29 +58,14 @@ class SpotifySourceImpl(
 
                     override fun onConnected(sar: SpotifyAppRemote) {
                         Log.d("SpotifyAppRemote", "Connected")
-                        launch {
-                            send(
-                                SpotifyConnectorResponse.Connected(
-                                    AltifyRepositories(
-                                        player = PlayerRepositoryImpl(sar.playerApi),
-                                        content = ContentRepositoryImpl(sar.contentApi),
-                                        images = ImagesRepositoryImpl(sar.imagesApi),
-                                        volume = VolumeRepositoryImpl(sar.connectApi),
-                                        user = UserRepositoryImpl(sar.userApi)
-                                    )
-                                )
-                            )
-                        }
+                        trySend(SpotifyConnectorResponse.Connected(sar.toAltifyRepositories()))
                         spotifyAppRemote = sar
                     }
 
                     override fun onFailure(throwable: Throwable) {
                         Log.d("SpotifyAppRemote", throwable.toString())
-                        launch {
-                            send(
-                                SpotifyConnectorResponse.ConnectionFailed(throwable as SpotifyAppRemoteException)
-                            )
-                        }
+                        trySend(SpotifyConnectorResponse.ConnectionFailed(throwable))
+
                     }
 
                 }
@@ -112,3 +93,12 @@ class SpotifySourceImpl(
         connectRequestChannel.trySend(Unit)
     }
 }
+
+private fun SpotifyAppRemote.toAltifyRepositories(): AltifyRepositories =
+    AltifyRepositories(
+        player = PlayerRepositoryImpl(this.playerApi),
+        content = ContentRepositoryImpl(this.contentApi),
+        images = ImagesRepositoryImpl(this.imagesApi),
+        volume = VolumeRepositoryImpl(this.connectApi),
+        user = UserRepositoryImpl(this.userApi)
+    )

@@ -1,6 +1,6 @@
 package bilal.altify.domain.spotify.use_case.model
 
-import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
 
 sealed interface Command
@@ -33,13 +33,13 @@ sealed interface ContentCommand : Command {
 
     object GetRecommended : ContentCommand
 
-    data class GetChildrenOfItem(val mediaItem: MediaItem) : ContentCommand
+    data class GetChildrenOfItem(val item: ListItem) : ContentCommand
 
     data class LoadMoreChildrenOfItem(val listItems: ListItems) : ContentCommand
 
     object GetPrevious : ContentCommand
 
-    data class Play(val mediaItem: MediaItem) : ContentCommand
+    data class Play(val item: ListItem) : ContentCommand
 
 }
 

@@ -1,7 +1,10 @@
 package bilal.altify.data.spotify.repositories
 
+import bilal.altify.data.mappers.spotifyUriToRemoteId
 import bilal.altify.data.mappers.toModel
+import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.spotify.repositories.appremote.UserRepository
 import com.spotify.android.appremote.api.UserApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +18,8 @@ class UserRepositoryImpl(
     private val _currentTrackLibraryState = MutableStateFlow<LibraryState?>(null)
     override val currentTrackLibraryState = _currentTrackLibraryState.asStateFlow()
 
-    override fun updateCurrentTrackState(uri: String) {
-        userApi.getLibraryState(uri)
+    override fun updateCurrentTrackState(remoteId: RemoteId) {
+        userApi.getLibraryState(remoteId.toSpotifyUri())
             .setResultCallback {
                 _currentTrackLibraryState.value = it.toModel()
             }
@@ -25,19 +28,19 @@ class UserRepositoryImpl(
             }
     }
 
-    private val _browserLibraryState = MutableStateFlow<Map<String, LibraryState>>(emptyMap())
+    private val _browserLibraryState = MutableStateFlow<Map<RemoteId, LibraryState>>(emptyMap())
     override val browserLibraryState = _browserLibraryState.asStateFlow()
 
-    override fun updateBrowserLibraryState(uris: List<String>) {
+    override fun updateBrowserLibraryState(remoteIds: List<RemoteId>) {
 
         _browserLibraryState.value = emptyMap()
-        val newLibraryStates = mutableMapOf<String, LibraryState>()
 
-        uris.forEach { uri ->
-            userApi.getLibraryState(uri)
-                .setResultCallback {
-                    newLibraryStates[it.uri] = it.toModel()
-                    _browserLibraryState.update { newLibraryStates }
+        remoteIds.forEach { uri ->
+            userApi.getLibraryState(uri.toSpotifyUri())
+                .setResultCallback { result ->
+                    _browserLibraryState.update {
+                        it + (result.uri.spotifyUriToRemoteId() to result.toModel())
+                    }
                 }
                 .setErrorCallback {
                     throw UserRepository.UserSourceException(it.localizedMessage)
@@ -45,32 +48,30 @@ class UserRepositoryImpl(
         }
     }
 
-    override fun toggleLibraryStatus(uri: String, added: Boolean) {
+    override fun toggleLibraryStatus(remoteId: RemoteId, added: Boolean) {
         val addOrRemove = when (added) {
             true -> userApi::addToLibrary
             false -> userApi::removeFromLibrary
         }
-        addOrRemove(uri)
+        addOrRemove(remoteId.toSpotifyUri())
             .setResultCallback {
-                updateStates(uri = uri)
+                updateStates(remoteId)
             }
             .setErrorCallback {
                 throw UserRepository.UserSourceException(it.localizedMessage)
             }
     }
 
-    private fun updateStates(uri: String) {
-        when (uri) {
-            currentTrackLibraryState.value?.uri -> {
-                updateCurrentTrackState(uri = uri)
+    private fun updateStates(remoteId: RemoteId) {
+        when (remoteId) {
+            currentTrackLibraryState.value?.remoteId -> {
+                updateCurrentTrackState(remoteId = remoteId)
             }
             in browserLibraryState.value.keys -> {
-                userApi.getLibraryState(uri)
+                userApi.getLibraryState(remoteId.toSpotifyUri())
                     .setResultCallback { ls ->
                         _browserLibraryState.update {
-                            val mm = it.toMutableMap()
-                            mm[uri] = ls.toModel()
-                            mm.toMap()
+                            it + (remoteId to ls.toModel())
                         }
                     }
                     .setErrorCallback {

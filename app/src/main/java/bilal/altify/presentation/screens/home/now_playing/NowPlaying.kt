@@ -39,7 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.PlayerContext
+import bilal.altify.domain.model.Item
 import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand
@@ -81,7 +83,7 @@ private fun NowPlaying(
 ) {
 
     // gets new artwork for each new track
-    LaunchedEffect(key1 = uiState.trackState.track?.uri) {
+    LaunchedEffect(key1 = uiState.trackState.track?.toSpotifyUri()) {
         val uri = uiState.trackState.track?.imageUri
         if (!uri.isNullOrEmpty()) {
             executeCommand(ImagesCommand.GetArtwork(uri))
@@ -282,7 +284,7 @@ private fun NowPlayingPreview() {
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(
                 playerContext = PlayerContext.example,
-                track = Track.example,
+                track = Item.Track.example,
                 playbackPosition = 5000
             ),
             preferences = AltPreferencesState(),
@@ -300,7 +302,7 @@ private fun NowPlayingDarkPreview() {
             uiState = NowPlayingUIState.Success(
                 trackState = CurrentTrackState(
                     playerContext = PlayerContext.example,
-                    track = Track.example,
+                    track = Item.Track.example,
                     playbackPosition = 5000
                 ),
                 preferences = AltPreferencesState(),
@@ -319,7 +321,7 @@ private fun NowPlayingToggledPreview() {
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(
                 playerContext = PlayerContext.example,
-                track = Track.example,
+                track = Item.Track.example,
                 playbackPosition = 5000
             ),
             preferences = AltPreferencesState(),

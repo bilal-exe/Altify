@@ -1,7 +1,7 @@
 package bilal.altify.domain.spotify.repositories.web_api
 
-import bilal.altify.domain.model.Album
-import bilal.altify.domain.model.MediaItemsList
+import bilal.altify.domain.model.ExtendedItemList
+import bilal.altify.domain.model.ExtendedItem.Album
 
 interface AlbumsRepository {
 
@@ -9,7 +9,7 @@ interface AlbumsRepository {
 
     suspend fun getAlbums(ids: List<String>): List<Album>
 
-    suspend fun getSavedAlbums(): MediaItemsList<Album>
+    suspend fun getSavedAlbums(): ExtendedItemList<Album>
 
     suspend fun saveAlbums(ids: List<String>)
 
@@ -17,6 +17,6 @@ interface AlbumsRepository {
 
     suspend fun checkAlbumIsSaved(ids: List<String>): List<Boolean>
 
-    suspend fun getNewReleases(): MediaItemsList<Album>
+    suspend fun getNewReleases(): ExtendedItemList<Album>
 
 }

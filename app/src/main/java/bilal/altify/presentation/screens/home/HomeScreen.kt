@@ -114,18 +114,15 @@ private fun HomeScreen(
     if (state is BrowserUIState.Success) {
         LaunchedEffect(key1 = state.browserState.listItems) {
             Log.d("browserUIState", "called")
-            if (state.browserState.listItems().isNotEmpty()) {
+            if (state.browserState.listItems != null) {
                 executeCommand(ImagesCommand.ClearThumbnails)
-                state.browserState.listItems().forEach { item ->
-                    if (!item.imageUri.isNullOrBlank()) executeCommand(
-                        ImagesCommand.GetThumbnail(
-                            item.imageUri
-                        )
-                    )
+                state.browserState.listItems.items.forEach { item ->
+                    if (!item.imageUri.isNullOrBlank())
+                        executeCommand(ImagesCommand.GetThumbnail(item.imageUri))
                 }
                 executeCommand(
                     UserCommand.UpdateBrowserLibraryState(
-                        state.browserState.listItems().map { it.uri }
+                        state.browserState.listItems.items.map { it.remoteId }
                     )
                 )
             }
@@ -134,7 +131,7 @@ private fun HomeScreen(
 
     LaunchedEffect(key1 = lazyListState.canScrollForward) {
         if (state !is BrowserUIState.Success) return@LaunchedEffect
-        if (!lazyListState.canScrollForward) {
+        if (!lazyListState.canScrollForward && state.browserState.listItems != null) {
             executeCommand(ContentCommand.LoadMoreChildrenOfItem(state.browserState.listItems))
         }
     }
@@ -157,7 +154,7 @@ private fun HomeScreen(
             }
             browser(
                 preferences = uiState.preferences,
-                playingTrackUri = uiState.trackState.track?.uri,
+                playingTrackUri = uiState.trackState.track?.remoteId,
                 backgroundColor = browserBackgroundColor,
                 executeCommand = executeCommand,
                 uiState = browserUIState,

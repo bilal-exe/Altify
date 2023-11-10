@@ -3,7 +3,8 @@ package bilal.altify.data.spotify.repositories
 import bilal.altify.data.mappers.SpotifyListItems
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toOriginal
-import bilal.altify.domain.model.MediaItem
+import bilal.altify.domain.model.ListItem
+import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.spotify.repositories.appremote.ContentRepository
 import com.spotify.android.appremote.api.ContentApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ class ContentRepositoryImpl(
         _listItemsFlow.value = lis.toModel()
     }
 
-    private val _listItemsFlow = MutableStateFlow(TODO())
+    private val _listItemsFlow = MutableStateFlow<ListItems?>(null)
     override val listItemsFlow = _listItemsFlow.asStateFlow()
 
     init {
@@ -32,29 +33,28 @@ class ContentRepositoryImpl(
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun getChildrenOfItem(mediaItem: MediaItem, count: Int) {
+    override fun getChildrenOfItem(item: ListItem, count: Int) {
         contentApi
-            .getChildrenOfItem(mediaItem.toOriginal(), count, 0)
+            .getChildrenOfItem(item.toOriginal(), count, 0)
             .setResultCallback(::listItemsCallback)
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun loadMoreChildrenOfItem(mediaItem: MediaItem, offset: Int, count: Int) {
+    override fun loadMoreChildrenOfItem(item: ListItem, offset: Int, count: Int) {
         contentApi
-            .getChildrenOfItem(mediaItem.toOriginal(), count, offset)
-            .setResultCallback { res ->
-                _listItemsFlow.update {
-                    it.copy(
+            .getChildrenOfItem(item.toOriginal(), count, offset)
+            .setResultCallback { res -> _listItemsFlow.update {
+                    it?.copy(
                         items = it.items + res.toModel().items,
                         total = res.total
                     )
-                }
-            }
+                        ?: res.toModel()
+            } }
             .setErrorCallback { throw ContentRepository.ContentSourceException(it.localizedMessage) }
     }
 
-    override fun play(mediaItem: MediaItem) {
-        contentApi.playContentItem(mediaItem.toOriginal())
+    override fun play(item: ListItem) {
+        contentApi.playContentItem(item.toOriginal())
     }
 
 }

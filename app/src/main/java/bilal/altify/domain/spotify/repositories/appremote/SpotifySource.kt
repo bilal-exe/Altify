@@ -28,6 +28,6 @@ sealed interface SpotifyConnectorResponse {
 
     data class Connected(val repositories: AltifyRepositories): SpotifyConnectorResponse
 
-    data class ConnectionFailed(val exception: Exception): SpotifyConnectorResponse
+    data class ConnectionFailed(val exception: Throwable): SpotifyConnectorResponse
 
 }

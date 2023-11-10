@@ -82,8 +82,8 @@ private fun VolumeOverlay(volume: Float) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         LinearProgressIndicator(
-            progress = volume,
-            trackColor = bottomColor
+            progress = { volume },
+            trackColor = bottomColor,
         )
     }
 }

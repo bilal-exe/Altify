@@ -1,7 +1,7 @@
 package bilal.altify.domain.model
 
 data class Image(
-    val remoteId: String,
+    val remoteId: RemoteId,
     val height: Int,
     val width: Int
 )

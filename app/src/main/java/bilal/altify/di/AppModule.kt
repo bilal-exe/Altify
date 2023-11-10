@@ -51,7 +51,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesWebAPIRepository(@ApplicationContext context: Context): AccessTokenRepository =
+    fun providesAccessTokenRepository(@ApplicationContext context: Context): AccessTokenRepository =
         AccessTokenRepositoryImpl(
             PreferenceDataStoreFactory.create(
                 produceFile = { context.preferencesDataStoreFile("AccessToken") }

@@ -52,17 +52,18 @@ class AltifyViewModel @Inject constructor(
                 repositories = spotifyConnector.repositories,
                 token = token.accessToken
             )
-        else if (spotifyConnector is SpotifyConnectorResponse.ConnectionFailed)
-            AltifyUIState.Disconnected(
-                Error.SpotifyConnector(spotifyConnector.exception.localizedMessage)
-            )
-        else {
-            val error = when (token) {
-                TokenState.Empty -> APITokenError.EMPTY
-                is TokenState.Token -> APITokenError.EXPIRED
+        else
+            if (spotifyConnector is SpotifyConnectorResponse.ConnectionFailed)
+                AltifyUIState.Disconnected(
+                    Error.SpotifyConnector(spotifyConnector.exception.localizedMessage)
+                )
+            else {
+                val error = when (token) {
+                    TokenState.Empty -> APITokenError.EMPTY
+                    is TokenState.Token -> APITokenError.EXPIRED
+                }
+                AltifyUIState.Disconnected(Error.APIToken(error))
             }
-            AltifyUIState.Disconnected(Error.APIToken(error))
-        }
     }
         .stateIn(
             scope = viewModelScope,
@@ -112,7 +113,9 @@ class AltifyViewModel @Inject constructor(
                 AuthorizationResponse.Type.ERROR ->
                     _errors.emit(response.error ?: "Could not get a Spotify API token")
                 else ->
-                    _errors.emit(response.error ?: "There was a problem getting the Spotify API token")
+                    _errors.emit(
+                        response.error ?: "There was a problem getting the Spotify API token"
+                    )
             }
         }
     }

@@ -1,8 +1,7 @@
 package bilal.altify.domain.spotify.use_case
 
+import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
-import bilal.altify.domain.model.MediaItem
-import bilal.altify.domain.model.ContentType
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ContentCommand
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand
@@ -13,7 +12,7 @@ import java.util.Stack
 
 class ExecuteCommandUseCase {
 
-    private val browserVisitedHistory: Stack<MediaItem> = Stack()
+    private val browserVisitedHistory: Stack<ListItem> = Stack()
 
     companion object {
         const val BROWSER_PER_PAGE = 25
@@ -56,7 +55,7 @@ class ExecuteCommandUseCase {
 
             is PlaybackCommand.SkipToTrack -> {
                 if (browserVisitedHistory.isEmpty()) repositories.player.play(command.trackUri)
-                else repositories.player.skipToTrack(browserVisitedHistory.peek().uri, command.index)
+                else repositories.player.skipToTrack(browserVisitedHistory.peek().remoteId, command.index)
             }
 
             PlaybackCommand.ToggleRepeat -> {
@@ -73,21 +72,21 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.GetChildrenOfItem -> {
-                if (command.mediaItem.type == ContentType.Track) return
-                browserVisitedHistory.add(command.mediaItem)
-                repositories.content.getChildrenOfItem(command.mediaItem, BROWSER_PER_PAGE)
+                if (command.item.contentType == ListItem.ContentType.Track) return
+                browserVisitedHistory.add(command.item)
+                repositories.content.getChildrenOfItem(command.item, BROWSER_PER_PAGE)
             }
 
             is ContentCommand.LoadMoreChildrenOfItem -> {
-                if (command.listItems().size == command.listItems.total) return
+                if (command.listItems.items.size == command.listItems.total) return
                 if (browserVisitedHistory.isEmpty()) return
-                val listItemsSize = command.listItems().size
+                val listItemsSize = command.listItems.items.size
                 val loadCount = if (listItemsSize + BROWSER_PER_PAGE > command.listItems.total) {
                     command.listItems.total - listItemsSize
                 } else BROWSER_PER_PAGE
                 repositories.content.loadMoreChildrenOfItem(
-                    mediaItem = browserVisitedHistory.peek(),
-                    offset = command.listItems().size,
+                    item = browserVisitedHistory.peek(),
+                    offset = command.listItems.items.size,
                     count = loadCount
                 )
             }
@@ -111,7 +110,7 @@ class ExecuteCommandUseCase {
             }
 
             is ContentCommand.Play -> {
-                repositories.content.play(command.mediaItem)
+                repositories.content.play(command.item)
             }
 
             //volume

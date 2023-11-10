@@ -4,9 +4,10 @@ import android.graphics.Bitmap
 import bilal.altify.domain.model.LibraryState
 import bilal.altify.domain.model.PlayerContext
 import bilal.altify.domain.model.RepeatMode
+import bilal.altify.domain.model.Item
 
 data class CurrentTrackState(
-    val track: Track? = null,
+    val track: Item.Track? = null,
     val isPaused: Boolean = true,
     val playbackPosition: Long = 0L,
     val playerContext: PlayerContext? = null,

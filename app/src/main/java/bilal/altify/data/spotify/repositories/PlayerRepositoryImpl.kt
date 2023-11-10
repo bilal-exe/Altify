@@ -1,7 +1,9 @@
 package bilal.altify.data.spotify.repositories
 
 import bilal.altify.data.mappers.toModel
+import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.PlayerStateAndContext
+import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.model.RepeatMode
 import bilal.altify.domain.spotify.repositories.appremote.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
@@ -69,12 +71,12 @@ class PlayerRepositoryImpl(
         }
     }
 
-    override fun play(uri: String) {
-        playerApi.play(uri)
+    override fun play(remoteId: RemoteId) {
+        playerApi.play(remoteId.toSpotifyUri())
     }
 
-    override fun addToQueue(uri: String) {
-        playerApi.queue(uri)
+    override fun addToQueue(remoteId: RemoteId) {
+        playerApi.queue(remoteId.toSpotifyUri())
     }
 
     override fun seek(position: Long) {
@@ -93,8 +95,8 @@ class PlayerRepositoryImpl(
         playerApi.skipPrevious()
     }
 
-    override fun skipToTrack(uri: String, index: Int) {
-        playerApi.skipToIndex(uri, index)
+    override fun skipToTrack(remoteId: RemoteId, index: Int) {
+        playerApi.skipToIndex(remoteId.toSpotifyUri(), index)
     }
 
     override fun toggleRepeat() {

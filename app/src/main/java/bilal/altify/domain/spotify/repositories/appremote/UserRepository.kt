@@ -1,19 +1,20 @@
 package bilal.altify.domain.spotify.repositories.appremote
 
 import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.RemoteId
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
     val currentTrackLibraryState: Flow<LibraryState?>
 
-    fun updateCurrentTrackState(uri: String)
+    val browserLibraryState: Flow<Map<RemoteId, LibraryState>>
 
-    val browserLibraryState: Flow<Map<String, LibraryState>>
+    fun updateCurrentTrackState(remoteId: RemoteId)
 
-    fun updateBrowserLibraryState(uris: List<String>)
+    fun updateBrowserLibraryState(remoteIds: List<RemoteId>)
 
-    fun toggleLibraryStatus(uri: String, added: Boolean)
+    fun toggleLibraryStatus(remoteId: RemoteId, added: Boolean)
 
     class UserSourceException(override val message: String?): Exception(message)
 

@@ -28,7 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.Item
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.UserCommand
 import bilal.altify.presentation.prefrences.MusicInfoAlignmentConfig
@@ -37,7 +39,7 @@ import bilal.altify.presentation.util.ShakeBounceAnimation
 
 @Composable
 fun NowPlayingMusicInfo(
-    track: Track?,
+    track: Item.Track?,
     config: MusicInfoAlignmentConfig,
     libraryState: LibraryState?,
     executeCommand: (Command) -> Unit,
@@ -52,7 +54,7 @@ fun NowPlayingMusicInfo(
     }
 
     LaunchedEffect(key1 = track) {
-        if (track != null) getLibraryState(track.uri)
+        if (track != null) getLibraryState(track.toSpotifyUri())
     }
 
     Crossfade(
@@ -76,8 +78,8 @@ fun NowPlayingMusicInfo(
 @Composable
 private fun NowPlayingMusicInfo(
     name: String,
-    artist: Artist,
-    album: Album,
+    artist: Item.Artist,
+    album: Item.Album,
     config: MusicInfoAlignmentConfig,
     libraryState: LibraryState?,
     toggleLibraryStatus: (String, Boolean) -> Unit,
@@ -153,7 +155,7 @@ fun AddOrRemoveFromLibraryButton(
             icon = icon,
             modifier = Modifier
                 .clickable(interactionSource = interactionSource, indication = null ) {
-                    toggleLibraryStatus(libraryState.uri, !libraryState.isAdded)
+                    toggleLibraryStatus(libraryState.remoteId, !libraryState.isAdded)
                 },
         ) {
             Icon(
@@ -174,8 +176,8 @@ fun AddOrRemoveFromLibraryButton(
 private fun NowPlayingMusicInfoPreview() {
     NowPlayingMusicInfo(
         name = "name",
-        artist = Artist("artist", ""),
-        album = Album("album",""),
+        artist = Item.Artist("artist", ""),
+        album = Item.Album("album", ""),
         config = MusicInfoAlignmentConfig.CENTER,
         libraryState = LibraryState("", false, canAdd = false),
         toggleLibraryStatus = { _, _ -> },
@@ -188,8 +190,8 @@ private fun NowPlayingMusicInfoPreview() {
 private fun NowPlayingLongMusicInfoPreview() {
     NowPlayingMusicInfo(
         name = "namenamenamenamenamenamenamename",
-        artist = Artist("artist",""),
-        album = Album("album",""),
+        artist = Item.Artist("artist", ""),
+        album = Item.Album("album", ""),
         config = MusicInfoAlignmentConfig.CENTER,
         libraryState = LibraryState("", false, canAdd = false),
         toggleLibraryStatus = { _, _ -> },
@@ -202,8 +204,8 @@ private fun NowPlayingLongMusicInfoPreview() {
 private fun NowPlayingMusicInfoLeftPreview() {
     NowPlayingMusicInfo(
         name = "name",
-        artist = Artist("artist",""),
-        album = Album("album",""),
+        artist = Item.Artist("artist", ""),
+        album = Item.Album("album", ""),
         config = MusicInfoAlignmentConfig.LEFT,
         libraryState = LibraryState("", isAdded = false, canAdd = false),
         toggleLibraryStatus = { _, _ -> },

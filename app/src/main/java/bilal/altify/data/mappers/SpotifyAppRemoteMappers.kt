@@ -1,8 +1,11 @@
 package bilal.altify.data.mappers
 
 import bilal.altify.domain.model.LibraryState
+import bilal.altify.domain.model.Item.*
+import bilal.altify.domain.model.ListItem
+import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.model.PlayerContext
-import bilal.altify.domain.model.*
+import bilal.altify.domain.model.RemoteId
 import com.spotify.protocol.types.ImageUri
 
 typealias SpotifyTrack = com.spotify.protocol.types.Track
@@ -14,77 +17,64 @@ typealias SpotifyAlbum = com.spotify.protocol.types.Album
 typealias SpotifyArtist = com.spotify.protocol.types.Artist
 
 fun SpotifyTrack.toModel() =
-    MediaItem.Track(
-        remoteId = this.uri.uriToSpotifyId(),
+    Track(
+        remoteId = this.uri.spotifyUriToRemoteId(),
+        name = this.name,
         artist = this.artist.toModel(),
         artists = this.artists.map { it.toModel() },
         album = this.album.toModel(),
         duration = this.duration,
-        name = this.name,
         imageUri = this.imageUri.raw,
     )
 
 fun SpotifyAlbum.toModel() =
     Album(
-        remoteId = this.uri.uriToSpotifyId(),
+        remoteId = this.uri.spotifyUriToRemoteId(),
         name = this.name,
     )
 
 fun SpotifyArtist.toModel() =
     Artist(
         name = this.name,
-        remoteId = this.uri.uriToSpotifyId(),
+        remoteId = this.uri.spotifyUriToRemoteId(),
     )
 
 fun SpotifyPlayerContext.toModel() =
     PlayerContext(
-        uri = this.uri,
+        remoteId = uri.spotifyUriToRemoteId(),
         title = this.title,
         subtitle = this.subtitle,
         type = this.type,
     )
 
 fun SpotifyListItem.toModel() =
-    when (uri.substringAfter(':').substringBefore(':')) {
-        "album" ->
-            Album(
-                remoteId = this.uri.uriToSpotifyId(),
-                name = this.title,
-            )
-        "artist" ->
-            Artist(
-                remoteId = this.uri.uriToSpotifyId(),
-                name = this.title,
-            )
-        "playlist" ->
-            Playlist(
-                remoteId = this.uri.uriToSpotifyId(),
-                name = this.title,
-
-            )
-        "track" ->
-            Track(
-                remoteId = this.uri.uriToSpotifyId(),
-                name = this.title,
-            )
-        "section" -> TODO()
-        else -> throw Exception()
-    }
+    ListItem(
+        remoteId = uri.spotifyUriToRemoteId(),
+        imageUri = imageUri.raw,
+        title = title,
+        subtitle = subtitle,
+        playable = playable,
+    )
 
 fun SpotifyListItems.toModel() =
-    MediaItemsList(
+    ListItems(
         items = this.items.map { it.toModel() },
         total = this.total
     )
 
 fun SpotifyLibraryState.toModel() =
     LibraryState(
-        uri = this.uri,
+        remoteId = uri.spotifyUriToRemoteId(),
         isAdded = this.isAdded,
         canAdd = this.canAdd
     )
 
-fun MediaItem.toOriginal(): SpotifyListItem {
+/*
+only the `id` and `playable` field is required as the spotify SDK functions `getChildrenOfItem`
+and `playContentItem` only use these
+*/
+fun ListItem.toOriginal(): SpotifyListItem {
+    val uri = this.remoteId.toSpotifyUri()
     return com.spotify.protocol.types.ListItem(
         /* id = */ uri,
         /* uri = */ uri,
@@ -92,11 +82,17 @@ fun MediaItem.toOriginal(): SpotifyListItem {
         /* title = */ title,
         /* subtitle = */ subtitle,
         /* playable = */ playable,
-        /* hasChildren = */ hasChildren
+        /* hasChildren = */ true
     )
 }
 
-private fun String.uriToSpotifyId() =
-    this.substringAfterLast(':')
+fun String.spotifyUriToRemoteId() =
+    RemoteId(
+        remoteId = this.substringAfterLast(':'),
+        contentTypeString = this.substringAfter(':').substringBefore(':')
+    )
 
-private fun
+
+fun RemoteId.toSpotifyUri() =
+    "spotify:${this.getContentTypeString()}:$remoteId"
+
