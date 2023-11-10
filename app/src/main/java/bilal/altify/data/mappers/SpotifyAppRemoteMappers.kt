@@ -1,5 +1,6 @@
 package bilal.altify.data.mappers
 
+import android.util.Log
 import bilal.altify.domain.model.ImageRemoteId
 import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.model.LibraryState
@@ -93,12 +94,31 @@ fun String.spotifyUriToRemoteId() =
         contentTypeString = substringAfter(':').substringBefore(':')
     )
 
-fun SpotifyImage.toImageRemoteId() =
-    this.raw?.let { ImageRemoteId(it.substringAfterLast(':')) }
+fun SpotifyImage.toImageRemoteId(): ImageRemoteId? {
+    this.raw?.let { Log.d("toImageRemoteId", "toImageRemoteId $it") }
+    return if (this.raw == null || this.raw!!.isBlank()) null
+    else {
+        val uri = this.raw!!
+        when (uri.substring(0, 8)) {
+            "spotify:" -> // the raw string is a uri
+                ImageRemoteId(this.raw!!.substringAfterLast(':'))
+            "https://" -> // is a web link
+                ImageRemoteId(this.raw!!)
+            else ->
+                throw Exception("Unrecognised uri string from imageUri: $uri")
+        }
+    }
+}
 
-fun ImageRemoteId?.toSpotifyImageUri() =
-    if (this != null) SpotifyImage("spotify:image:$remoteId") else SpotifyImage(null)
+fun ImageRemoteId?.toSpotifyImageUri(): SpotifyImage {
+    this?.let { Log.d("toImageRemoteId", "toSpotifyUri spotify:image:${this.remoteId}") }
+    return if (this == null) SpotifyImage(null)
+    else {
+        if ("https://" in this.remoteId) SpotifyImage(this.remoteId) // web link. leave in raw form
+        else SpotifyImage("spotify:image:${this.remoteId}") // reconstruct uri
+    }
+}
 
-fun RemoteId.toSpotifyUri() =
+fun RemoteId.toSpotifyUri(): String =
     "spotify:${this.getContentTypeString()}:$id"
 
