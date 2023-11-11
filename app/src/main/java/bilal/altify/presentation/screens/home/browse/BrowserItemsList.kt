@@ -2,6 +2,7 @@ package bilal.altify.presentation.screens.home.browse
 
 import android.graphics.Bitmap
 import android.os.Build
+import android.util.Log
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -108,14 +110,15 @@ fun LazyListScope.browserItemsList(
     item {
         GetRecommendedButton(getRecommended)
     }
-    itemsIndexed(
+    items(
         items = listItems.items,
-    ) { index, item ->
+        key = { it.id }
+    ) { item ->
         ListItemRow(
             item = item,
             selected = playingTrackId == item.remoteId,
             thumbnail = thumbnailMap[item.imageRemoteId],
-            playItem = { playItem(item, index) },
+            playItem = { playItem(item, listItems.items.indexOf(item)) },
             getChildrenOfItem = { getChildrenOfItem(item) },
             libraryState = libraryState[item.remoteId],
             toggleLibraryStatus = toggleLibraryStatus,

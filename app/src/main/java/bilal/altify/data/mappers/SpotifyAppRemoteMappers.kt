@@ -1,6 +1,5 @@
 package bilal.altify.data.mappers
 
-import android.util.Log
 import bilal.altify.domain.model.ImageRemoteId
 import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.model.LibraryState
@@ -95,7 +94,6 @@ fun String.spotifyUriToRemoteId() =
     )
 
 fun SpotifyImage.toImageRemoteId(): ImageRemoteId? {
-    this.raw?.let { Log.d("toImageRemoteId", "toImageRemoteId $it") }
     return if (this.raw == null || this.raw!!.isBlank()) null
     else {
         val uri = this.raw!!
@@ -111,7 +109,6 @@ fun SpotifyImage.toImageRemoteId(): ImageRemoteId? {
 }
 
 fun ImageRemoteId?.toSpotifyImageUri(): SpotifyImage {
-    this?.let { Log.d("toImageRemoteId", "toSpotifyUri spotify:image:${this.remoteId}") }
     return if (this == null) SpotifyImage(null)
     else {
         if ("https://" in this.remoteId) SpotifyImage(this.remoteId) // web link. leave in raw form
