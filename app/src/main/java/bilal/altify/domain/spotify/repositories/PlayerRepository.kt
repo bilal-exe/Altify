@@ -1,4 +1,4 @@
-package bilal.altify.domain.spotify.repositories.appremote
+package bilal.altify.domain.spotify.repositories
 
 import bilal.altify.domain.model.PlayerStateAndContext
 import bilal.altify.domain.model.RemoteId

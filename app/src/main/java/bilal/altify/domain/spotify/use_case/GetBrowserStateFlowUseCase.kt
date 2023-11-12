@@ -1,7 +1,7 @@
 package bilal.altify.domain.spotify.use_case
 
 import bilal.altify.domain.spotify.use_case.model.BrowserState
-import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.util.AltifyRepositories
 import kotlinx.coroutines.flow.combine
 
 class GetBrowserStateFlowUseCase {

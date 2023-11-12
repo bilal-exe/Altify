@@ -1,6 +1,6 @@
 package bilal.altify.presentation
 
-import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.util.AltifyRepositories
 import bilal.altify.presentation.prefrences.AltPreferencesState
 
 sealed interface AltifyUIState {

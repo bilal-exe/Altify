@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Overlay(
-    overlayType: OverlayType?
+    overlayType: OverlayType
 ) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = overlayType) {
@@ -61,7 +61,7 @@ fun Overlay(
             when (overlayType) {
                 is OverlayType.Time -> TimeOverlay(overlayType.value)
                 is OverlayType.Volume -> VolumeOverlay(overlayType.volume)
-                null -> {}
+                is OverlayType.AddToPlaylist -> TODO()
             }
         }
     }

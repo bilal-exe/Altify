@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.use_case.model.BrowserState
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.repositories.appremote.SpotifySource
+import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.repositories.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

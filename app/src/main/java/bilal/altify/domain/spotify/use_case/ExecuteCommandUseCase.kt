@@ -2,7 +2,7 @@ package bilal.altify.domain.spotify.use_case
 
 import bilal.altify.domain.model.ContentType
 import bilal.altify.domain.model.ListItem
-import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.util.AltifyRepositories
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ContentCommand
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand

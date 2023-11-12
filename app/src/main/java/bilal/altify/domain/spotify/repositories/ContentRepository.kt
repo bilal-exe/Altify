@@ -1,4 +1,4 @@
-package bilal.altify.domain.spotify.repositories.appremote
+package bilal.altify.domain.spotify.repositories
 
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems

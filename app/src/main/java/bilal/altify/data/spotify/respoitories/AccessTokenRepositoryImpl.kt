@@ -1,12 +1,12 @@
-package bilal.altify.data.spotify.remote.web_api.access_token
+package bilal.altify.data.spotify.respoitories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import bilal.altify.domain.spotify.repositories.web_api.access_token.TokenState
-import bilal.altify.domain.spotify.repositories.web_api.access_token.AccessTokenRepository
+import bilal.altify.domain.model.TokenState
+import bilal.altify.domain.spotify.repositories.AccessTokenRepository
 import bilal.altify.util.getISO3166code
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

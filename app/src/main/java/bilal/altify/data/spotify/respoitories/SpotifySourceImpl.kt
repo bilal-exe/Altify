@@ -1,24 +1,16 @@
-package bilal.altify.data.spotify.remote.appremote
+package bilal.altify.data.spotify.respoitories
 
 import android.content.Context
 import android.util.Log
-import bilal.altify.data.spotify.repositories.ContentRepositoryImpl
-import bilal.altify.data.spotify.repositories.ImagesRepositoryImpl
-import bilal.altify.data.spotify.repositories.PlayerRepositoryImpl
-import bilal.altify.data.spotify.repositories.UserRepositoryImpl
-import bilal.altify.data.spotify.repositories.VolumeRepositoryImpl
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector.Companion.CLIENT_ID
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector.Companion.REDIRECT_URI
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnectorResponse
-import bilal.altify.domain.spotify.repositories.appremote.SpotifySource
-import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.SpotifyConnector
+import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
+import bilal.altify.domain.spotify.repositories.SpotifySource
+import bilal.altify.domain.spotify.repositories.util.AltifyRepositories
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -31,14 +23,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.withContext
 
-
 class SpotifySourceImpl(
     private val context: Context
 ) : SpotifySource, SpotifyConnector {
 
-    private val connectionParams: ConnectionParams = ConnectionParams
-        .Builder(CLIENT_ID)
-        .setRedirectUri(REDIRECT_URI)
+    private val connectionParams: ConnectionParams = ConnectionParams.Builder(SpotifyConnector.CLIENT_ID)
+        .setRedirectUri(SpotifyConnector.REDIRECT_URI)
         .showAuthView(true)
         .build()
 
@@ -81,7 +71,7 @@ class SpotifySourceImpl(
             }
         }
         .shareIn(
-            scope = CoroutineScope(IO),
+            scope = CoroutineScope(Dispatchers.IO),
             started = SharingStarted.Eagerly,
             replay = 1
         )

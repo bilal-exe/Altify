@@ -1,5 +1,6 @@
-package bilal.altify.domain.spotify.repositories.web_api.access_token
+package bilal.altify.domain.spotify.repositories
 
+import bilal.altify.domain.model.TokenState
 import kotlinx.coroutines.flow.Flow
 
 interface AccessTokenRepository {

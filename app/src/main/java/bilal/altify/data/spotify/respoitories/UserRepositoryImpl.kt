@@ -1,12 +1,11 @@
-package bilal.altify.data.spotify.repositories
+package bilal.altify.data.spotify.respoitories
 
 import android.util.Log
-import bilal.altify.data.mappers.spotifyUriToRemoteId
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.LibraryState
 import bilal.altify.domain.model.RemoteId
-import bilal.altify.domain.spotify.repositories.appremote.UserRepository
+import bilal.altify.domain.spotify.repositories.UserRepository
 import com.spotify.android.appremote.api.UserApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

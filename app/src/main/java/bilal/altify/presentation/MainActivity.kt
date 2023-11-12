@@ -27,9 +27,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import bilal.altify.R
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector.Companion.CLIENT_ID
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector.Companion.REDIRECT_URI
-import bilal.altify.domain.spotify.repositories.appremote.SpotifyConnector.Companion.REQUEST_CODE
+import bilal.altify.domain.spotify.repositories.SpotifyConnector.Companion.CLIENT_ID
+import bilal.altify.domain.spotify.repositories.SpotifyConnector.Companion.REDIRECT_URI
+import bilal.altify.domain.spotify.repositories.SpotifyConnector.Companion.REQUEST_CODE
 import bilal.altify.domain.spotify.use_case.model.VolumeCommand
 import bilal.altify.presentation.prefrences.AltPreference
 import bilal.altify.presentation.screens.ErrorScreen

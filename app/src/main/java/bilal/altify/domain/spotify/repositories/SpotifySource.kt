@@ -1,8 +1,7 @@
-package bilal.altify.domain.spotify.repositories.appremote
+package bilal.altify.domain.spotify.repositories
 
-import bilal.altify.domain.spotify.repositories.appremote.util.AltifyRepositories
+import bilal.altify.domain.spotify.repositories.util.AltifyRepositories
 import kotlinx.coroutines.flow.Flow
-import java.lang.Exception
 
 interface SpotifySource {
 

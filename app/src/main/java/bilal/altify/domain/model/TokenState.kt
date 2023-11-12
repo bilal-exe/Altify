@@ -1,4 +1,4 @@
-package bilal.altify.domain.spotify.repositories.web_api.access_token
+package bilal.altify.domain.model
 
 import java.time.Instant
 

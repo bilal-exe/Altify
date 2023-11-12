@@ -1,4 +1,4 @@
-package bilal.altify.data.spotify.repositories
+package bilal.altify.data.spotify.respoitories
 
 import android.util.Log
 import bilal.altify.data.mappers.SpotifyListItems
@@ -6,7 +6,7 @@ import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toOriginal
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
-import bilal.altify.domain.spotify.repositories.appremote.ContentRepository
+import bilal.altify.domain.spotify.repositories.ContentRepository
 import com.spotify.android.appremote.api.ContentApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
