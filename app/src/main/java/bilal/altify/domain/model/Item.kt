@@ -1,5 +1,7 @@
 package bilal.altify.domain.model
 
+import kotlin.time.Duration
+
 data class ListItem(
     val remoteId: RemoteId,
     val imageRemoteId: ImageRemoteId?,
@@ -48,7 +50,7 @@ sealed interface Item {
         val artist: Artist
         val artists: List<Artist>
         val album: Album
-        val duration: Long
+        val duration: Duration
         val imageId: ImageRemoteId?
     }
 

@@ -1,5 +1,8 @@
 package bilal.altify.domain.model
 
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+
 /*
 * Items with minimal information for displaying in browsable lists
 * */
@@ -32,7 +35,7 @@ sealed interface SimpleItem : Item {
         override val artist: Artist,
         override val artists: List<Artist>,
         override val album: Album,
-        override val duration: Long,
+        override val duration: Duration,
         override val imageId: ImageRemoteId?
     ) : SimpleItem, Item.Track {
         companion object {
@@ -42,7 +45,7 @@ sealed interface SimpleItem : Item {
                 artist = Artist(RemoteId.fake, "Artist"),
                 artists = listOf(Artist(RemoteId.fake, "Artist1"), Artist(RemoteId.fake, "Artist2")),
                 album = Album(RemoteId.fake, "Album"),
-                duration = 0,
+                duration = 5.minutes,
                 imageId = ImageRemoteId("")
             )
         }

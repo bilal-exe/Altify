@@ -1,6 +1,8 @@
 package bilal.altify.domain.model
 
 import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 /*
 * Detailed items for full page views
@@ -19,8 +21,8 @@ sealed interface ExtendedItem : Item {
         val images: List<Image> = emptyList(),
     ) : ExtendedItem, Item.Album {
 
-        enum class AlbumType {
-            Album, Single, Compilation
+        enum class AlbumType(val serializedName: String) {
+            Album("album"), Single("single"), Compilation("compilation")
         }
 
     }
@@ -45,7 +47,7 @@ sealed interface ExtendedItem : Item {
         override val artist: Artist,
         override val artists: List<Artist>,
         override val album: Album,
-        override val duration: Long,
+        override val duration: Duration,
         override val imageId: ImageRemoteId?,
     ) : ExtendedItem, Item.Track {
 
@@ -54,9 +56,12 @@ sealed interface ExtendedItem : Item {
                 remoteId = RemoteId.fake,
                 name = "TestingTesting123",
                 artist = Artist(RemoteId.fake, "Artist"),
-                artists = listOf(Artist(RemoteId.fake, "Artist1"), Artist(RemoteId.fake, "Artist2")),
+                artists = listOf(
+                    Artist(RemoteId.fake, "Artist1"),
+                    Artist(RemoteId.fake, "Artist2")
+                ),
                 album = Album(RemoteId.fake, "Album"),
-                duration = 0,
+                duration = 5.minutes,
                 imageId = ImageRemoteId("")
             )
         }
