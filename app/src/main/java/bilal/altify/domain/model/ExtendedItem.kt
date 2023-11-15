@@ -16,7 +16,7 @@ sealed interface ExtendedItem : Item {
         val artist: List<Artist> = emptyList(),
         val genres: List<Genre> = emptyList(),
         val label: String? = null,
-        val releaseDate: Instant? = null,
+        val releaseDate: DateWithPrecision? = null,
         val tracks: ExtendedItemList<Track> = ExtendedItemList(),
         val images: List<Image> = emptyList(),
     ) : ExtendedItem, Item.Album {

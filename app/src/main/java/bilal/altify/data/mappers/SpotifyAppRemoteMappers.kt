@@ -7,6 +7,7 @@ import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.model.PlayerContext
 import bilal.altify.domain.model.SimpleItem
+import kotlin.time.Duration.Companion.milliseconds
 
 typealias SpotifyTrack = com.spotify.protocol.types.Track
 typealias SpotifyPlayerContext = com.spotify.protocol.types.PlayerContext
@@ -24,7 +25,7 @@ fun SpotifyTrack.toModel() =
         artist = this.artist.toModel(),
         artists = this.artists.map { it.toModel() },
         album = this.album.toModel(),
-        duration = this.duration,
+        duration = this.duration.milliseconds,
         imageId = this.imageUri.toImageRemoteId(),
     )
 
