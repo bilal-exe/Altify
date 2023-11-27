@@ -142,7 +142,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun authorizeSpotifyWebApi() {
-        AuthorizationClient.clearCookies(this)
         val request = AuthorizationRequest.Builder(
             CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI
         )
