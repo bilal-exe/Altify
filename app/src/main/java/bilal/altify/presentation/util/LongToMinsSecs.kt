@@ -1,12 +1,11 @@
 package bilal.altify.presentation.util
 
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration
 
-fun Long.toMinsSecs(): String {
-    val millis = this.milliseconds
+fun Duration.toMinsSecs(): String {
     return String.format(
         "%02d:%02d",
-        millis.inWholeMinutes,
-        millis.inWholeSeconds % 60
+        inWholeMinutes,
+        inWholeSeconds % 60
     )
 }

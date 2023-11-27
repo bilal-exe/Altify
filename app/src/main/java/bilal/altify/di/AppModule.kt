@@ -3,17 +3,17 @@ package bilal.altify.di
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import bilal.altify.data.prefrences.PreferencesRepositoryImpl
+import bilal.altify.data.spotify.respoitories.AccessTokenRepositoryImpl
 import bilal.altify.data.spotify.respoitories.SpotifySourceImpl
+import bilal.altify.domain.prefrences.PreferencesRepository
+import bilal.altify.domain.spotify.repositories.AccessTokenRepository
+import bilal.altify.domain.spotify.repositories.SpotifyConnector
 import bilal.altify.domain.spotify.repositories.SpotifySource
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.ExecuteCommandUseCase
 import bilal.altify.domain.spotify.use_case.GetBrowserStateFlowUseCase
 import bilal.altify.domain.spotify.use_case.GetCurrentTrackFlowUseCase
-import bilal.altify.data.prefrences.PreferencesRepositoryImpl
-import bilal.altify.data.spotify.respoitories.AccessTokenRepositoryImpl
-import bilal.altify.domain.prefrences.PreferencesRepository
-import bilal.altify.domain.spotify.repositories.SpotifyConnector
-import bilal.altify.domain.spotify.repositories.AccessTokenRepository
 import bilal.altify.presentation.volume_notification.VolumeNotifications
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -23,7 +23,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
 

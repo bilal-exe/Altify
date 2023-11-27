@@ -56,6 +56,8 @@ sealed interface Item {
 
 }
 
-
-
+data class ItemList<T : Item>(
+    val totalItems: Int = 0,
+    val items: List<T> = emptyList()
+)
 

@@ -8,33 +8,35 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlin.time.Duration.Companion.milliseconds
 
 class GetCurrentTrackFlowUseCase {
 
     operator fun invoke(
         repositories: AltifyRepositories
     ) = combine(
-        repositories.player.playerStateAndContext,
+        repositories.player.playerState,
+        repositories.player.playerContext,
         repositories.volume.volume,
         repositories.images.artworkFlow,
         repositories.user.currentTrackLibraryState
-    ) { psc, vol, art, lib ->
+    ) { ps, pc, vol, art, lib ->
         CurrentTrackState(
-            track = psc.track,
-            isPaused = psc.isPaused,
-            playbackPosition = psc.position,
-            playerContext = psc.context,
+            track = ps.track,
+            isPaused = ps.isPaused,
+            playbackPosition = ps.position,
+            playerContext = pc,
             volume = vol,
             artwork = art,
             libraryState = lib,
-            repeatMode = psc.repeatMode,
-            isShuffled = psc.isShuffling
+            repeatMode = ps.repeatMode,
+            isShuffled = ps.isShuffling
         )
     }
         .interpolatePlaybackPosition()
 
     companion object {
-        const val INTERPOLATION_FREQUENCY_MS = 500L
+        val INTERPOLATION_FREQUENCY_MS = 500L.milliseconds
     }
 
     // interpolates playback position between Spotify callbacks to keep UI updated

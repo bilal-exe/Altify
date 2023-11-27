@@ -1,7 +1,6 @@
 package bilal.altify.data.spotify.sources
 
 import bilal.altify.data.spotify.model.NetworkAlbum
-import bilal.altify.domain.model.RemoteId
 import retrofit2.Retrofit
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -40,25 +39,24 @@ class AlbumNetworkSource @Inject constructor(
     suspend fun saveAlbums(
         authorization: String,
         market: String,
-        ids: List<RemoteId>
+        ids: List<String>
     ) =
         networkApi.saveAlbums(authorization, market, ids)
 
     suspend fun unSaveAlbums(
         authorization: String,
         market: String,
-        ids: List<RemoteId>
+        ids: List<String>
     ) =
         networkApi.unSaveAlbums(authorization, market, ids)
 
     suspend fun checkAlbumIsSaved(
         authorization: String,
         market: String,
-        ids: List<RemoteId>
+        ids: List<String>
     ): List<Boolean> =
         networkApi.checkAlbumIsSaved(authorization, market, ids)
 
-    @GET("v1/browse/new-releases")
     suspend fun getNewReleases(
         authorization: String,
         market: String,
@@ -67,8 +65,6 @@ class AlbumNetworkSource @Inject constructor(
 
 
 }
-
-//private fun TokenState.
 
 private interface RetrofitAlbumApi {
 
@@ -79,11 +75,11 @@ private interface RetrofitAlbumApi {
         @Path("id") id: String
     ): NetworkAlbum
 
-    @GET("v1/albums?ids={ids}")
+    @GET("v1/albums")
     suspend fun getAlbums(
         @Header("Authorization") authorization: String,
         @Query("market") market: String,
-        @Path("ids") ids: List<String>
+        @Query("ids") ids: List<String>
     ): List<NetworkAlbum>
 
     @GET("v1/me/albums")
@@ -91,25 +87,25 @@ private interface RetrofitAlbumApi {
         @Header("Authorization") authorization: String
     ): List<NetworkAlbum>
 
-    @PUT("v1/me/albums?ids={ids}")
+    @PUT("v1/me/albums")
     suspend fun saveAlbums(
         @Header("Authorization") authorization: String,
         @Query("market") market: String,
-        @Path("ids") ids: List<RemoteId>
+        @Query("ids") ids: List<String>
     )
 
-    @DELETE("v1/me/albums?ids={ids}")
+    @DELETE("v1/me/albums")
     suspend fun unSaveAlbums(
         @Header("Authorization") authorization: String,
         @Query("market") market: String,
-        @Path("ids") ids: List<RemoteId>
+        @Query("ids") ids: List<String>
     )
 
-    @GET("v1/me/albums/contains?ids={ids}")
+    @GET("v1/me/albums/contains")
     suspend fun checkAlbumIsSaved(
         @Header("Authorization") authorization: String,
         @Query("market") market: String,
-        @Path("ids") ids: List<RemoteId>
+        @Query("ids") ids: List<String>
     ): List<Boolean>
 
     @GET("v1/browse/new-releases")

@@ -13,6 +13,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 private fun sliderColors() =
@@ -27,7 +29,7 @@ private fun sliderColors() =
 fun AltSlider(
     progress: Long,
     modifier: Modifier = Modifier,
-    duration: Long = 0,
+    duration: Duration = 0.minutes,
     onSliderMoved: (Long) -> Unit,
 ) {
     val color = MaterialTheme.colorScheme.onBackground
@@ -35,7 +37,7 @@ fun AltSlider(
         modifier = modifier.height(20.dp),
         value = progress.toFloat(),
         onValueChange = { onSliderMoved(it.toLong()) },
-        valueRange = 0f..duration.toFloat(),
+        valueRange = 0f..duration.inWholeMilliseconds.toFloat(),
         colors = sliderColors(),
         thumb = {
             Canvas(

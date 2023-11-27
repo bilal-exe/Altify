@@ -1,10 +1,12 @@
 package bilal.altify.domain.model
 
-data class PlayerStateAndContext(
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+
+data class PlayerState(
     val track: Item.Track? = null,
     val isPaused: Boolean = true,
-    val position: Long = 0L,
-    val context: PlayerContext? = null,
+    val position: Duration = 0.milliseconds,
     val repeatMode: RepeatMode,
     val isShuffling: Boolean
 )

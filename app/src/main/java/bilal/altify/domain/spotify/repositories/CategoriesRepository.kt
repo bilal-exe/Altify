@@ -1,9 +1,11 @@
 package bilal.altify.domain.spotify.repositories
 
-import bilal.altify.domain.model.ListItems
+import bilal.altify.domain.model.Category
 
 interface CategoriesRepository {
 
-    suspend fun getCategories(): ListItems
+    suspend fun getCategories(): List<Category>
+
+    suspend fun getCategory(id: String): Category
 
 }

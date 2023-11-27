@@ -1,23 +1,22 @@
 package bilal.altify.domain.spotify.repositories
 
-import bilal.altify.domain.model.ExtendedItemList
 import bilal.altify.domain.model.ExtendedItem.Album
 import bilal.altify.domain.model.RemoteId
 
 interface AlbumsRepository {
 
-    suspend fun getAlbum(id: RemoteId): Album
+    suspend fun getAlbum(token: String, id: RemoteId): Album
 
-    suspend fun getAlbums(ids: List<RemoteId>): List<Album>
+    suspend fun getAlbums(token: String, ids: List<RemoteId>): List<Album>
 
-    suspend fun getSavedAlbums(): ExtendedItemList<Album>
+    suspend fun getSavedAlbums(token: String): List<Album>
 
-    suspend fun saveAlbums(ids: List<RemoteId>)
+    suspend fun saveAlbums(token: String, ids: List<RemoteId>)
 
-    suspend fun unSaveAlbums(ids: List<RemoteId>)
+    suspend fun unSaveAlbums(token: String, ids: List<RemoteId>)
 
-    suspend fun checkAlbumIsSaved(ids: List<RemoteId>): List<Boolean>
+    suspend fun checkAlbumsAreSaved(token: String, ids: List<RemoteId>): List<Boolean>
 
-    suspend fun getNewReleases(): ExtendedItemList<Album>
+    suspend fun getNewReleases(token: String): List<Album>
 
 }

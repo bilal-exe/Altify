@@ -6,6 +6,8 @@ import bilal.altify.domain.model.LibraryState
 import bilal.altify.domain.model.ListItem
 import bilal.altify.domain.model.ListItems
 import bilal.altify.domain.model.PlayerContext
+import bilal.altify.domain.model.PlayerState
+import bilal.altify.domain.model.RepeatMode
 import bilal.altify.domain.model.SimpleItem
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -17,6 +19,7 @@ typealias SpotifyLibraryState = com.spotify.protocol.types.LibraryState
 typealias SpotifyAlbum = com.spotify.protocol.types.Album
 typealias SpotifyArtist = com.spotify.protocol.types.Artist
 typealias SpotifyImage = com.spotify.protocol.types.ImageUri
+typealias SpotifyPlayerState = com.spotify.protocol.types.PlayerState
 
 fun SpotifyTrack.toModel() =
     SimpleItem.Track(
@@ -69,6 +72,21 @@ fun SpotifyLibraryState.toModel() =
         remoteId = uri.spotifyUriToRemoteId(),
         isAdded = this.isAdded,
         canAdd = this.canAdd
+    )
+
+private val repeatModes = mapOf(
+    0 to RepeatMode.OFF,
+    1 to RepeatMode.CONTEXT,
+    3 to RepeatMode.TRACK
+)
+
+fun SpotifyPlayerState.toModel() =
+    PlayerState(
+        track = track.toModel(),
+        isPaused = isPaused,
+        position = playbackPosition.milliseconds,
+        repeatMode = repeatModes[playbackOptions.repeatMode]!!,
+        isShuffling = playbackOptions.isShuffling
     )
 
 /*

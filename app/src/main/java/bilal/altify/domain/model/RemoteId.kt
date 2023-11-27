@@ -46,3 +46,5 @@ enum class ContentType {
 class InvalidRemoteIdException(val remoteId: String) :
     Exception("Tried to declare $remoteId as a RemoteId")
 
+fun List<RemoteId>.toIdsList() =
+    this.map { it.id }

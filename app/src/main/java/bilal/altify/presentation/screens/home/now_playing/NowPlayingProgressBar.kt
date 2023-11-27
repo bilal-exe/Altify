@@ -9,13 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import bilal.altify.presentation.screens.home.nowPlayingItemsPadding
-import bilal.altify.presentation.util.toMinsSecs
 import bilal.altify.presentation.util.AltSlider
+import bilal.altify.presentation.util.toMinsSecs
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun NowPlayingProgressBar(
-    progress: Long,
-    duration: Long = 0,
+    progress: Duration,
+    duration: Duration = 0.minutes,
     onSliderMoved: (Long) -> Unit
 ) {
     Column(
@@ -26,7 +29,7 @@ fun NowPlayingProgressBar(
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top)
     ) {
         AltSlider(
-            progress = progress,
+            progress = progress.inWholeMilliseconds,
             duration = duration,
             onSliderMoved = onSliderMoved,
         )
@@ -49,5 +52,5 @@ fun NowPlayingProgressBar(
 @Preview(showBackground = true)
 @Composable
 private fun NowPlayingProgressBarPreview() {
-    NowPlayingProgressBar(5000L, 10000L) {}
+    NowPlayingProgressBar(5000L.milliseconds, 10000L.milliseconds) {}
 }

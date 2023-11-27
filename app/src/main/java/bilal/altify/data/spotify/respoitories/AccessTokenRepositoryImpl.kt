@@ -1,5 +1,6 @@
 package bilal.altify.data.spotify.respoitories
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -10,6 +11,7 @@ import bilal.altify.domain.spotify.repositories.AccessTokenRepository
 import bilal.altify.util.getISO3166code
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import java.time.Instant
 
 class AccessTokenRepositoryImpl(
@@ -26,6 +28,7 @@ class AccessTokenRepositoryImpl(
             region = getISO3166code()
         )
     }
+        .onEach { if (it is TokenState.Token) Log.d("Token", it.accessToken) }
 
     override suspend fun setToken(accessToken: TokenState.Token) {
         altPreferences.edit {

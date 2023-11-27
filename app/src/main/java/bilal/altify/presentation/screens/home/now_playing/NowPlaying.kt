@@ -51,6 +51,7 @@ import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.presentation.prefrences.FullScreenMusicInfoAlignment
 import bilal.altify.presentation.screens.LoadingScreen
 import bilal.altify.presentation.util.DevicePreviews
+import kotlin.time.Duration.Companion.milliseconds
 
 const val NOW_PLAYING_HORIZONTAL_PADDING = 24
 
@@ -193,7 +194,7 @@ private fun NowPlayingPortraitContent(
             Column {
                 NowPlayingProgressBar(
                     progress = uiState.trackState.playbackPosition,
-                    duration = uiState.trackState.track?.duration ?: 0,
+                    duration = uiState.trackState.track?.duration ?: 0.milliseconds,
                     onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
                 )
                 NowPlayingMusicControls(
@@ -256,9 +257,8 @@ private fun NowPlayingLandscapeContent(
                 Column {
                     NowPlayingProgressBar(
                         progress = uiState.trackState.playbackPosition,
-                        duration = uiState.trackState.track?.duration ?: 0,
-                        onSliderMoved = { executeCommand(PlaybackCommand.Seek(it)) }
-                    )
+                        duration = uiState.trackState.track?.duration ?: 0.milliseconds
+                    ) { executeCommand(PlaybackCommand.Seek(it)) }
                     Spacer(modifier = Modifier.height(16.dp))
                     NowPlayingMusicControls(
                         executeCommand = executeCommand,
@@ -285,7 +285,7 @@ private fun NowPlayingPreview() {
             trackState = CurrentTrackState(
                 playerContext = PlayerContext.example,
                 track = SimpleItem.Track.fake,
-                playbackPosition = 5000
+                playbackPosition = 5000.milliseconds
             ),
             preferences = AltPreferencesState(),
         ),
@@ -303,7 +303,7 @@ private fun NowPlayingDarkPreview() {
                 trackState = CurrentTrackState(
                     playerContext = PlayerContext.example,
                     track = SimpleItem.Track.fake,
-                    playbackPosition = 5000
+                    playbackPosition = 5000.milliseconds
                 ),
                 preferences = AltPreferencesState(),
             ),
@@ -322,7 +322,7 @@ private fun NowPlayingToggledPreview() {
             trackState = CurrentTrackState(
                 playerContext = PlayerContext.example,
                 track = SimpleItem.Track.fake,
-                playbackPosition = 5000
+                playbackPosition = 5000.milliseconds
             ),
             preferences = AltPreferencesState(),
         ),

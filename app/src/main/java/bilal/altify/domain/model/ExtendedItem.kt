@@ -1,6 +1,5 @@
 package bilal.altify.domain.model
 
-import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -13,11 +12,11 @@ sealed interface ExtendedItem : Item {
         override val remoteId: RemoteId,
         override val name: String,
         val albumType: AlbumType = AlbumType.Album,
-        val artist: List<Artist> = emptyList(),
+        val artist: List<Item.Artist> = emptyList(),
         val genres: List<Genre> = emptyList(),
         val label: String? = null,
         val releaseDate: DateWithPrecision? = null,
-        val tracks: ExtendedItemList<Track> = ExtendedItemList(),
+        val tracks: ItemList<Item.Track> = ItemList(),
         val images: List<Image> = emptyList(),
     ) : ExtendedItem, Item.Album {
 
@@ -38,7 +37,7 @@ sealed interface ExtendedItem : Item {
         override val remoteId: RemoteId,
         override val name: String,
         val images: List<Image> = emptyList(),
-        val tracks: ExtendedItemList<Track> = ExtendedItemList(),
+        val tracks: ItemList<Track> = ItemList(),
     ) : ExtendedItem, Item.Playlist
 
     data class Track(
@@ -68,9 +67,3 @@ sealed interface ExtendedItem : Item {
 
     }
 }
-
-
-data class ExtendedItemList<T : ExtendedItem>(
-    val totalItems: Int = 0,
-    val items: List<T> = emptyList()
-)
