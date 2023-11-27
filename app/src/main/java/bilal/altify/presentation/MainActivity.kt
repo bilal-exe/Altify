@@ -145,7 +145,27 @@ class MainActivity : ComponentActivity() {
         val request = AuthorizationRequest.Builder(
             CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI
         )
-            .setScopes(arrayOf("streaming"))
+            .setScopes(
+                arrayOf(
+                    "streaming",
+                    "user-read-playback-state",
+                    "user-modify-playback-state",
+                    "user-read-currently-playing",
+                    "playlist-read-private",
+                    "playlist-read-collaborative",
+                    "playlist-modify-private",
+                    "playlist-modify-public",
+                    "user-follow-modify",
+                    "user-follow-read",
+                    "user-read-playback-position",
+                    "user-top-read",
+                    "user-read-recently-played",
+                    "user-library-modify",
+                    "user-library-read",
+                    "user-read-email",
+                    "user-read-private",
+                )
+            )
             .setShowDialog(true)
             .build()
         AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
@@ -160,30 +180,33 @@ class MainActivity : ComponentActivity() {
     }
 
     // use get instead of direct assignment as You can't request ViewModel before onCreate call
-    private val spotifyConnectorErrorInfo get() = ErrorScreenInfo(
-        message = "Could not connect to Spotify",
-        buttonText = "Retry connection",
-        buttonFunc = viewModel::connect,
-        buttonFrontIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
-    )
+    private val spotifyConnectorErrorInfo
+        get() = ErrorScreenInfo(
+            message = "Could not connect to Spotify",
+            buttonText = "Retry connection",
+            buttonFunc = viewModel::connect,
+            buttonFrontIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+        )
 
-    private val emptyApiTokenErrorInfo get() = ErrorScreenInfo(
-        message = "No Spotify API token",
-        icon = Icon.DrawableResourceIcon(R.drawable.key_off),
-        buttonText = "Refresh key",
-        buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
-        // todo should i use lifecycle-scope?
-        buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
-    )
+    private val emptyApiTokenErrorInfo
+        get() = ErrorScreenInfo(
+            message = "No Spotify API token",
+            icon = Icon.DrawableResourceIcon(R.drawable.key_off),
+            buttonText = "Refresh key",
+            buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+            // todo should i use lifecycle-scope?
+            buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
+        )
 
-    private val expiredApiTokenErrorInfo get() = ErrorScreenInfo(
-        message = "Expired Spotify API token",
-        icon = Icon.DrawableResourceIcon(R.drawable.key_off),
-        buttonText = "Refresh key",
-        buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
-        // todo should i use lifecycle-scope?
-        buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
-    )
+    private val expiredApiTokenErrorInfo
+        get() = ErrorScreenInfo(
+            message = "Expired Spotify API token",
+            icon = Icon.DrawableResourceIcon(R.drawable.key_off),
+            buttonText = "Refresh key",
+            buttonBackIcon = Icon.ImageVectorIcon(Icons.Default.Refresh),
+            // todo should i use lifecycle-scope?
+            buttonFunc = { CoroutineScope(IO).launch { authorizeSpotifyWebApi() } }
+        )
 }
 
 enum class DarkThemeConfig(override val code: Int, override val title: String) : AltPreference {

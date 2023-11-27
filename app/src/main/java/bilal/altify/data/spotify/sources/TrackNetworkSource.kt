@@ -1,6 +1,7 @@
 package bilal.altify.data.spotify.sources
 
 import bilal.altify.data.spotify.model.ExtendedNetworkTrack
+import bilal.altify.data.spotify.model.NetworkAudioFeatures
 import retrofit2.Retrofit
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -50,6 +51,11 @@ class TrackNetworkSource @Inject constructor(
         id: List<String>
     ) = networkApi.checkTracksAreSaved(authorization, id)
 
+    suspend fun getAudioFeatures(
+        authorization: String,
+        id: String
+    ) = networkApi.getAudioFeatures(authorization, id)
+
 }
 
 private interface RetrofitTracksApi {
@@ -91,4 +97,10 @@ private interface RetrofitTracksApi {
         @Header("Authorization") authorization: String,
         @Query("ids") id: List<String>
     ): List<Boolean>
+
+    @GET("v1/audio-features/{id}")
+    suspend fun getAudioFeatures(
+        @Header("Authorization") authorization: String,
+        @Path("ids") id: String
+    ): NetworkAudioFeatures
 }

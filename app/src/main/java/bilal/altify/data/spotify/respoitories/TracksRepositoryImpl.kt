@@ -22,11 +22,14 @@ class TracksRepositoryImpl @Inject constructor(
         source.getSavedTracks(authorization = token, market = getISO3166code()).map { it.toExtendedTrack() }
 
     override suspend fun saveTrack(token: String, remoteIds: List<RemoteId>) =
-        source.saveTrack(token, remoteIds.toIdsList())
+        source.saveTrack(authorization = token, id = remoteIds.toIdsList())
 
     override suspend fun unSaveTrack(token: String, remoteIds: List<RemoteId>) =
-        source.unSaveTrack(token, remoteIds.toIdsList())
+        source.unSaveTrack(authorization = token, id = remoteIds.toIdsList())
 
     override suspend fun checkTracksAreSaved(token: String, remoteIds: List<RemoteId>) =
-        source.checkTracksAreSaved(token, remoteIds.toIdsList())
+        source.checkTracksAreSaved(authorization = token, id = remoteIds.toIdsList())
+
+    override suspend fun getAudioFeatures(token: String, remoteId: RemoteId) =
+        source.getAudioFeatures(authorization = token, id = remoteId.id).toAudioFeatures()
 }

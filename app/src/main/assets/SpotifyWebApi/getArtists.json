@@ -1,0 +1,151 @@
+{
+  "artists" : [ {
+    "external_urls" : {
+      "spotify" : "https://open.spotify.com/artist/3zCAmjKyHsG7kTGsls1cfj"
+    },
+    "followers" : {
+      "href" : null,
+      "total" : 361510
+    },
+    "genres" : [ "cartoon", "children's music" ],
+    "href" : "https://api.spotify.com/v1/artists/3zCAmjKyHsG7kTGsls1cfj",
+    "id" : "3zCAmjKyHsG7kTGsls1cfj",
+    "images" : [ {
+      "height" : 1049,
+      "url" : "https://i.scdn.co/image/56fc3a11d95a9b44dabf22ca2dc56b670541c3f5",
+      "width" : 1000
+    }, {
+      "height" : 671,
+      "url" : "https://i.scdn.co/image/3fb9fb7e2c4ae8bbfb5b3343e03fcbc77c40b8a1",
+      "width" : 640
+    }, {
+      "height" : 210,
+      "url" : "https://i.scdn.co/image/5cfc958ede70f736a774d819cf07ad49ae937ac6",
+      "width" : 200
+    }, {
+      "height" : 67,
+      "url" : "https://i.scdn.co/image/d5c57f36c7afb1b3bbd2c91d6a91b3299f474774",
+      "width" : 64
+    } ],
+    "name" : "Spongebob Squarepants",
+    "popularity" : 51,
+    "type" : "artist",
+    "uri" : "spotify:artist:3zCAmjKyHsG7kTGsls1cfj"
+  }, {
+    "external_urls" : {
+      "spotify" : "https://open.spotify.com/artist/0gxyHStUsqpMadRV0Di1Qt"
+    },
+    "followers" : {
+      "href" : null,
+      "total" : 1146703
+    },
+    "genres" : [ "new romantic", "new wave pop", "soft rock", "sophisti-pop", "synthpop" ],
+    "href" : "https://api.spotify.com/v1/artists/0gxyHStUsqpMadRV0Di1Qt",
+    "id" : "0gxyHStUsqpMadRV0Di1Qt",
+    "images" : [ {
+      "height" : 640,
+      "url" : "https://i.scdn.co/image/ab6761610000e5ebef34f4cfef524a703ccad877",
+      "width" : 640
+    }, {
+      "height" : 320,
+      "url" : "https://i.scdn.co/image/ab67616100005174ef34f4cfef524a703ccad877",
+      "width" : 320
+    }, {
+      "height" : 160,
+      "url" : "https://i.scdn.co/image/ab6761610000f178ef34f4cfef524a703ccad877",
+      "width" : 160
+    } ],
+    "name" : "Rick Astley",
+    "popularity" : 62,
+    "type" : "artist",
+    "uri" : "spotify:artist:0gxyHStUsqpMadRV0Di1Qt"
+  }, {
+    "external_urls" : {
+      "spotify" : "https://open.spotify.com/artist/6DPYiyq5kWVQS4RGwxzPC7"
+    },
+    "followers" : {
+      "href" : null,
+      "total" : 10817002
+    },
+    "genres" : [ "g funk", "gangster rap", "hip hop", "rap", "west coast rap" ],
+    "href" : "https://api.spotify.com/v1/artists/6DPYiyq5kWVQS4RGwxzPC7",
+    "id" : "6DPYiyq5kWVQS4RGwxzPC7",
+    "images" : [ {
+      "height" : 1005,
+      "url" : "https://i.scdn.co/image/83d2489cade1dadcdc533ddbcd74993d0ca6d4cb",
+      "width" : 1000
+    }, {
+      "height" : 643,
+      "url" : "https://i.scdn.co/image/170254ebdd747f4e7045df1cae8f11a42dc1a547",
+      "width" : 640
+    }, {
+      "height" : 201,
+      "url" : "https://i.scdn.co/image/dd4a7102c5e1897bab2b1fa4bbc086fbe2fc87dc",
+      "width" : 200
+    }, {
+      "height" : 64,
+      "url" : "https://i.scdn.co/image/85ebf2f6c52139b3384b596063678b47ab0fcb95",
+      "width" : 64
+    } ],
+    "name" : "Dr. Dre",
+    "popularity" : 77,
+    "type" : "artist",
+    "uri" : "spotify:artist:6DPYiyq5kWVQS4RGwxzPC7"
+  }, {
+    "external_urls" : {
+      "spotify" : "https://open.spotify.com/artist/7ADPwlOqNnCqFtqIV5TKCX"
+    },
+    "followers" : {
+      "href" : null,
+      "total" : 54096
+    },
+    "genres" : [ "meme", "meme rap" ],
+    "href" : "https://api.spotify.com/v1/artists/7ADPwlOqNnCqFtqIV5TKCX",
+    "id" : "7ADPwlOqNnCqFtqIV5TKCX",
+    "images" : [ {
+      "height" : 640,
+      "url" : "https://i.scdn.co/image/ab67616d0000b27363cd4c15622c673478406f2e",
+      "width" : 640
+    }, {
+      "height" : 300,
+      "url" : "https://i.scdn.co/image/ab67616d00001e0263cd4c15622c673478406f2e",
+      "width" : 300
+    }, {
+      "height" : 64,
+      "url" : "https://i.scdn.co/image/ab67616d0000485163cd4c15622c673478406f2e",
+      "width" : 64
+    } ],
+    "name" : "Kahoot!",
+    "popularity" : 38,
+    "type" : "artist",
+    "uri" : "spotify:artist:7ADPwlOqNnCqFtqIV5TKCX"
+  }, {
+    "external_urls" : {
+      "spotify" : "https://open.spotify.com/artist/3VNITwohbvU5Wuy5PC6dsI"
+    },
+    "followers" : {
+      "href" : null,
+      "total" : 2403088
+    },
+    "genres" : [ "disco", "funk", "motown", "soft rock", "soul" ],
+    "href" : "https://api.spotify.com/v1/artists/3VNITwohbvU5Wuy5PC6dsI",
+    "id" : "3VNITwohbvU5Wuy5PC6dsI",
+    "images" : [ {
+      "height" : 640,
+      "url" : "https://i.scdn.co/image/ab6761610000e5eb69287c3f1b150bbead642499",
+      "width" : 640
+    }, {
+      "height" : 320,
+      "url" : "https://i.scdn.co/image/ab6761610000517469287c3f1b150bbead642499",
+      "width" : 320
+    }, {
+      "height" : 160,
+      "url" : "https://i.scdn.co/image/ab6761610000f17869287c3f1b150bbead642499",
+      "width" : 160
+    } ],
+    "name" : "Kool & The Gang",
+    "popularity" : 65,
+    "type" : "artist",
+    "uri" : "spotify:artist:3VNITwohbvU5Wuy5PC6dsI"
+  } ]
+}
