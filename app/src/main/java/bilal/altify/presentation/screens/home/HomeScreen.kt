@@ -30,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
+import bilal.altify.domain.model.ContentType
+import bilal.altify.domain.model.TokenState
 import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.ContentCommand
@@ -136,6 +138,15 @@ private fun HomeScreen(
         }
     }
 
+    LaunchedEffect(key1 = browserUIState) {
+        val buis = browserUIState
+        if (buis is BrowserUIState.Success && buis.browserState.listItems?.items?.first()?.remoteId?.contentType == ContentType.Track) {
+            if (uiState.tokenState is TokenState.Token) {
+                browserViewModel.getAudioFeatures(uiState.tokenState, uiState.trackState.track!!)
+            }
+        }
+    }
+
     Scaffold(
         floatingActionButton = { ScrollToTopButton(lazyListState) }
     ) { pv ->
@@ -218,7 +229,8 @@ fun HomeScreenPreview() {
         executeCommand = { },
         uiState = NowPlayingUIState.Success(
             trackState = CurrentTrackState(),
-            preferences = AltPreferencesState()
+            preferences = AltPreferencesState(),
+            tokenState = TokenState.Empty
         )
     )
 }

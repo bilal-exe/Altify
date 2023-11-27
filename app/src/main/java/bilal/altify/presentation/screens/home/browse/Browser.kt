@@ -54,6 +54,8 @@ fun LazyListScope.browser(
                 executeCommand = executeCommand,
                 backgroundColor = backgroundColor,
             )
+        is BrowserUIState.ShowAudioFeatures ->
+            audioFeaturesScreen(uiState.audioFeatures, uiState.track)
     }
 }
 

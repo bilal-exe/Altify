@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import bilal.altify.data.mappers.toSpotifyUri
 import bilal.altify.domain.model.PlayerContext
 import bilal.altify.domain.model.SimpleItem
+import bilal.altify.domain.model.TokenState
 import bilal.altify.domain.spotify.use_case.model.Command
 import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
 import bilal.altify.domain.spotify.use_case.model.ImagesCommand
@@ -288,6 +289,7 @@ private fun NowPlayingPreview() {
                 playbackPosition = 5000.milliseconds
             ),
             preferences = AltPreferencesState(),
+            tokenState = TokenState.Empty
         ),
         navToSettings = {},
         executeCommand = {},
@@ -306,6 +308,7 @@ private fun NowPlayingDarkPreview() {
                     playbackPosition = 5000.milliseconds
                 ),
                 preferences = AltPreferencesState(),
+                tokenState = TokenState.Empty
             ),
             navToSettings = {},
             executeCommand = {},
@@ -325,6 +328,7 @@ private fun NowPlayingToggledPreview() {
                 playbackPosition = 5000.milliseconds
             ),
             preferences = AltPreferencesState(),
+            tokenState = TokenState.Empty
         ),
         executeCommand = {},
         showControls = false

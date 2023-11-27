@@ -2,7 +2,9 @@ package bilal.altify.presentation.screens.home.now_playing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import bilal.altify.domain.model.TokenState
 import bilal.altify.domain.prefrences.PreferencesRepository
+import bilal.altify.domain.spotify.repositories.AccessTokenRepository
 import bilal.altify.domain.spotify.use_case.model.CurrentTrackState
 import bilal.altify.domain.spotify.repositories.SpotifyConnectorResponse
 import bilal.altify.domain.spotify.repositories.SpotifySource
@@ -29,6 +31,7 @@ class NowPlayingViewModel @Inject constructor(
     private val useCases: AltifyUseCases,
     private val volumeNotifications: VolumeNotifications,
     private val preferences: PreferencesRepository,
+    private val accessTokenRepository: AccessTokenRepository
 ) : ViewModel() {
 
     val uiState = spotifySource.data
@@ -38,6 +41,7 @@ class NowPlayingViewModel @Inject constructor(
                         combine(
                             useCases.currentTrack(it.repositories),
                             preferences.state,
+                            accessTokenRepository.state,
                             NowPlayingUIState::Success
                         )
                 is SpotifyConnectorResponse.ConnectionFailed ->
@@ -71,5 +75,6 @@ sealed interface NowPlayingUIState {
     data class Success(
         val trackState: CurrentTrackState,
         val preferences: AltPreferencesState,
+        val tokenState: TokenState
     ) : NowPlayingUIState
 }

@@ -6,10 +6,13 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import bilal.altify.data.prefrences.PreferencesRepositoryImpl
 import bilal.altify.data.spotify.respoitories.AccessTokenRepositoryImpl
 import bilal.altify.data.spotify.respoitories.SpotifySourceImpl
+import bilal.altify.data.spotify.respoitories.TracksRepositoryImpl
+import bilal.altify.data.spotify.sources.TrackNetworkSource
 import bilal.altify.domain.prefrences.PreferencesRepository
 import bilal.altify.domain.spotify.repositories.AccessTokenRepository
 import bilal.altify.domain.spotify.repositories.SpotifyConnector
 import bilal.altify.domain.spotify.repositories.SpotifySource
+import bilal.altify.domain.spotify.repositories.TracksRepository
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.ExecuteCommandUseCase
 import bilal.altify.domain.spotify.use_case.GetBrowserStateFlowUseCase
@@ -23,6 +26,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -81,6 +86,19 @@ object AppModule {
         Retrofit.Builder()
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .baseUrl(baseUrl)
+            .callFactory(
+                OkHttpClient.Builder()
+                    .addInterceptor(
+                        HttpLoggingInterceptor()
+                            .apply { setLevel(HttpLoggingInterceptor.Level.BODY) },
+                    )
+                    .build()
+            )
             .build()
+
+    @Provides
+    @Singleton
+    fun providesTracksRepo(retrofit: Retrofit): TracksRepository =
+        TracksRepositoryImpl(TrackNetworkSource(retrofit))
 
 }

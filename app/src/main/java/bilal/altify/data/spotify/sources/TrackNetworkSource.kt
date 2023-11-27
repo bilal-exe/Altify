@@ -54,7 +54,7 @@ class TrackNetworkSource @Inject constructor(
     suspend fun getAudioFeatures(
         authorization: String,
         id: String
-    ) = networkApi.getAudioFeatures(authorization, id)
+    ) = networkApi.getAudioFeatures("Bearer $authorization", id)
 
 }
 
@@ -101,6 +101,6 @@ private interface RetrofitTracksApi {
     @GET("v1/audio-features/{id}")
     suspend fun getAudioFeatures(
         @Header("Authorization") authorization: String,
-        @Path("ids") id: String
+        @Path("id") id: String
     ): NetworkAudioFeatures
 }
