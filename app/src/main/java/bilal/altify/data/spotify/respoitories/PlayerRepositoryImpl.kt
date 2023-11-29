@@ -3,6 +3,7 @@ package bilal.altify.data.spotify.respoitories
 import android.util.Log
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toSpotifyUri
+import bilal.altify.data.spotify.sources.PlayerNetworkSource
 import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.spotify.repositories.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class PlayerRepositoryImpl(
     private val playerApi: PlayerApi,
+    private val playerNetworkSource: PlayerNetworkSource
 ) : PlayerRepository {
 
     override val playerState = callbackFlow {
