@@ -10,6 +10,7 @@ import bilal.altify.domain.model.TokenState
 import bilal.altify.domain.spotify.repositories.util.AltifyRepositories
 import bilal.altify.domain.spotify.use_case.AltifyUseCases
 import bilal.altify.domain.spotify.use_case.model.Command
+import bilal.altify.presentation.prefrences.AltPreferencesState
 import bilal.altify.util.getISO3166code
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -120,4 +121,23 @@ class AltifyViewModel @Inject constructor(
         }
     }
 
+}
+
+sealed interface AltifyUIState {
+    data class Disconnected(val error: Error) : AltifyUIState
+    object Connecting : AltifyUIState
+    data class Success(
+        val preferences: AltPreferencesState = AltPreferencesState(),
+        val repositories: AltifyRepositories,
+        val token: String
+    ) : AltifyUIState
+}
+
+sealed interface Error {
+    data class SpotifyConnector(val message: String?) : Error
+    data class APIToken(val error: APITokenError) : Error
+}
+
+enum class APITokenError {
+    EXPIRED, EMPTY
 }
