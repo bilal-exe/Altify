@@ -5,7 +5,6 @@ import bilal.altify.data.spotify.model.NetworkDevice
 import bilal.altify.data.spotify.model.NetworkQueue
 import bilal.altify.data.spotify.model.NetworkTracks
 import retrofit2.Retrofit
-import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PUT
@@ -51,7 +50,7 @@ private interface RetrofitPlayerApi {
     @GET("v1/me/player/devices")
     suspend fun getAvailableDevices(
         @Header("Authorization") token: String,
-    ): NetworkDevice
+    ): List<NetworkDevice>
 
     @PUT("v1/me/player")
     suspend fun transferPlaybackToDevice(

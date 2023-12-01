@@ -3,7 +3,9 @@ package bilal.altify.data.spotify.respoitories
 import android.util.Log
 import bilal.altify.data.mappers.toModel
 import bilal.altify.data.mappers.toSpotifyUri
+import bilal.altify.data.spotify.model.NetworkDevice
 import bilal.altify.data.spotify.sources.PlayerNetworkSource
+import bilal.altify.domain.model.Device
 import bilal.altify.domain.model.RemoteId
 import bilal.altify.domain.spotify.repositories.PlayerRepository
 import com.spotify.android.appremote.api.PlayerApi
@@ -12,7 +14,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class PlayerRepositoryImpl(
     private val playerApi: PlayerApi,
-    private val playerNetworkSource: PlayerNetworkSource
+    private val playerNetworkSource: PlayerNetworkSource,
 ) : PlayerRepository {
 
     override val playerState = callbackFlow {
@@ -86,5 +88,13 @@ class PlayerRepositoryImpl(
 
     override fun toggleShuffle() {
         playerApi.toggleShuffle()
+    }
+
+    override suspend fun getAvailableDevices(): List<Device> =
+        playerNetworkSource.getAvailableDevices("").map(NetworkDevice::toDevice)
+
+
+    override suspend fun transferPlaybackToDevice(device: Device) {
+        TODO("Not yet implemented")
     }
 }

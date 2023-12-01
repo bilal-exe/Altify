@@ -1,5 +1,6 @@
 package bilal.altify.domain.spotify.repositories
 
+import bilal.altify.domain.model.Device
 import bilal.altify.domain.model.PlayerContext
 import bilal.altify.domain.model.PlayerState
 import bilal.altify.domain.model.RemoteId
@@ -30,6 +31,10 @@ interface PlayerRepository {
     fun toggleRepeat()
 
     fun toggleShuffle()
+
+    suspend fun getAvailableDevices(): List<Device>
+
+    suspend fun transferPlaybackToDevice(device: Device)
 
     class PlayerSourceException(override val message: String?): Exception(message)
 
