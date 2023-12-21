@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class PlayerRepositoryImpl(
     private val playerApi: PlayerApi,
-    private val playerNetworkSource: PlayerNetworkSource,
+//    private val playerNetworkSource: PlayerNetworkSource,
 ) : PlayerRepository {
 
     override val playerState = callbackFlow {
@@ -90,8 +90,8 @@ class PlayerRepositoryImpl(
         playerApi.toggleShuffle()
     }
 
-    override suspend fun getAvailableDevices(): List<Device> =
-        playerNetworkSource.getAvailableDevices("").map(NetworkDevice::toDevice)
+//    override suspend fun getAvailableDevices(): List<Device> =
+//        playerNetworkSource.getAvailableDevices("").map(NetworkDevice::toDevice)
 
 
     override suspend fun transferPlaybackToDevice(device: Device) {

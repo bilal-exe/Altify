@@ -32,7 +32,7 @@ interface PlayerRepository {
 
     fun toggleShuffle()
 
-    suspend fun getAvailableDevices(): List<Device>
+//    suspend fun getAvailableDevices(): List<Device>
 
     suspend fun transferPlaybackToDevice(device: Device)
 
